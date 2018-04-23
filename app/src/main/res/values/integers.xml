@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="fragment_change_animationduration">500</integer>
+    <integer name="expand_arrow_rotation_duration">500</integer>
+    <integer name="splash_loader_part_duration">500</integer>
+    <integer name="event_pager_indicator_height">9</integer>
+</resources>

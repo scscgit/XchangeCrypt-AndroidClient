@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">XchangeCrypt</string>
+
+
+    <!--dialog-->
+    <string name="ok_btn">OK</string>
+    <string name="positive_btn">Áno</string>
+    <string name="negative_btn">Nie</string>
+
+    <!--drawer-->
+    <string name="drawer_open">Otvoriť menu</string>
+    <string name="drawer_close">Zatvoriť menu</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="google_sign_client_id">972714216596-862htfsetkeglm03eili6k42tiph9tge.apps.googleusercontent.com</string>
+    <string name="google_sign_client_id_test">972714216596-0nsr2manqtue1fejl7f0re98fv24a7hd.apps.googleusercontent.com</string>
+
+</resources>
