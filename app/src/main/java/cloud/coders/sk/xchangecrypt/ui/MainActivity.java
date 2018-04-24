@@ -17,6 +17,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import cloud.coders.sk.xchangecrypt.core.Constants;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
@@ -45,6 +48,11 @@ import cloud.coders.sk.xchangecrypt.ui.fragments.WalletFragment;
 import cloud.coders.sk.xchangecrypt.utils.Logger;
 import cloud.coders.sk.xchangecrypt.utils.Utility;
 import cloud.coders.sk.R;
+import io.swagger.client.ApiException;
+import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
+import io.swagger.client.api.TradingTerminalIntegrationApi;
+import io.swagger.client.model.InlineResponse2004;
+import io.swagger.client.model.Order;
 
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
@@ -68,6 +76,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void createDumbData() {
+        /*
+        InlineResponse2004 inlineResponse2004;
+        try {
+            Log.d(MainActivity.class.getSimpleName(),"b4 download test");
+//            TradingTerminalIntegrationApi tradingTerminalIntegrationApi = new TradingTerminalIntegrationApi();
+            TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
+            tradingPanelBridgeBrokerDataOrdersApi.authorizePost("test","test");
+            inlineResponse2004 =              tradingPanelBridgeBrokerDataOrdersApi       .accountsAccountIdOrdersGet("0");
+            Log.d(MainActivity.class.getSimpleName(),"after download");
+        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+            e.printStackTrace();
+            throw new RuntimeException("2004 error");
+        }*/
+
         MyTransaction transaction0 = new MyTransaction(new Date(), true, "QBC", "BTC", (float)0.00000311, (float)258.00058265);
         MyTransaction transaction1 = new MyTransaction(new Date(), false, "LTC", "BTC", (float)0.02000311, (float)0.058265);
         List<MyTransaction> transactionList = new ArrayList<>();
@@ -88,10 +110,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         Offer offer2 = new Offer(true,0.00000270, "QBC",3000.0000000,"BTC",0.008100000 );
 
         List<Offer> offerList = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            offerList.add(offer1);
-            offerList.add(offer2);
+        /*
+        for (Order order : inlineResponse2004.getD()) {
+            //boolean sell, double price, String baseCurrency,
+            // double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount) {
+            offerList.add(new Offer(
+                    order.getSide() != Order.SideEnum.buy,
+                    order.getLimitPrice().doubleValue(),
+                    order.getInstrument(),
+                    order.getQty().doubleValue(),
+                    order.getInstrument(),
+                    order.getQty().doubleValue() * order.getLimitPrice().doubleValue()
+            ));
         }
+        */
         getContentProvider().setOffers(offerList);
 
 

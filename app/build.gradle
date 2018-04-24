@@ -21,6 +21,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
 }
 
 dependencies {
@@ -39,6 +52,7 @@ dependencies {
 //    compile 'com.google.firebase:firebase-database:11.6.0'
 //    compile 'com.google.firebase:firebase-auth:11.6.0'
 //    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile project(path: ':swagger')
 }
 
 //apply plugin: 'com.google.gms.google-services'

@@ -63,7 +63,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         }else {
             builder.append("Nákup ");
         }
-        builder.append(transaction.getBaseCurrency()).append("//").append(transaction.getQuoteCurrency());
+        builder.append(transaction.getBaseCurrency()).append("/").append(transaction.getQuoteCurrency());
         holder.title.setText(builder.toString());
 
         holder.price.setText(String.format("%.8f", transaction.getPrice()));
