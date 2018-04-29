@@ -103,6 +103,23 @@ public class BaseActivity extends AppCompatActivity {
         alertDialog = builder.create();
         alertDialog.show();
     }
+/*
+    ProgressDialog progressDialog = null;
+    public void showProgressDialog( CharSequence title, CharSequence message){
+        progressDialog = new ProgressDialog(getApplicationContext());
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle(title);
+        progressDialog.setMessage(message);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
+    }
+
+    public void closeProgressDialog( ){
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
+    }
+*/
 
 
     public void hideKeyboard() {

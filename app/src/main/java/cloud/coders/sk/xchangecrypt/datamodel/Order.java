@@ -4,40 +4,64 @@ package cloud.coders.sk.xchangecrypt.datamodel;
  * Created by Peter on 23.04.2018.
  */
 
-public class Offer extends BaseObject {
+public class Order extends BaseObject {
 
     private double price;
     private String baseCurrency;
     private double baseCurrencyAmount;
     private String quoteCurrency;
     private double quoteCurrencyAmount;
-    private boolean sell;
+    private OrderSide side;
+    private OrderType type;
+    private String orderId;
 
-    public Offer(boolean sell, double price, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount) {
-        this.sell = sell;
+    public Order(double price, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
         this.price = price;
         this.baseCurrency = baseCurrency;
         this.baseCurrencyAmount = baseCurrencyAmount;
         this.quoteCurrency = quoteCurrency;
         this.quoteCurrencyAmount = quoteCurrencyAmount;
+        this.side = side;
+        this.type = type;
     }
 
-    public Offer(boolean sell, int id, double price, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount) {
+    public Order(int id, double price, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
         super(id);
-        this.sell = sell;
         this.price = price;
         this.baseCurrency = baseCurrency;
         this.baseCurrencyAmount = baseCurrencyAmount;
         this.quoteCurrency = quoteCurrency;
         this.quoteCurrencyAmount = quoteCurrencyAmount;
+        this.side = side;
+        this.type = type;
     }
 
-    public boolean isSell() {
-        return sell;
+    public Order(double price, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type, String orderId) {
+        this.price = price;
+        this.baseCurrency = baseCurrency;
+        this.baseCurrencyAmount = baseCurrencyAmount;
+        this.quoteCurrency = quoteCurrency;
+        this.quoteCurrencyAmount = quoteCurrencyAmount;
+        this.side = side;
+        this.type = type;
+        this.orderId = orderId;
     }
 
-    public void setSell(boolean sell) {
-        this.sell = sell;
+
+    public OrderSide getSide() {
+        return side;
+    }
+
+    public void setSide(OrderSide side) {
+        this.side = side;
+    }
+
+    public OrderType getType() {
+        return type;
+    }
+
+    public void setType(OrderType type) {
+        this.type = type;
     }
 
     public double getPrice() {
@@ -78,5 +102,13 @@ public class Offer extends BaseObject {
 
     public void setQuoteCurrencyAmount(double quoteCurrencyAmount) {
         this.quoteCurrencyAmount = quoteCurrencyAmount;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

@@ -1,21 +1,36 @@
 package cloud.coders.sk.xchangecrypt.ui.fragments;
 
-import android.media.Image;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.ExchangeOrderListViewAdapter;
+import cloud.coders.sk.xchangecrypt.datamodel.Coin;
+import cloud.coders.sk.xchangecrypt.datamodel.CurrencyPair;
+import cloud.coders.sk.xchangecrypt.datamodel.Order;
+import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
@@ -42,10 +57,24 @@ public class ExchangeFragment extends BaseFragment {
     private TextView feeCoin;
 
     private EditText sumEdit;
-    private TextView sumtCoin;
+    private TextView sumCoin;
 
-    private Button buttonOrder;
+    private Button buttonBuy;
+    private Button buttonSell;
 
+    private Button marketOrders;
+    private Button userOrders;
+
+    private LinearLayout firstFrameLinearLayout;
+    private LinearLayout secondFrameLinearLayout;
+    private LinearLayout thirdFrameLinearLayout;
+
+    private LinearLayout coinPairLinearLayout;
+
+    TextView listViewOrderHeaderBaseCurrency;
+    TextView listViewOrderHeaderQuoteCurrency;
+
+    private OrderSide orderSide;
 
 
     private RecyclerView recyclerView;
@@ -65,7 +94,7 @@ public class ExchangeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_exchange,container,false);
 
-
+        this.orderSide = OrderSide.buy;
         setActionBar();
         setViews();
         setViewContents();
@@ -98,44 +127,236 @@ public class ExchangeFragment extends BaseFragment {
         feeCoin = (TextView) rootView.findViewById(R.id.exchange_fee_coin_text);
 
         sumEdit = (EditText) rootView.findViewById(R.id.exchange_sum_edit);
-        sumtCoin = (TextView) rootView.findViewById(R.id.exchange_sum_coin_text);
+        sumCoin = (TextView) rootView.findViewById(R.id.exchange_sum_coin_text);
 
-        buttonOrder = (Button) rootView.findViewById(R.id.button_order);
+      //  buttonOrder = (Button) rootView.findViewById(R.id.button_order);
+
+        secondFrameLinearLayout = (LinearLayout) rootView.findViewById(R.id.linerlayout_order_place);
+        thirdFrameLinearLayout = (LinearLayout) rootView.findViewById(R.id.linerlayout_order_list);
+        firstFrameLinearLayout = (LinearLayout) rootView.findViewById(R.id.linerlayout_order_coin_pair);
+        coinPairLinearLayout = (LinearLayout) rootView.findViewById(R.id.linearLayout_coin_pair_select);
+
+        buttonBuy = (Button) rootView.findViewById(R.id.exchange_button_exchange_buy);
+        buttonSell = (Button) rootView.findViewById(R.id.exchange_button_exchange_sell);
+
+        marketOrders = (Button) rootView.findViewById(R.id.button_exchange_order_all);
+        userOrders = (Button) rootView.findViewById(R.id.button_exchange_order_my);
+
+//        listViewOrderHeaderBaseCurrency = (TextView) rootView.findViewById(R.id.listview_orders_header_coin1);
+  //      listViewOrderHeaderQuoteCurrency = (TextView) rootView.findViewById(R.id.listview_orders_header_coin2);
     }
+
 
     @Override
     protected void setViewContents() {
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getOffers()));
+
+        feeEdit.setKeyListener(null);
+        feeEdit.setText("0,00000001");
+        priceEdit.setText("0,00000311");
+
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketOrders().get(getContentProvider().getActualCurrencyPair().toString())));
         listViewOrders.setClickable(false);
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
+        listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
+        listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
         listViewOrders.addHeaderView(header);
+        //setListViewHeightBasedOnChildren(listViewOrders);
+        //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
 
-        ballanceText.setText(String.format("%.8f", getContentProvider().getCoins().get(0).getAmount()) + " " + getContentProvider().getCoins().get(0).getName());
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = rootView.getRootView().getHeight();
+
+                // r.bottom is the position above soft keypad or device button.
+                // if keypad is shown, the r.bottom is smaller than that before.
+                int keypadHeight = screenHeight - r.bottom;
+
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    setSecondFrameSize(true);
+                }
+                else {
+                    setSecondFrameSize(false);
+                }
+            }
+        });
+        coinPairLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<CurrencyPair> list1 = Arrays.asList(CurrencyPair.values());
+                final List<String> list2 = new ArrayList<>();
+                for (CurrencyPair pair:list1) {
+                    list2.add(pair.toString().replace("_","/"));
+                }
+
+                CharSequence[] cs = list2.toArray(new CharSequence[list2.size()]);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Vyberte menový pár")
+                        .setItems(cs, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                updateAfterCurrencyPairChange(list2.get(which).replace("/","_"));
+                            }
+                        });
+                Dialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        buttonBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToBuyMode();
+            }
+        });
+
+        buttonSell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToSellMode();
+            }
+        });
+
+        marketOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMarketOrders();
+            }
+        });
+
+        userOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUserOrders();
+            }
+        });
+        updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair().toString());
+
+
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
+    private boolean myOrders = false;
 
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+    public void switchToBuyMode(){
+        getContentProvider().setCurrentOrderSide(OrderSide.buy);
+        buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
+        buttonSell.setBackgroundColor(getResources().getColor(R.color.gray));
+        String[] pairParts = getContentProvider().getActualCurrencyPair().toString().split("_");
+        Coin quoteCoin = getContentProvider().getCoinByName(pairParts[1]);
+        ballanceText.setText(String.format("%.8f", quoteCoin.getAmount()) + " " + quoteCoin.getName());
+        if (myOrders){
+            showUserOrders();
+        }else {
+            showMarketOrders();
         }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
     }
+
+    public void switchToSellMode(){
+        getContentProvider().setCurrentOrderSide(OrderSide.sell);
+        buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
+        buttonSell.setBackgroundColor(getResources().getColor(R.color.orange));
+        String[] pairParts = getContentProvider().getActualCurrencyPair().toString().split("_");
+        Coin baseCoin = getContentProvider().getCoinByName(pairParts[0]);
+        ballanceText.setText(String.format("%.8f", baseCoin.getAmount()) + " " + baseCoin.getName());
+        if (myOrders){
+            showUserOrders();
+        }else {
+            showMarketOrders();
+        }
+    }
+
+    private void showMarketOrders(){
+        String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
+        List<Order> orders = getContentProvider().getMarketOrderForPairAndSide(pair[0],pair[1], getContentProvider().getCurrentOrderSide());
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), orders));
+        marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
+        userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
+        myOrders = false;
+    }
+
+    private void showUserOrders(){
+        String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getUserOrdersByCurrencyPairAndSide(pair[0],pair[1],orderSide)));
+        marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
+        userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
+        myOrders = true;
+    }
+
+    private void setLogo(String coin, ImageView logo){
+        switch (coin){
+            case "BTC":
+                logo.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.btc_icon));
+                break;
+            case "QBC":
+                logo.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.qbc_icon));
+        }
+    }
+
+    private void updateAfterCurrencyPairChange(String pair){
+        //((MainActivity)getActivity()).getTradingApiHelper().tradingOffersForCurrencyPair(MainActivity.asyncTaskId++,pair);
+        //((MainActivity)getActivity()).showProgressDialog("Načítavám dáta");
+        String[] pairParts = pair.split("_");
+        firstCurrencyText.setText(pairParts[0]);
+        secondCurrencyText.setText(pairParts[1]);
+        setLogo(pairParts[0],firstCurrencyLogo);
+        setLogo(pairParts[1],secondCurrencyLogo);
+        getContentProvider().setActualCurrencyPair(CurrencyPair.valueOf(pair));
+
+        amountCoin.setText(pairParts[0]);
+        priceCoin.setText(pairParts[1]);
+        feeCoin.setText(pairParts[1]);
+        sumCoin.setText(pairParts[1]);
+
+        listViewOrderHeaderBaseCurrency.setText(pairParts[0]);
+        listViewOrderHeaderBaseCurrency.setText(pairParts[1]);
+        myOrders = false;
+        switchToBuyMode();
+
+    }
+
+
+
+    public void setSecondFrameSize(boolean isExpanded){
+        LinearLayout.LayoutParams param1;
+        LinearLayout.LayoutParams param2;
+        LinearLayout.LayoutParams param3;
+        if (!isExpanded) {
+             param1 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    3.0f
+            );
+            param2 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    3.0f
+            );
+            param3 = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            0,
+                            1.0f
+            );
+        }else {
+            param1 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    0f
+            );
+            param2 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    7.0f
+            );
+            param3 = param1;
+
+        }
+        thirdFrameLinearLayout.setLayoutParams(param1);
+        secondFrameLinearLayout.setLayoutParams(param2);
+        firstFrameLinearLayout.setLayoutParams(param3);
+    }
+
 
 
 }

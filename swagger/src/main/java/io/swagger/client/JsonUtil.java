@@ -210,7 +210,7 @@ public class JsonUtil {
     }
     
     if ("Status".equalsIgnoreCase(className)) {
-      return new TypeToken<List<Status>>(){}.getType();
+      return new TypeToken<List<String>>(){}.getType();
     }
     
     if ("SymbolInfoArrays".equalsIgnoreCase(className)) {
@@ -384,7 +384,7 @@ public class JsonUtil {
     }
     
     if ("Status".equalsIgnoreCase(className)) {
-      return new TypeToken<Status>(){}.getType();
+      return new TypeToken<String>(){}.getType();
     }
     
     if ("SymbolInfoArrays".equalsIgnoreCase(className)) {

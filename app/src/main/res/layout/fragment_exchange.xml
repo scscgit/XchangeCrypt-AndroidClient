@@ -11,30 +11,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="6"
+        android:weightSum="7"
         android:orientation="vertical"
         >
 
         <!--first frame-->
         <LinearLayout
+            android:id="@+id/linerlayout_order_coin_pair"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:weightSum="3"
+            android:weightSum="4"
             >
 
             <!--currency pair-->
             <LinearLayout
+                android:id="@+id/linearLayout_coin_pair_select"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:orientation="horizontal"
-                android:weightSum="4"
+                android:weightSum="6"
                 >
                 <TextView
                     android:id="@+id/first_coin_logo_text"
-                    android:text="BTC"
+                    android:text="QBC"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
@@ -47,7 +49,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:src="@drawable/btc_icon"
+                    android:src="@drawable/qbc_icon"
                     android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
@@ -61,7 +63,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:src="@drawable/qbc_icon"
+                    android:src="@drawable/btc_icon"
                     android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
@@ -70,12 +72,38 @@
                     />
                 <TextView
                     android:id="@+id/second_coin_logo_text"
-                    android:text="QBC"
+                    android:text="BTC"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:gravity="left|center"
                     />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    android:weightSum="2"
+                    >
+                    <Button
+                        android:id="@+id/exchange_button_exchange_buy"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="Nákup"
+                        android:background="@color/orange"
+                        />
+
+                    <Button
+                        android:id="@+id/exchange_button_exchange_sell"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="Predaj"
+                        android:background="@color/gray"
+                        />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -106,44 +134,14 @@
 
         </LinearLayout>
 
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            />
+
         <!--second frame-->
         <LinearLayout
-            android:id="@+id/linerlayout_order_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:background="@color/white"
-            >
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                >
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/order_icon"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Prehľad ponúk"
-                    android:gravity="center"
-                    />
-            </RelativeLayout>
-
-            <ListView
-                android:id="@+id/listview_orders"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-
-        </LinearLayout>
-
-        <!--third frame-->
-        <LinearLayout
+            android:id="@+id/linerlayout_order_place"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
@@ -191,13 +189,19 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
+                    android:textSize="@dimen/item_text_size"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:singleLine="true"
+                    android:gravity="center"
                     />
                 <TextView
                     android:id="@+id/exchange_amount_coin_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="BTC"
+                    android:text="QBC"
                     android:gravity="left|center"
                     />
             </LinearLayout>
@@ -225,6 +229,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
+                    android:textSize="@dimen/item_text_size"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:singleLine="true"
+                    android:gravity="center"
                     />
                 <TextView
                     android:id="@+id/exchange_price_coin_text"
@@ -259,6 +269,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
+                    android:textSize="@dimen/item_text_size"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:singleLine="true"
+                    android:gravity="center"
                     />
                 <TextView
                     android:id="@+id/exchange_fee_coin_text"
@@ -293,6 +309,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
+                    android:textSize="@dimen/item_text_size"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:singleLine="true"
+                    android:gravity="center"
                     />
                 <TextView
                     android:id="@+id/exchange_sum_coin_text"
@@ -304,27 +326,139 @@
                     />
             </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center"
             >
 
             <Button
-                android:id="@+id/button_order"
+                android:id="@+id/button_exchange_market"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_orange"
-                android:text="Predať"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:gravity="center"
-                android:layout_centerInParent="true"/>
+                android:text="Market" />
 
-        </RelativeLayout>
+            <Button
+                android:id="@+id/button_exchange_limit"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/item_background_gray"
+                android:gravity="center"
+                android:text="Limit"
+                android:enabled="false"
+                />
+
+            <Button
+                android:id="@+id/button_exchange_stop"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/item_background_gray"
+                android:gravity="center"
+                android:text="Stop"
+                android:enabled="false"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            />
+        <!--third frame-->
+        <LinearLayout
+            android:id="@+id/linerlayout_order_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_marginTop="5dp"
+            >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                >
+                <!--<ImageView-->
+                    <!--android:layout_width="50dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:src="@drawable/order_icon"-->
+                    <!--/>-->
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    >
+                <Button
+                    android:id="@+id/button_exchange_order_all"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:text="TRH"
+                    android:gravity="center"
+                    android:background="@color/orange"
+                    />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Prehľad ponúk"
+                    android:gravity="center"
+                    />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    >
+                <Button
+                    android:id="@+id/button_exchange_order_my"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:text="Moje"
+                    android:textSize="@dimen/item_text_size"
+                    android:background="@color/gray"
+                    />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+            <ListView
+                android:id="@+id/listview_orders"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+        </RelativeLayout>
+
+        </LinearLayout>
 
 
     </LinearLayout>

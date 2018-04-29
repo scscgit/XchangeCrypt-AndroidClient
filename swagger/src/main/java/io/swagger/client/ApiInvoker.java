@@ -46,8 +46,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
 import io.swagger.client.auth.Authentication;
 import io.swagger.client.auth.ApiKeyAuth;
+import io.swagger.client.auth.FastAccessTokenApiKey;
 import io.swagger.client.auth.HttpBasicAuth;
 import io.swagger.client.request.GetRequest;
 import io.swagger.client.request.PostRequest;
@@ -204,7 +206,16 @@ public class ApiInvoker {
     // Setup authentications (key: authentication name, value: authentication).
     INSTANCE.authentications = new HashMap<String, Authentication>();
     // TODO: comment out below as OAuth does not exist
-    //INSTANCE.authentications.put("oauth", new OAuth());
+//    INSTANCE.authentications.put("oauth", new OAuth()    );
+    INSTANCE.authentications.put("oauth", new FastAccessTokenApiKey() {{
+
+      try {
+        TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
+        setApiKey(tradingPanelBridgeBrokerDataOrdersApi.authorizePost("test","test").getD().getAccessToken());
+      } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+        throw new RuntimeException("Authorization failed",e);
+      }
+    }}   );
     // Prevent the authentications from being modified.
     INSTANCE.authentications = Collections.unmodifiableMap(INSTANCE.authentications);
   }
@@ -358,8 +369,9 @@ public class ApiInvoker {
   private void updateParamsForAuth(String[] authNames, List<Pair> queryParams, Map<String, String> headerParams) {
     for (String authName : authNames) {
       Authentication auth = authentications.get(authName);
-      if (auth == null) throw new RuntimeException("Authentication undefined: " + authName);
-        auth.applyToParams(queryParams, headerParams);
+      if (auth == null)
+        throw new RuntimeException("Authentication undefined: " + authName);
+      auth.applyToParams(queryParams, headerParams);
     }
   }
 

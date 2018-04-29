@@ -1,8 +1,8 @@
 package cloud.coders.sk.xchangecrypt.datamodel;
 
-import java.util.Date;
+        import java.util.Date;
 
-import cloud.coders.sk.xchangecrypt.ui.fragments.BaseFragment;
+        import cloud.coders.sk.xchangecrypt.ui.fragments.BaseFragment;
 
 /**
  * Created by Peter on 22.04.2018.
@@ -11,47 +11,35 @@ import cloud.coders.sk.xchangecrypt.ui.fragments.BaseFragment;
 public class MyTransaction extends BaseObject {
 
 
-    private Date date;
-    private boolean sell;
+    private OrderSide side;
     private String baseCurrency;
     private String quoteCurrency;
-    private float price;
-    private float amount;
+    private double price;
+    private double amount;
 
-    public MyTransaction(Date date, boolean sell, String baseCurrency, String quoteCurrency, float price, float amount) {
-        this.date = date;
-        this.sell = sell;
+    public MyTransaction( OrderSide side, String baseCurrency, String quoteCurrency, double price, double amount) {
+        this.side = side;
         this.baseCurrency = baseCurrency;
         this.quoteCurrency = quoteCurrency;
         this.price = price;
         this.amount = amount;
     }
 
-    public MyTransaction(int id, Date date, boolean sell, String baseCurrency, String quoteCurrency, float price, float amount) {
+    public MyTransaction(int id, OrderSide side, String baseCurrency, String quoteCurrency, double price, double amount) {
         super(id);
-        this.date = date;
-        this.sell = sell;
+        this.side = side;
         this.baseCurrency = baseCurrency;
         this.quoteCurrency = quoteCurrency;
         this.price = price;
         this.amount = amount;
     }
 
-
-    public Date getDate() {
-        return date;
+    public OrderSide getSide() {
+        return side;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public boolean isSell() {
-        return sell;
-    }
-
-    public void setSell(boolean sell) {
-        this.sell = sell;
+    public void setSide(OrderSide side) {
+        this.side = side;
     }
 
     public String getBaseCurrency() {
@@ -70,19 +58,19 @@ public class MyTransaction extends BaseObject {
         this.quoteCurrency = quoteCurrency;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 }

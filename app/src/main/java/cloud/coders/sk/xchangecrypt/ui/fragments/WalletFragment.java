@@ -54,14 +54,14 @@ public class WalletFragment extends BaseFragment {
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 
-        adapter = new WalletRecyclerViewAdapter(getContentProvider().getTransactionHistory(), getContext(), (MainActivity) getActivity());
+        adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountTransactionHistory(), getContext(), (MainActivity) getActivity());
 
     }
 
     @Override
     protected void setViewContents() {
 
-        balanceListView.setAdapter(new WalletListViewAdapter(getContext(), getContentProvider().getCoins()));
+        balanceListView.setAdapter(new WalletListViewAdapter(getContext(), getContentProvider().getCoinsBalance()));
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);

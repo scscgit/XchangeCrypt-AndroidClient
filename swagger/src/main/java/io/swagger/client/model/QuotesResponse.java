@@ -12,8 +12,6 @@
 
 package io.swagger.client.model;
 
-import io.swagger.client.model.SingleQuote;
-import io.swagger.client.model.Status;
 import io.swagger.annotations.*;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,7 +22,7 @@ import com.google.gson.annotations.SerializedName;
 public class QuotesResponse {
   
   @SerializedName("s")
-  private Status s = null;
+  private String s = null;
   @SerializedName("n")
   private String n = null;
   @SerializedName("v")
@@ -33,10 +31,10 @@ public class QuotesResponse {
   /**
    **/
   @ApiModelProperty(required = true, value = "")
-  public Status getS() {
+  public String getS() {
     return s;
   }
-  public void setS(Status s) {
+  public void setS(String s) {
     this.s = s;
   }
 

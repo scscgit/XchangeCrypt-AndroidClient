@@ -13,6 +13,7 @@ import java.util.List;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
+import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import cloud.coders.sk.xchangecrypt.utils.DateFormatter;
 
@@ -35,7 +36,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
             title = (TextView) view.findViewById(R.id.title_text);
             price = (TextView) view.findViewById(R.id.price_text);
             amount = (TextView) view.findViewById(R.id.amount_text);
-            date = (TextView) view.findViewById(R.id.date_text);
+          //  date = (TextView) view.findViewById(R.id.date_text);
             logo = (ImageView) view.findViewById(R.id.coin_image);
         }
     }
@@ -58,7 +59,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyTransaction transaction = transactions.get(position);
         StringBuilder builder = new StringBuilder();
-        if (transaction.isSell()){
+        if (transaction.getSide() == OrderSide.sell){
            builder.append("Predaj ");
         }else {
             builder.append("Nákup ");
@@ -69,10 +70,26 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         holder.price.setText(String.format("%.8f", transaction.getPrice()));
         holder.amount.setText(String.format("%.8f", transaction.getAmount()));
 
-        holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
+        //holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
 
 
-        holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
+        if (transaction.getSide() == OrderSide.buy) {
+            switch (transaction.getQuoteCurrency()) {
+                case "BTC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
+                    break;
+                case "QBC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
+            }
+        }else {
+            switch (transaction.getBaseCurrency()) {
+                case "BTC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
+                    break;
+                case "QBC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
+            }
+        }
 
 
     }
