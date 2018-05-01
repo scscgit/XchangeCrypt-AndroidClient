@@ -21,70 +21,110 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:weightSum="4"
             >
-
-            <!--currency pair-->
             <LinearLayout
-                android:id="@+id/linearLayout_coin_pair_select"
+                android:id="@+id/linerlayout_order_coin_pair_sub"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="4"
+                >
+            <!--currency pair-->
+                <LinearLayout
+                    android:id="@+id/linearLayout_coin_pair_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    >
+                    <TextView
+                        android:id="@+id/first_coin_logo_text"
+                        android:text="QBC"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="right|center"
+                        />
+
+                    <ImageView
+                        android:id="@+id/first_coin_logo_image"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:src="@drawable/qbc_icon"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        />
+
+                    <ImageView
+                        android:id="@+id/second_coin_logo_image"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:src="@drawable/btc_icon"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        />
+                    <TextView
+                        android:id="@+id/second_coin_logo_text"
+                        android:text="BTC"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="left|center"
+                        />
+
+                </LinearLayout>
+
+                <!--ballance-->
+                <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3"
+                android:layout_weight="1"
                 android:orientation="horizontal"
-                android:weightSum="6"
                 >
                 <TextView
-                    android:id="@+id/first_coin_logo_text"
-                    android:text="QBC"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="right|center"
-                    />
+                android:id="@+id/exchange_balance_title"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:text="Zostatok:"
+                android:layout_marginStart="10dp"
+                />
 
-                <ImageView
-                    android:id="@+id/first_coin_logo_image"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:src="@drawable/qbc_icon"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    />
-
-                <ImageView
-                    android:id="@+id/second_coin_logo_image"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:src="@drawable/btc_icon"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    />
                 <TextView
-                    android:id="@+id/second_coin_logo_text"
-                    android:text="BTC"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="left|center"
-                    />
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:orientation="vertical"
-                    android:weightSum="2"
-                    >
+                android:id="@+id/exchange_balance_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Zostatok"
+                />
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="2"
+                >
+
                     <Button
                         android:id="@+id/exchange_button_exchange_buy"
                         android:layout_width="match_parent"
@@ -103,36 +143,35 @@
                         android:background="@color/gray"
                         />
 
-                </LinearLayout>
-
             </LinearLayout>
-
-            <!--ballance-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                >
-                <TextView
-                    android:id="@+id/exchange_balance_title"
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:text="Zostatok:"
-                    android:layout_marginStart="10dp"
-                    />
-
-                <TextView
-                    android:id="@+id/exchange_balance_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Zostatok"
-                    />
-
-            </LinearLayout>
-
         </LinearLayout>
+
+            <!--&lt;!&ndash;ballance&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:weightSum="3"-->
+                <!--&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/exchange_balance_title"-->
+                    <!--android:layout_width="70dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:text="Zostatok:"-->
+                    <!--android:layout_marginStart="10dp"-->
+                    <!--/>-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/exchange_balance_text"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:text="Zostatok"-->
+                    <!--/>-->
+
+            <!--</LinearLayout>-->
+
+        <!--</LinearLayout>-->
 
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -152,18 +191,55 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:weightSum="4"
+                android:orientation="horizontal"
                 >
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
                     android:src="@drawable/coin_order_icon"
                     />
+                </LinearLayout>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="match_parent"
                     android:text="Stanoviť ponuku"
                     android:gravity="center"
                     />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    >
+
+                    <ImageView
+                        android:id="@+id/image_up"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/up_arrow"
+                    />
+
+                    <ImageView
+                        android:id="@+id/image_down"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/down_arrow"
+                        />
+
+
+                </LinearLayout>
+
+
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
@@ -341,6 +417,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_orange"
                 android:gravity="center"
+                android:layout_marginBottom="5dp"
                 android:text="Market" />
 
             <Button
@@ -353,6 +430,7 @@
                 android:gravity="center"
                 android:text="Limit"
                 android:enabled="false"
+                android:layout_marginBottom="5dp"
                 />
 
             <Button
@@ -364,12 +442,99 @@
                 android:background="@drawable/item_background_gray"
                 android:gravity="center"
                 android:text="Stop"
+                android:layout_marginBottom="5dp"
                 android:enabled="false"
                 />
 
+            </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout_order_advanced"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="2">
+
+            <RelativeLayout
+                android:id="@+id/relative_layout_stop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/checkbox_stop"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/textview_stop"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/checkbox_stop"
+                    android:gravity="left|center"
+                    android:text="STOP LOSS" />
+
+                <EditText
+                    android:enabled="false"
+                    android:id="@+id/edittext_stop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/textview_stop"
+                    android:layout_toRightOf="@id/checkbox_stop"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:textSize="@dimen/item_text_size"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_layout_profit"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/checkbox_take"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/textview_profit"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/checkbox_take"
+                    android:gravity="left|center"
+                    android:text="TAKE PROFIT" />
+
+                <EditText
+                    android:enabled="false"
+                    android:id="@+id/editext_profit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/textview_profit"
+                    android:layout_toRightOf="@id/checkbox_take"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.,"
+                    android:ellipsize="start"
+                    android:textSize="@dimen/item_text_size"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/black"
@@ -390,7 +555,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
-                android:weightSum="4"
+                android:weightSum="16"
                 >
                 <!--<ImageView-->
                     <!--android:layout_width="50dp"-->
@@ -402,11 +567,11 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     >
                 <Button
                     android:id="@+id/button_exchange_order_all"
-                    android:layout_width="60dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="TRH"
                     android:gravity="center"
@@ -419,6 +584,24 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight="2"
+                    android:gravity="center"
+                    >
+                    <Button
+                        android:id="@+id/button_exchange_order_my"
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:text="Moje"
+                        android:textSize="@dimen/item_text_size"
+                        android:gravity="center"
+                        android:background="@color/gray"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="8"
                     >
                 <TextView
                     android:layout_width="match_parent"
@@ -432,18 +615,38 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="end"
                     >
-                <Button
-                    android:id="@+id/button_exchange_order_my"
-                    android:layout_width="60dp"
+
+                <ImageView
+                    android:id="@+id/image_down_down"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Moje"
-                    android:textSize="@dimen/item_text_size"
-                    android:background="@color/gray"
+                    android:src="@drawable/down_arrow"
+                    android:visibility="gone"
                     />
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    >
+                    <Button
+                        android:id="@+id/button_exchange_graph"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:text="Graf"
+                        android:textSize="@dimen/item_text_size"
+                        android:background="@color/gray"
+                        />
+                </LinearLayout>
+
+
             </LinearLayout>
 
             <RelativeLayout

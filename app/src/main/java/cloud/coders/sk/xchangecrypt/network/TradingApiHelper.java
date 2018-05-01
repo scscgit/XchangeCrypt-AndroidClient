@@ -37,12 +37,18 @@ public class TradingApiHelper {
     private List<Integer> pendingTask;
 
     public TradingApiHelper(MainActivity mainActivity, Context context) {
-        this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
+       // this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
         this.context = context;
         this.mainActivity = mainActivity;
         this.accountOrders = new HashMap<>();
         this.depthData = new HashMap<>();
         this.pendingTask = new ArrayList<>();
+    }
+
+    public void createTradingApi(){
+        if (tradingApi == null) {
+            this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
+        }
     }
 
     private InlineResponse200 authorizationResponses;
@@ -84,6 +90,7 @@ public class TradingApiHelper {
         AsyncTask task = new AsyncTask<Void, Void, InlineResponse2004>() {
             @Override
             protected InlineResponse2004 doInBackground(Void... voids) {
+                createTradingApi();
                 pendingTask.add(taskId);
                 InlineResponse2004 inlineResponse2004 = null;
                 try {
@@ -114,6 +121,7 @@ public class TradingApiHelper {
 
             @Override
             protected InlineResponse20013 doInBackground(Void... voids) {
+                createTradingApi();
                 pendingTask.add(taskId);
                 InlineResponse20013 inlineResponse20013 = null;
                 try {
@@ -143,6 +151,7 @@ public class TradingApiHelper {
 
             @Override
             protected InlineResponse2005 doInBackground(Order... offers) {
+                createTradingApi();
                 pendingTask.add(taskId);
                 Order offer = offers[0];
 

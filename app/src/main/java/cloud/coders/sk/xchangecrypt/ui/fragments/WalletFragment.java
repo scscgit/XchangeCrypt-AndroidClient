@@ -1,12 +1,15 @@
 package cloud.coders.sk.xchangecrypt.ui.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.WalletListViewAdapter;
@@ -28,6 +31,8 @@ public class WalletFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private WalletRecyclerViewAdapter adapter;
     private ListView balanceListView;
+    private FloatingActionButton floatingActionButton;
+    private AppBarLayout appBarLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViews() {
+        appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar_layout);
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_wallet);
         balanceListView = (ListView) rootView.findViewById(R.id.listwiew_wallet);
         balanceListView.setClickable(false);
@@ -60,11 +67,16 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViewContents() {
-
         balanceListView.setAdapter(new WalletListViewAdapter(getContext(), getContentProvider().getCoinsBalance()));
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            appBarLayout.setExpanded(false);
+            }
+        });
 
     }
 }

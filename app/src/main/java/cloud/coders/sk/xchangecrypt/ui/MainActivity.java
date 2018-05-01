@@ -89,13 +89,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         createNetworkReceiver();
         getFragmentsManager().clearAndInit(this, true);
         switchToFragmentAndClear(FRAGMENT_SPLASH, null);
-//        tradingApiHelper = new TradingApiHelper(this, getApplicationContext());
+        tradingApiHelper = new TradingApiHelper(this, getApplicationContext());
         createDumbData();
 
     }
 
     private void createDumbData() {
-
+        getContentProvider().setUser(new User("0"));
         MyTransaction transaction0 = new MyTransaction(OrderSide.buy, "QBC", "BTC", (float)0.00000311, (float)258.00058265);
         MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "BTC", "QBC", (float)0.02000311, (float)0.058265);
         List<MyTransaction> transactionList = new ArrayList<>();
@@ -103,14 +103,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             transactionList.add(transaction0);
             transactionList.add(transaction1);
         }
-        getContentProvider().setAccountTransactionHistory(transactionList);
+       // getContentProvider().setAccountTransactionHistory(transactionList);
 
         Coin coin1 = new Coin("BTC", 0.00025638);
         Coin coin2 = new Coin("QBC", 0.90025211);
         List<Coin> coins = new ArrayList<>();
         coins.add(coin1);
         coins.add(coin2);
-        getContentProvider().setCoinsBalance(coins);
+      //  getContentProvider().setCoinsBalance(coins);
 
         Order offer1 = new Order(0.00000268, "QBC",1252.1965919,"BTC",0.034565856, OrderSide.buy,OrderType.limit );
         Order offer2 = new Order(0.00000270, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.sell,OrderType.limit );
@@ -120,17 +120,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
          offerList.add(offer1);
          offerList.add(offer2);
         }
-        getContentProvider().addToOrders("QBC_BTC", offerList);
-        getContentProvider().addToOrders("BTC_QBC", new ArrayList<Order>());
+      //  getContentProvider().addToOrders("QBC_BTC", offerList);
+      //  getContentProvider().addToOrders("BTC_QBC", new ArrayList<Order>());
 
         List<Order> myoffers = new ArrayList<Order>();
         myoffers.add(offer1);
         myoffers.add(offer2);
-        getContentProvider().setAccountOrders(myoffers);
-        getContentProvider().setUser(new User("0"));
+    //    getContentProvider().setAccountOrders(myoffers);
+     //   getContentProvider().setUser(new User("0"));
 
         getContentProvider().setActualCurrencyPair(CurrencyPair.QBC_BTC);
         getContentProvider().setCurrentOrderSide(OrderSide.buy);
+
+        getContentProvider().addMarketPrice("QBC_BTC",0.00000311);
+        getContentProvider().addMarketPrice("BTC_QBC",0.90000311);
 
 
     }
@@ -277,8 +280,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
                 }
             };
-            registerReceiver(depthDataReceiver, new IntentFilter("depth_update"));
         }
+        registerReceiver(depthDataReceiver, new IntentFilter("depth_update"));
 
 
         accountHistoryOfferReceiver = new BroadcastReceiver() {
@@ -361,6 +364,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().releaseLoadedData();
         super.onDestroy();
         unregisterReceiver(networkStateReceiver);
+        unregisterReceiver(removeOfferReceiver);
+        unregisterReceiver(sendOfferReceiver);
+        unregisterReceiver(authorizationReceiver);
+        unregisterReceiver(accountHistoryOfferReceiver);
+        unregisterReceiver(depthDataReceiver);
+        unregisterReceiver(accountOfferDataReceiver);
     }
 
     @Override
@@ -384,7 +393,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 getFragmentsManager().switchFragmentInMainBackStack(SplashFragment.newInstance(args), clear, true);
                 break;
             case FRAGMENT_EXCHANGE:
-                 //tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++,getContentProvider().getActualCurrencyPair().toString());
+                // tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++,getContentProvider().getActualCurrencyPair().toString());
                  //tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                  //showProgressDialog("Načítavám dáta");
                 getFragmentsManager().switchFragmentInMainBackStack(ExchangeFragment.newInstance(args), clear, true);
@@ -393,7 +402,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 getFragmentsManager().switchFragmentInMainBackStack(LoginFragment.newInstance(args), clear, true);
                 break;
             case FRAGMENT_WALLET:
-                //tradingApiHelper.getHistoryAccountOrders(getContentProvider().getUser().getAccountId());
+               // tradingApiHelper.getHistoryAccountOrders(getContentProvider().getUser().getAccountId());
                 //showProgressDialog("Načítavám dáta");
                 getFragmentsManager().switchFragmentInMainBackStack(WalletFragment.newInstance(args), clear, true);
                 break;
