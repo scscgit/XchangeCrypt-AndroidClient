@@ -153,7 +153,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //                .build();
 
         GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.google_sign_client_id))
+                //.requestIdToken(getString(R.string.google_sign_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestServerAuthCode(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
