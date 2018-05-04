@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cloud.coders.sk.R;
+import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 
@@ -22,10 +23,10 @@ import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 public class LoginFragment extends BaseFragment{
 
     private ImageView googleSignButton;
-    private Button signButton;
-    private Button registerButton;
-    private EditText emailEditText;
-    private EditText passwordEditText;
+//    private Button signButton;
+//    private Button registerButton;
+//    private EditText emailEditText;
+//    private EditText passwordEditText;
 
 
     public static LoginFragment newInstance(Bundle args){
@@ -51,10 +52,10 @@ public class LoginFragment extends BaseFragment{
     @Override
     protected void setActionBar() {
         googleSignButton = (ImageView) rootView.findViewById(R.id.button_google_sign);
-        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
-        registerButton =(Button) rootView.findViewById(R.id.button_register);
-        emailEditText = (EditText) rootView.findViewById(R.id.edit_text_email);
-        passwordEditText = (EditText) rootView.findViewById(R.id.edit_text_password);
+//        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
+//        registerButton =(Button) rootView.findViewById(R.id.button_register);
+//        emailEditText = (EditText) rootView.findViewById(R.id.edit_text_email);
+//        passwordEditText = (EditText) rootView.findViewById(R.id.edit_text_password);
     }
 
     @Override
@@ -62,23 +63,23 @@ public class LoginFragment extends BaseFragment{
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+                ((MainActivity)getActivity()).signIn();
             }
          });
-
-        signButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
-            }
-        });
-
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
-            }
-        });
+//
+//        signButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+//            }
+//        });
+//
+//        registerButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+//            }
+//        });
 
     }
 

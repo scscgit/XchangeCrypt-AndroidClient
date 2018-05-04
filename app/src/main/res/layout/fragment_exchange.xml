@@ -466,6 +466,7 @@
                 android:orientation="horizontal">
 
                 <CheckBox
+                    android:enabled="false"
                     android:id="@+id/checkbox_stop"
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
@@ -503,6 +504,7 @@
                 android:orientation="horizontal">
 
                 <CheckBox
+                    android:enabled="false"
                     android:id="@+id/checkbox_take"
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />

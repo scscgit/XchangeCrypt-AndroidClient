@@ -6,5 +6,5 @@ package cloud.coders.sk.xchangecrypt.datamodel;
 
 public enum OrderType {
 
-    limit, market, stop, stoplimit
+    unknown, limit, market, stop, stoplimit
 }

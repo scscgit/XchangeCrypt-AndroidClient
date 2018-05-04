@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.CurrencyPair;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
@@ -204,6 +207,14 @@ public class ExchangeFragment extends BaseFragment {
         //setListViewHeightBasedOnChildren(listViewOrders);
         //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
 
+        listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((MainActivity)getActivity()).deleteOrder(currentUserOrders.get(position-1));
+            }
+        });
+
+
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -273,8 +284,7 @@ public class ExchangeFragment extends BaseFragment {
 
         marketOrders.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showMarketOrders();
+            public void onClick(View v) {showMarketOrders();
             }
         });
 
@@ -331,12 +341,18 @@ public class ExchangeFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (Double.parseDouble(s.toString().replace(",", ".")) != getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair().toString())) {
                     buttonMarketOrder.setEnabled(false);
+                    stopCheckbox.setEnabled(true);
+                    profitCheckbox.setEnabled(true);
                     buttonMarketOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_gray));
                     buttonLimitOrder.setEnabled(true);
                     buttonLimitOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     buttonStopOrder.setEnabled(true);
                     buttonStopOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                 }else {
+                    stopCheckbox.setEnabled(false);
+                    stopCheckbox.setChecked(false);
+                    profitCheckbox.setEnabled(false);
+                    profitCheckbox.setChecked(false);
                     buttonMarketOrder.setEnabled(true);
                     buttonMarketOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     buttonLimitOrder.setEnabled(false);
@@ -398,9 +414,134 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    profitCheckbox.setEnabled(true);
+                    profitEditText.setEnabled(true);
                 }else{
-                    profitCheckbox.setEnabled(false);
+                    profitEditText.setEnabled(false);
+                }
+            }
+        });
+
+        buttonMarketOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
+                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
+                    String[] pair = cp.toString().split("_");
+                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
+                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
+                    Order order = new Order(null,null,
+                        pair[0],
+                        amount,
+                        pair[1],
+                        price*amount,
+                        orderSide,
+                        OrderType.market
+                        );
+                    ((MainActivity)getActivity()).sendOrder(order);
+
+            }
+            else{
+                    Toast.makeText(getContext(),"Musíte zadať množstvo", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonLimitOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
+                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
+                    String[] pair = cp.toString().split("_");
+                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
+                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
+
+                    Double stopLoss = null;
+                    if (stopCheckbox.isChecked()){
+                        if (stopEditText.getText().toString() != null && stopEditText.getText().toString().trim().length() > 0) {
+                            stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+                        }else {
+                           Toast.makeText(getContext(),"Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                           return;
+                    }
+                    }
+                    Double takeProfit = null;
+                    if (profitCheckbox.isChecked()) {
+                        if (profitEditText.getText().toString() != null && profitEditText.getText().toString().trim().length() > 0) {
+                            takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+                        } else {
+                            Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    Order order = new Order(
+                            price,
+                            null,
+                            stopLoss,
+                            takeProfit,
+                            pair[0],
+                            Double.parseDouble(amountEdit.getText().toString().replace(",",".")),
+                            pair[1],
+                            price*amount,
+                            orderSide,
+                            OrderType.limit
+                    );
+
+                    ((MainActivity)getActivity()).sendOrder(order);
+
+                }
+                else{
+                    Toast.makeText(getContext(),"Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        buttonStopOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0){
+                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
+                    String[] pair = cp.toString().split("_");
+                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
+                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
+
+                    Double stopLoss = null;
+                    if (stopCheckbox.isChecked()){
+                        if (stopEditText.getText().toString() != null && stopEditText.getText().toString().trim().length() > 0) {
+                            stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+                        }else {
+                            Toast.makeText(getContext(),"Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    Double takeProfit = null;
+                    if (profitCheckbox.isChecked()) {
+                        if (profitEditText.getText().toString() != null && profitEditText.getText().toString().trim().length() > 0) {
+                            takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+                        } else {
+                            Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+
+                    Order order = new Order(
+                            null,
+                            price,
+                            stopLoss,
+                            takeProfit,
+                            pair[0],
+                            amount,
+                            pair[1],
+                            price*amount,
+                            orderSide, OrderType.stop
+                    );
+                    ((MainActivity)getActivity()).sendOrder(order);
+
+                }
+                else{
+                    Toast.makeText(getContext(),"Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -438,10 +579,11 @@ public class ExchangeFragment extends BaseFragment {
         }
     }
 
+    private List<Order> currentUserOrders = null;
     private void showMarketOrders(){
         String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
-        List<Order> orders = getContentProvider().getMarketOrderForPairAndSide(pair[0],pair[1], getContentProvider().getCurrentOrderSide());
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), orders));
+        List<Order> marketOrderForPairAndSide = getContentProvider().getMarketOrderForPairAndSide(pair[0],pair[1], getContentProvider().getCurrentOrderSide());
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketOrderForPairAndSide));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         myOrders = false;
@@ -449,7 +591,8 @@ public class ExchangeFragment extends BaseFragment {
 
     private void showUserOrders(){
         String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getUserOrdersByCurrencyPairAndSide(pair[0],pair[1],orderSide)));
+        currentUserOrders = getContentProvider().getUserOrdersByCurrencyPairAndSide(pair[0],pair[1],orderSide);
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         myOrders = true;

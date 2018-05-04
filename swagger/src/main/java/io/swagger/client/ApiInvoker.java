@@ -207,8 +207,9 @@ public class ApiInvoker {
     INSTANCE.authentications = new HashMap<String, Authentication>();
     // TODO: comment out below as OAuth does not exist
 //    INSTANCE.authentications.put("oauth", new OAuth()    );
+    TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
+    /*
     INSTANCE.authentications.put("oauth", new FastAccessTokenApiKey() {{
-
       try {
         TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
         setApiKey(tradingPanelBridgeBrokerDataOrdersApi.authorizePost("test","test").getD().getAccessToken());
@@ -216,6 +217,7 @@ public class ApiInvoker {
         throw new RuntimeException("Authorization failed",e);
       }
     }}   );
+    */
     // Prevent the authentications from being modified.
     INSTANCE.authentications = Collections.unmodifiableMap(INSTANCE.authentications);
   }
@@ -366,12 +368,13 @@ public class ApiInvoker {
    *
    * @param authNames The authentications to apply
    */
+  //TODO auth
   private void updateParamsForAuth(String[] authNames, List<Pair> queryParams, Map<String, String> headerParams) {
     for (String authName : authNames) {
       Authentication auth = authentications.get(authName);
-      if (auth == null)
-        throw new RuntimeException("Authentication undefined: " + authName);
-      auth.applyToParams(queryParams, headerParams);
+   //   if (auth == null)
+   //     throw new RuntimeException("Authentication undefined: " + authName);
+   //   auth.applyToParams(queryParams, headerParams);
     }
   }
 

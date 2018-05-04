@@ -36,7 +36,7 @@
             android:id="@+id/button_google_sign"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="7"
             android:src="@drawable/google_sign"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
@@ -45,115 +45,115 @@
             android:layout_marginRight="20dp"
             android:layout_marginEnd="20dp"
             />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            >
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="vertical"-->
+            <!--&gt;-->
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="5dp"-->
+                <!--android:src="@drawable/dotted"-->
+                <!--/>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="alebo"
-                android:textSize="@dimen/title_text_size_big"
-                android:gravity="center"
-                />
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:text="alebo"-->
+                <!--android:textSize="@dimen/title_text_size_big"-->
+                <!--android:gravity="center"-->
+                <!--/>-->
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            >
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="E-mail"
-                android:textSize="@dimen/title_text_size_big"
-                android:gravity="center"
-                />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:weightSum="3"-->
+            <!--&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:text="E-mail"-->
+                <!--android:textSize="@dimen/title_text_size_big"-->
+                <!--android:gravity="center"-->
+                <!--/>-->
 
-            <EditText
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="match_parent"
-                android:id="@+id/edit_text_email"
-                android:text=""
-                />
+            <!--<EditText-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="2"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/edit_text_email"-->
+                <!--android:text=""-->
+                <!--/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            >
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="Heslo"
-                android:textSize="@dimen/title_text_size_big"
-                android:gravity="center"
-                android:inputType="textEmailAddress"
-                />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:weightSum="3"-->
+            <!--&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:text="Heslo"-->
+                <!--android:textSize="@dimen/title_text_size_big"-->
+                <!--android:gravity="center"-->
+                <!--android:inputType="textEmailAddress"-->
+                <!--/>-->
 
-            <EditText
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="match_parent"
-                android:id="@+id/edit_text_password"
-                android:inputType="textPassword"
-                android:text=""
-                />
+            <!--<EditText-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="2"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/edit_text_password"-->
+                <!--android:inputType="textPassword"-->
+                <!--android:text=""-->
+                <!--/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            >
-            <Button
-                android:id="@+id/button_sign_in"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@drawable/item_background_orange"
-                android:text="Prihlásiť"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp"
-                />
-            <Button
-                android:id="@+id/button_register"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@drawable/item_background_orange"
-                android:text="Registrovať"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp"
-                />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:weightSum="2"-->
+            <!--&gt;-->
+            <!--<Button-->
+                <!--android:id="@+id/button_sign_in"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@drawable/item_background_orange"-->
+                <!--android:text="Prihlásiť"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:layout_marginStart="20dp"-->
+                <!--android:layout_marginEnd="20dp"-->
+                <!--android:layout_marginTop="20dp"-->
+                <!--/>-->
+            <!--<Button-->
+                <!--android:id="@+id/button_register"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@drawable/item_background_orange"-->
+                <!--android:text="Registrovať"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:layout_marginStart="20dp"-->
+                <!--android:layout_marginEnd="20dp"-->
+                <!--android:layout_marginTop="20dp"-->
+                <!--/>-->
 
-        </LinearLayout>
+    <!--</LinearLayout>-->
 
 
 

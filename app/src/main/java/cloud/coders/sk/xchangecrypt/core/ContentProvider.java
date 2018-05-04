@@ -36,6 +36,7 @@ public class ContentProvider {
     private CurrencyPair actualCurrencyPair;
     private OrderSide currentOrderSide;
 
+
     private User user;
 
     private HashMap<String, Double> marketPrices;
@@ -169,6 +170,7 @@ public class ContentProvider {
 
     public List<Order> getUserOrdersByCurrencyPairAndSide(String base, String quote, OrderSide side){
         List<Order> filteredOrders = new ArrayList<>();
+        if (accountOrders == null) return new ArrayList<>();
         for (Order order:accountOrders) {
             if (order.getBaseCurrency().equals(base) && order.getQuoteCurrency().equals(quote) && order.getSide() == side)
             {
