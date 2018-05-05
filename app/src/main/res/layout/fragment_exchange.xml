@@ -260,18 +260,21 @@
                     android:text="Množstvo"
                     android:gravity="center"
                     />
+
                 <EditText
                     android:id="@+id/exchange_amount_edit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_weight="4"
-                    android:textSize="@dimen/item_text_size"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textSize="@dimen/item_text_size_big" />
                 <TextView
                     android:id="@+id/exchange_amount_coin_text"
                     android:layout_width="0dp"
@@ -300,18 +303,22 @@
                     android:text="Cena"
                     android:gravity="center"
                     />
+
                 <EditText
                     android:id="@+id/exchange_price_edit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_weight="4"
-                    android:textSize="@dimen/item_text_size"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textSize="@dimen/item_text_size_big" />
                 <TextView
                     android:id="@+id/exchange_price_coin_text"
                     android:layout_width="0dp"
@@ -340,18 +347,21 @@
                     android:text="Poplatok"
                     android:gravity="center"
                     />
+
                 <EditText
                     android:id="@+id/exchange_fee_edit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_weight="4"
-                    android:textSize="@dimen/item_text_size"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textSize="@dimen/item_text_size_big" />
                 <TextView
                     android:id="@+id/exchange_fee_coin_text"
                     android:layout_width="0dp"
@@ -380,18 +390,21 @@
                     android:text="Spolu"
                     android:gravity="center"
                     />
+
                 <EditText
                     android:id="@+id/exchange_sum_edit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_weight="4"
-                    android:textSize="@dimen/item_text_size"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textSize="@dimen/item_text_size_big" />
                 <TextView
                     android:id="@+id/exchange_sum_coin_text"
                     android:layout_width="0dp"
@@ -417,7 +430,6 @@
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_orange"
                 android:gravity="center"
-                android:layout_marginBottom="5dp"
                 android:text="Market" />
 
             <Button
@@ -427,11 +439,9 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_gray"
-                android:gravity="center"
-                android:text="Limit"
                 android:enabled="false"
-                android:layout_marginBottom="5dp"
-                />
+                android:gravity="center"
+                android:text="Limit" />
 
             <Button
                 android:id="@+id/button_exchange_stop"
@@ -440,11 +450,9 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_gray"
-                android:gravity="center"
-                android:text="Stop"
-                android:layout_marginBottom="5dp"
                 android:enabled="false"
-                />
+                android:gravity="center"
+                android:text="Stop" />
 
             </LinearLayout>
         </LinearLayout>
@@ -480,19 +488,21 @@
                     android:text="STOP LOSS" />
 
                 <EditText
-                    android:enabled="false"
                     android:id="@+id/edittext_stop"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_toEndOf="@id/textview_stop"
                     android:layout_toRightOf="@id/checkbox_stop"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
-                    android:textSize="@dimen/item_text_size"
+                    android:enabled="false"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textSize="@dimen/item_text_size_big" />
 
             </RelativeLayout>
 
@@ -518,19 +528,21 @@
                     android:text="TAKE PROFIT" />
 
                 <EditText
-                    android:enabled="false"
-                    android:id="@+id/editext_profit"
+                    android:id="@+id/edittext_profit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_marginTop="-8dp"
                     android:layout_toEndOf="@id/textview_profit"
                     android:layout_toRightOf="@id/checkbox_take"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
-                    android:textSize="@dimen/item_text_size"
+                    android:enabled="false"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:gravity="center"
-                    />
+                    android:textSize="@dimen/item_text_size_big" />
 
             </RelativeLayout>
 

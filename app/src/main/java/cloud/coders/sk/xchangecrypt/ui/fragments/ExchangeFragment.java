@@ -177,7 +177,7 @@ public class ExchangeFragment extends BaseFragment {
         profitCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_take);
 
         stopEditText = (EditText) rootView.findViewById(R.id.edittext_stop);
-        profitEditText = (EditText) rootView.findViewById(R.id.editext_profit);
+        profitEditText = (EditText) rootView.findViewById(R.id.edittext_profit);
 
 //        listViewOrderHeaderBaseCurrency = (TextView) rootView.findViewById(R.id.listview_orders_header_coin1);
   //      listViewOrderHeaderQuoteCurrency = (TextView) rootView.findViewById(R.id.listview_orders_header_coin2);
@@ -347,14 +347,14 @@ public class ExchangeFragment extends BaseFragment {
         });
 
         priceEdit.addTextChangedListener(new TextWatcher() {
+            private boolean alreadyChanged = false;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (Double.parseDouble(s.toString().replace(",", ".")) != getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair().toString())) {
+                if (!this.alreadyChanged) {
+                    this.alreadyChanged = true;
+                    // Unlocks the price for edit until a user restarts the Fragment
+                    priceEdit.setTextColor(feeEdit.getCurrentTextColor());
                     buttonMarketOrder.setEnabled(false);
                     stopCheckbox.setEnabled(true);
                     profitCheckbox.setEnabled(true);
@@ -363,43 +363,36 @@ public class ExchangeFragment extends BaseFragment {
                     buttonLimitOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     buttonStopOrder.setEnabled(true);
                     buttonStopOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
-                }else {
-                    stopCheckbox.setEnabled(false);
-                    stopCheckbox.setChecked(false);
-                    profitCheckbox.setEnabled(false);
-                    profitCheckbox.setChecked(false);
-                    buttonMarketOrder.setEnabled(true);
-                    buttonMarketOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
-                    buttonLimitOrder.setEnabled(false);
-                    buttonLimitOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_gray));
-                    buttonStopOrder.setEnabled(false);
-                    buttonStopOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_gray));
+                    // Initializes the stop and profit targets @ current price for easier edit
+                    profitEditText.setText(priceEdit.getText().toString());
+                    stopEditText.setText(priceEdit.getText().toString());
                 }
-                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0){
                     double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
                     double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
                     double fee = Double.parseDouble(feeEdit.getText().toString().replace(",","."));
                     double sum = amount*price+fee;
                     sumEdit.setText(String.format("%.8f", sum));
                 }
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
         amountEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
+                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0){
                     double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
                     double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
                     double fee = Double.parseDouble(feeEdit.getText().toString().replace(",","."));
@@ -410,7 +403,6 @@ public class ExchangeFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
