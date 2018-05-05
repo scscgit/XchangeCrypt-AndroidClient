@@ -56,7 +56,7 @@ import java.util.concurrent.TimeoutException;
 public class TradingPanelBridgeBrokerDataOrdersApi {
  // String basePath = "https://rest-demo.tradingview.com/tradingview/v1/";
 
-  String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/tradingapi/v1/";
+  String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/tradingapi";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

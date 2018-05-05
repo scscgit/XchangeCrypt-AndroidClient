@@ -1093,6 +1093,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     public void deleteOrder(Order order){
+        // TODO: choice to modify or delete?
         showProgressDialog("Vymázavanie ponuky");
         tradingApiHelper.deleteTradingOffer(asyncTaskId++,order,getContentProvider().getUser());
     }

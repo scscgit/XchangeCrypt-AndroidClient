@@ -9,7 +9,7 @@ android {
     defaultConfig {
         //applicationId "cloud.coders.sk.xchangecrypt"
         applicationId "cloud.coders.sk"
-        minSdkVersion 21
+        minSdkVersion 18
         //targetSdkVersion 24
         targetSdkVersion 26
         versionCode 1

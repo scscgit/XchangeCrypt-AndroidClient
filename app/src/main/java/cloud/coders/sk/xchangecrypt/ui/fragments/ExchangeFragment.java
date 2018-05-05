@@ -203,13 +203,28 @@ public class ExchangeFragment extends BaseFragment {
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
         listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
-        listViewOrders.addHeaderView(header);
+        try {
+            listViewOrders.addHeaderView(header);
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Header crased", Toast.LENGTH_SHORT).show();
+        }
         //setListViewHeightBasedOnChildren(listViewOrders);
         //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
 
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: handle when market orders are selected instead of my orders
+
+                // TODO: remove toast when it no longer crashes
+                if (currentUserOrders == null) {
+                    Toast.makeText(getContext(),
+                            "Couldn't delete order, current orders not available",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    return;
+                }
                 ((MainActivity)getActivity()).deleteOrder(currentUserOrders.get(position-1));
             }
         });
