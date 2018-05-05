@@ -3,6 +3,7 @@ package cloud.coders.sk.xchangecrypt.ui;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,6 +50,14 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
+import com.microsoft.identity.client.AuthenticationCallback;
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.ILoggerCallback;
+import com.microsoft.identity.client.MsalClientException;
+import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.MsalServiceException;
+import com.microsoft.identity.client.MsalUiRequiredException;
+import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
@@ -80,6 +90,7 @@ import cloud.coders.sk.xchangecrypt.ui.fragments.LoginFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SettingFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SplashFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.WalletFragment;
+import cloud.coders.sk.xchangecrypt.utils.Helpers;
 import cloud.coders.sk.xchangecrypt.utils.Logger;
 import cloud.coders.sk.xchangecrypt.utils.Utility;
 import cloud.coders.sk.R;
@@ -95,7 +106,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     public static int asyncTaskId = 0;
 
-    private static final String TAG = "[MainActivity]";
+//    private static final String TAG = "[MainActivity]";
     private TextView toolbarTitle;
 
     private BroadcastReceiver accountOfferDataReceiver;
@@ -120,16 +131,29 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInAccount googleAccount;
     private MobileServiceClient mobileServiceClient;
-    private Scope[] scopes;
+  //  private Scope[] scopes;
     private MobileServiceUser mobileServiceUser;
 
 
     private MobileServiceClient mClient;
 
-    public class TodoItem {
-        public String Id;
-        public String Text;
+
+    /* Azure AD variables */
+    private PublicClientApplication sampleApp;
+    private AuthenticationResult authResult;
+    private String[] scopes;
+
+    public String[] getScopes() {
+        return scopes;
     }
+
+    /* UI & Debugging Variables */
+    private static final String TAG = MainActivity.class.getSimpleName();
+    Button callApiButton;
+    Button learnMoreButton;
+
+    /* Global App State */
+    AppSubClass state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,148 +175,340 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //                .requestIdToken(getString(R.string.server_client_id))
 //                .requestServerAuthCode(getString(R.string.server_client_id))
 //                .build();
+//
+//        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                //.requestIdToken(getString(R.string.google_sign_client_id))
+//                .requestIdToken(getString(R.string.server_client_id))
+//                .requestServerAuthCode(getString(R.string.server_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        scopes = gso1.getScopeArray();
+//
+//        googleApiClient = new GoogleApiClient.Builder(this)
+//                .enableAutoManage(this, this)
+//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso1)
+//                .build();
+//
+//
+//        try {
+//            mobileServiceClient = new MobileServiceClient("https://xchangecrypttest-convergencebackend.azurewebsites.net",this);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
 
-        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //.requestIdToken(getString(R.string.google_sign_client_id))
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestServerAuthCode(getString(R.string.server_client_id))
-                .requestEmail()
-                .build();
+//        callApiButton = (Button) findViewById(R.id.callApi);
+//        learnMoreButton = (Button) findViewById(R.id.learnMore);
+//
+//        callApiButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                onCallApiClicked(scopes);
+//            }
+//        });
+//
+//        learnMoreButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                learnMore();
+//            }
+//        });
 
-        scopes = gso1.getScopeArray();
+        state = (AppSubClass) getApplicationContext();
+        scopes = Constants.SCOPES.split("\\s+");
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso1)
-                .build();
+        /* Initializes the app context using MSAL */
+        sampleApp = state.getPublicClient();
 
+        /* Initialize the MSAL App context */
+        if (sampleApp == null) {
+            sampleApp = new PublicClientApplication(
+                    this.getApplicationContext(),
+                    Constants.CLIENT_ID,
+                    String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY));
+            state.setPublicClient(sampleApp);
 
-        try {
-            mobileServiceClient = new MobileServiceClient("https://xchangecrypttest-convergencebackend.azurewebsites.net",this);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void signIn() {
-        if (isOnline()) {
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "Nie ste pripojený na internet, prihlásenie nie je možné.", Toast.LENGTH_SHORT);
-            toast.show();
-            new Timer().schedule(new TimerTask() {
+            com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                 @Override
-                public void run() {
-                    System.exit(1);
+                public void log(String tag, com.microsoft.identity.client.Logger.LogLevel logLevel, String message, boolean containsPII) {
+                    Log.d(tag, "MSAL_LOG: " + message);
                 }
-            }, 2000);
+            });
         }
-    }
 
-    public void signOut(View v) {
-        Auth.GoogleSignInApi.signOut(googleApiClient);
+
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        sampleApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
+    }
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+    /* Use MSAL to acquireToken for the end-user
+    *  Call API
+    *  Pass UserInfo response data to AuthenticatedActivity
+    */
+    public void onCallApiClicked(String[] scopes) {
 
-//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//            try {
-//                googleAccount = task.getResult(ApiException.class);
-//            } catch (ApiException e) {
-//                Toast.makeText(this, "Prihlásenie cez google neúspešné.",
-//                        Toast.LENGTH_SHORT).show();
-//                e.printStackTrace();
-//                //    System.exit(1);
+        /* Attempt to get a user and acquireTokenSilently
+         * If this fails we will do an interactive request
+         */
+        Log.d(TAG, "Call API Clicked");
+
+        try {
+            com.microsoft.identity.client.User currentUser = Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
+
+            if (currentUser != null) {
+                /* We have 1 user */
+
+                sampleApp.acquireTokenSilentAsync(
+                        scopes,
+                        currentUser,
+                        String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
+                        false,
+                        getAuthSilentCallback());
+            } else {
+                /* We have no user */
+                sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
+            }
+        } catch (MsalClientException e) {
+            /* No token in cache, proceed with normal unauthenticated app experience */
+            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+
+        } catch (IndexOutOfBoundsException e) {
+            Log.d(TAG, "User at this position does not exist: " + e.toString());
+        }
+    }
+
+    //
+    // App callbacks for MSAL
+    // ======================
+    // getActivity() - returns activity so we can acquireToken within a callback
+    // getAuthSilentCallback() - callback defined to handle acquireTokenSilent() case
+    // getAuthInteractiveCallback() - callback defined to handle acquireToken() case
+    //
+
+    public Activity getActivity() {
+        return this;
+    }
+
+    /* Callback used in for silent acquireToken calls.
+     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
+     * else errors that we need to do an interactive request.
+     */
+    private AuthenticationCallback getAuthSilentCallback() {
+        return new AuthenticationCallback() {
+            @Override
+            public void onSuccess(AuthenticationResult authenticationResult) {
+                /* Successfully got a token, call api now */
+                Log.d(TAG, "Successfully authenticated");
+                authResult = authenticationResult;
+                state.setAuthResult(authResult);
+
+                /* Start authenticated activity */
+                startAuthenticated();
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+                /* Failed to acquireToken */
+                Log.d(TAG, "Authentication failed: " + exception.toString());
+
+                if (exception instanceof MsalClientException) {
+                    /* Exception inside MSAL, more info inside MsalError.java */
+                    assert true;
+
+                } else if (exception instanceof MsalServiceException) {
+                    /* Exception when communicating with the STS, likely config issue */
+                    assert true;
+
+                } else if (exception instanceof MsalUiRequiredException) {
+                    /* Tokens expired or no session, retry with interactive */
+                    sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                /* User canceled the authentication */
+                Log.d(TAG, "User cancelled login.");
+            }
+        };
+    }
+
+    /* Callback used for interactive request.  If succeeds we use the access
+     * token to call the api. Does not check cache.
+     */
+    private AuthenticationCallback getAuthInteractiveCallback() {
+        return new AuthenticationCallback() {
+            @Override
+            public void onSuccess(AuthenticationResult authenticationResult) {
+                /* Successfully got a token, call api now */
+                Log.d(TAG, "Successfully authenticated");
+                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
+                authResult = authenticationResult;
+                state.setAuthResult(authResult);
+
+                /* Start authenticated activity */
+                startAuthenticated();
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+                /* Failed to acquireToken */
+                Log.d(TAG, "Authentication failed: " + exception.toString());
+
+                if (exception instanceof MsalClientException) {
+                    /* Exception inside MSAL, more info inside MsalError.java */
+                    assert true;
+                } else if (exception instanceof MsalServiceException) {
+                    /* Exception when communicating with the STS, likely config issue */
+                    assert true;
+
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                /* User canceled the authentication */
+                Log.d(TAG, "User cancelled login.");
+            }
+        };
+    }
+
+    //
+    // Activity Helpers
+    // ==================================
+    // learnMore() - starts the learn more activity
+    // startAuthenticated() - starts the authenticated user activity
+    //
+
+
+    /* Starts authenticated intent */
+    private void startAuthenticated() {
+        startActivity(new Intent(this, AuthenticatedActivity.class));
+    }
+
+
+
+
+//    public void signIn() {
+//        if (isOnline()) {
+//                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+//                startActivityForResult(signInIntent, RC_SIGN_IN);
+//        } else {
+//            Toast toast = Toast.makeText(getApplicationContext(), "Nie ste pripojený na internet, prihlásenie nie je možné.", Toast.LENGTH_SHORT);
+//            toast.show();
+//            new Timer().schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    System.exit(1);
+//                }
+//            }, 2000);
+//        }
+//    }
+//
+//    public void signOut(View v) {
+//        Auth.GoogleSignInApi.signOut(googleApiClient);
+//    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+//        if (requestCode == RC_SIGN_IN) {
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            handleSignInResult(result);
+//
+////            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+////            try {
+////                googleAccount = task.getResult(ApiException.class);
+////            } catch (ApiException e) {
+////                Toast.makeText(this, "Prihlásenie cez google neúspešné.",
+////                        Toast.LENGTH_SHORT).show();
+////                e.printStackTrace();
+////                //    System.exit(1);
+////            }
+//        }
+//    }
+//
+//    @SuppressLint("StaticFieldLeak")
+//    private void handleSignInResult(GoogleSignInResult result) {
+//        Log.d("", "handleSignInResult: " + result.isSuccess());
+//
+//        if(result.isSuccess()) {
+//            final GoogleSignInAccount account = result.getSignInAccount();
+//
+//            final String idToken = account.getIdToken();
+//            String serverAuthCode = account.getServerAuthCode();
+//
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//            prefs.edit().putString("idToken", idToken).apply();
+//            prefs.edit().putString("serverAuthCode", serverAuthCode).apply();
+//
+//            new AsyncTask<Void, Void, String>() {
+//
+//                @Override
+//                protected String doInBackground(Void... params) {
+//                    try {
+//
+//                        StringBuilder scopesBuilder = new StringBuilder("oauth2:");
+//                        for(Scope scope : scopes) {
+//                            scopesBuilder//.append("https://www.googleapis.com/auth/")
+//                                    .append(scope.toString())
+//                                    .append(" ");
+//                        }
+//
+//                        String token = GoogleAuthUtil.getToken(context,
+//                                account.getEmail(), scopesBuilder.toString());
+//
+//                        return token;
+//                    } catch (IOException | GoogleAuthException e) {
+//                        e.printStackTrace();
+//                    }
+//                    return null;
+//                }
+//
+//                @Override
+//                protected void onPostExecute(String result) {
+//                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+//                    prefs.edit().putString("accessToken", result).apply();
+//                    authenticateWithAzure();
+//                }
+//            }.execute();
+//        } else {
+//
+//        }
+//    }
+
+//    private void authenticateWithAzure() {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//
+//        String idToken = prefs.getString("idToken", null);
+//        String serverAuthCode = prefs.getString("serverAuthCode", null);
+//        String accessToken = prefs.getString("accessToken", null);
+//
+//        JsonObject json = new JsonObject();
+//        json.addProperty("access_token", accessToken);
+//        json.addProperty("id_token", idToken);
+//        json.addProperty("authorization_code", serverAuthCode);
+//
+//        ListenableFuture<MobileServiceUser> loginFuture =
+//                mobileServiceClient.login(MobileServiceAuthenticationProvider.Google, json);
+//
+//        Futures.addCallback(loginFuture, new FutureCallback<MobileServiceUser>() {
+//            @Override
+//            public void onSuccess(MobileServiceUser result) {
+//               mobileServiceUser = result;
+//               Toast.makeText(context,"Login succesfull.",Toast.LENGTH_SHORT);
 //            }
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("", "handleSignInResult: " + result.isSuccess());
-
-        if(result.isSuccess()) {
-            final GoogleSignInAccount account = result.getSignInAccount();
-
-            final String idToken = account.getIdToken();
-            String serverAuthCode = account.getServerAuthCode();
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.edit().putString("idToken", idToken).apply();
-            prefs.edit().putString("serverAuthCode", serverAuthCode).apply();
-
-            new AsyncTask<Void, Void, String>() {
-
-                @Override
-                protected String doInBackground(Void... params) {
-                    try {
-
-                        StringBuilder scopesBuilder = new StringBuilder("oauth2:");
-                        for(Scope scope : scopes) {
-                            scopesBuilder//.append("https://www.googleapis.com/auth/")
-                                    .append(scope.toString())
-                                    .append(" ");
-                        }
-
-                        String token = GoogleAuthUtil.getToken(context,
-                                account.getEmail(), scopesBuilder.toString());
-
-                        return token;
-                    } catch (IOException | GoogleAuthException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(String result) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    prefs.edit().putString("accessToken", result).apply();
-                    authenticateWithAzure();
-                }
-            }.execute();
-        } else {
-
-        }
-    }
-
-    private void authenticateWithAzure() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String idToken = prefs.getString("idToken", null);
-        String serverAuthCode = prefs.getString("serverAuthCode", null);
-        String accessToken = prefs.getString("accessToken", null);
-
-        JsonObject json = new JsonObject();
-        json.addProperty("access_token", accessToken);
-        json.addProperty("id_token", idToken);
-        json.addProperty("authorization_code", serverAuthCode);
-
-        ListenableFuture<MobileServiceUser> loginFuture =
-                mobileServiceClient.login(MobileServiceAuthenticationProvider.Google, json);
-
-        Futures.addCallback(loginFuture, new FutureCallback<MobileServiceUser>() {
-            @Override
-            public void onSuccess(MobileServiceUser result) {
-               mobileServiceUser = result;
-               Toast.makeText(context,"Login succesfull.",Toast.LENGTH_SHORT);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(TAG, t.getMessage(), t);
-            }
-
-        });
-    }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                Log.e(TAG, t.getMessage(), t);
+//            }
+//
+//        });
+//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

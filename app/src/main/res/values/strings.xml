@@ -16,4 +16,32 @@
 
     <string name="server_client_id">851065012923-etmf2ie0nv8b3eo0tbra5a2i5a7e6nlt.apps.googleusercontent.com</string>
 
+
+
+
+
+
+
+    <string name="welcome">Welcome to Wingtip Toys</string>
+    <string name="aadPlug">Identity by Azure AD B2C</string>
+    <string name="callAPIText">Call API</string>
+    <string name="learnText">Learn more</string>
+    <string name="title_activity_authenticated">AuthenticatedActivity</string>
+    <string name="title_activity_learn_more">LearnMoreActivity</string>
+    <string name="tokenPresent">In Cache</string>
+    <string name="noToken">Null</string>
+    <string name="IT">ID Token:</string>
+    <string name="AT">Access Token:</string>
+    <string name="RT">Refresh Token:</string>
+    <string name="api">Calling API...</string>
+    <string name="failedRefresh">Failed to Refresh Token.</string>
+    <string name="editSuccess">Successfully Updated Profile</string>
+    <string name="editFailure">Failed to Updated Profile</string>
+
+
+
+
+
+
+
 </resources>
