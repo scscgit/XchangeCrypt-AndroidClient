@@ -2,6 +2,9 @@ package cloud.coders.sk.xchangecrypt.core;
 
 import android.content.Context;
 
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.PublicClientApplication;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +39,35 @@ public class ContentProvider {
     private CurrencyPair actualCurrencyPair;
     private OrderSide currentOrderSide;
 
+
+    private PublicClientApplication publicClientApplication;
+    private AuthenticationResult authResult;
+    private String[] scopes;
+
+
+    public PublicClientApplication getPublicClientApplication() {
+        return publicClientApplication;
+    }
+
+    public void setPublicClientApplication(PublicClientApplication publicClientApplication) {
+        this.publicClientApplication = publicClientApplication;
+    }
+
+    public AuthenticationResult getAuthResult() {
+        return authResult;
+    }
+
+    public void setAuthResult(AuthenticationResult authResult) {
+        this.authResult = authResult;
+    }
+
+    public String[] getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(String[] scopes) {
+        this.scopes = scopes;
+    }
 
     private User user;
 

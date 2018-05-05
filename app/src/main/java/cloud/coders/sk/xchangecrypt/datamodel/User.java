@@ -19,17 +19,32 @@ public class User extends BaseObject {
         AccountId = accountId;
     }
 
+    private String name = "a b";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getAccountId() {
         return AccountId;
     }
 
-    private String login;
 
-    private String password;
-
+    private String idToken;
     private String accessToken;
+    private String refreshToken;
 
-    private double expiration;
+    public String getIdToken() {
+        return idToken;
+    }
+
+    public void setIdToken(String idToken) {
+        this.idToken = idToken;
+    }
 
     public String getAccessToken() {
         return accessToken;
@@ -38,6 +53,30 @@ public class User extends BaseObject {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    private String login;
+
+    private String password;
+
+ //   private String accessToken;
+
+    private double expiration;
+
+//    public String getAccessToken() {
+//        return accessToken;
+//    }
+//
+//    public void setAccessToken(String accessToken) {
+//        this.accessToken = accessToken;
+//    }
 
     public double getExpiration() {
         return expiration;

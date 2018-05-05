@@ -34,6 +34,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
@@ -64,12 +71,16 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUse
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -149,11 +160,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-    Button callApiButton;
-    Button learnMoreButton;
 
     /* Global App State */
-    AppSubClass state;
+  //  AppSubClass state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,11 +221,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //            }
 //        });
 
-        state = (AppSubClass) getApplicationContext();
         scopes = Constants.SCOPES.split("\\s+");
+        getContentProvider().setScopes(scopes);
 
         /* Initializes the app context using MSAL */
-        sampleApp = state.getPublicClient();
 
         /* Initialize the MSAL App context */
         if (sampleApp == null) {
@@ -224,7 +232,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     this.getApplicationContext(),
                     Constants.CLIENT_ID,
                     String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY));
-            state.setPublicClient(sampleApp);
+            getContentProvider().setPublicClientApplication(sampleApp);
 
             com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                 @Override
@@ -301,10 +309,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 /* Successfully got a token, call api now */
                 Log.d(TAG, "Successfully authenticated");
                 authResult = authenticationResult;
-                state.setAuthResult(authResult);
+                getContentProvider().setAuthResult(authResult);
 
                 /* Start authenticated activity */
-                startAuthenticated();
+                switchToFragment(FRAGMENT_EXCHANGE,null);
+                callAPI();
             }
 
             @Override
@@ -345,10 +354,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
                 authResult = authenticationResult;
-                state.setAuthResult(authResult);
+                getContentProvider().setAuthResult(authResult);
 
                 /* Start authenticated activity */
-                startAuthenticated();
+                switchToFragment(FRAGMENT_EXCHANGE,null);
+                callAPI();
             }
 
             @Override
@@ -374,18 +384,165 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         };
     }
 
-    //
-    // Activity Helpers
-    // ==================================
-    // learnMore() - starts the learn more activity
-    // startAuthenticated() - starts the authenticated user activity
-    //
 
+    public void clearCache() {
+        List<com.microsoft.identity.client.User> users = null;
+        try {
+            Log.d(TAG, "Clearing app cache");
+            users = sampleApp.getUsers();
 
-    /* Starts authenticated intent */
-    private void startAuthenticated() {
-        startActivity(new Intent(this, AuthenticatedActivity.class));
+            if (users == null) {
+                /* We have no users */
+
+                Log.d(TAG, "Faield to Sign out/clear cache, no user");
+            } else if (users.size() == 1) {
+                /* We have 1 user */
+
+                /* Remove from token cache */
+                sampleApp.remove(users.get(0));
+
+                Log.d(TAG, "Signed out/cleared cache");
+
+            }
+            else {
+                /* We have multiple users */
+
+                for (int i = 0; i < users.size(); i++) {
+                    sampleApp.remove(users.get(i));
+                }
+
+                Log.d(TAG, "Signed out/cleared cache for multiple users");
+            }
+
+            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT)
+                    .show();
+
+        } catch (MsalClientException e) {
+            /* No token in cache, proceed with normal unauthenticated app experience */
+            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+
+        } catch (IndexOutOfBoundsException e) {
+            Log.d(TAG, "User at this position does not exist: " + e.toString());
+        }
     }
+
+    /* Use Volley to request the /me endpoint from API
+    *  Sets the UI to what we get back
+    */
+    private void callAPI() {
+
+        Log.d(TAG, "Starting volley request to API");
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Constants.API_URL,
+                parameters,new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                /* Successfully called API */
+                Log.d(TAG, "Response: " + response);
+                try {
+                    getContentProvider().getUser().setName(response.getString("name"));
+
+                    Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT)
+                            .show();
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONEXception Error: " + e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                Log.d(TAG, "Token: " + authResult.getAccessToken().toString());
+                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+                return headers;
+            }
+        };
+
+        queue.add(request);
+    }
+
+//    public void hasRefreshToken() {
+//
+//        /* Attempt to get a user and acquireTokenSilently
+//         * If this fails we will do an interactive request
+//         */
+//        List<com.microsoft.identity.client.User> users = null;
+//        try {
+//            com.microsoft.identity.client.User currentUser = Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
+//
+//            if (currentUser != null) {
+//            /* We have 1 user */
+//                boolean forceRefresh = true;
+//                sampleApp.acquireTokenSilentAsync(
+//                        scopes,
+//                        currentUser,
+//                        String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
+//                        forceRefresh,
+//                        getAuthSilentCallbackToken());
+//            } else {
+//                /* We have no user for this policy*/
+//            }
+//        } catch (MsalClientException e) {
+//            /* No token in cache, proceed with normal unauthenticated app experience */
+//            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+//
+//        } catch (IndexOutOfBoundsException e) {
+//            Log.d(TAG, "User at this position does not exist: " + e.toString());
+//        }
+//    }
+//
+//    /* Callback used in for silent acquireToken calls.
+//    * Used in here solely to test whether or not we have a refresh token in the cache
+//    */
+//    private AuthenticationCallback getAuthSilentCallbackToken() {
+//        return new AuthenticationCallback() {
+//            @Override
+//            public void onSuccess(AuthenticationResult authenticationResult) {
+//                /* Successfully got a token */
+//
+//                /* If the token is refreshed we should refresh our data */
+//                callAPI();
+//            }
+//
+//            @Override
+//            public void onError(MsalException exception) {
+//                /* Failed to acquireToken */
+//                Log.d(TAG, "Authentication failed: " + exception.toString());
+//                if (exception instanceof MsalClientException) {
+//                    /* Exception inside MSAL, more info inside MsalError.java */
+//                    assert true;
+//
+//                } else if (exception instanceof MsalServiceException) {
+//                    /* Exception when communicating with the STS, likely config issue */
+//                    assert true;
+//
+//                } else if (exception instanceof MsalUiRequiredException) {
+//                    /* Tokens expired or no session, retry with interactive */
+//                    assert true;
+//                }
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                /* User canceled the authentication */
+//                Log.d(TAG, "User cancelled login.");
+//            }
+//        };
+//    }
+
 
 
 
@@ -525,14 +682,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             transactionList.add(transaction0);
             transactionList.add(transaction1);
         }
-       // getContentProvider().setAccountTransactionHistory(transactionList);
+        getContentProvider().setAccountTransactionHistory(transactionList);
 
         Coin coin1 = new Coin("BTC", 0.00025638);
         Coin coin2 = new Coin("QBC", 0.90025211);
         List<Coin> coins = new ArrayList<>();
         coins.add(coin1);
         coins.add(coin2);
-      //  getContentProvider().setCoinsBalance(coins);
+        getContentProvider().setCoinsBalance(coins);
 
         Order offer1 = new Order(0.00000268,0.00000268, "QBC",1252.1965919,"BTC",0.034565856, OrderSide.buy,OrderType.limit,"1" );
         Order offer2 = new Order(0.00000270,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.sell,OrderType.limit,"2" );
@@ -542,8 +699,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
          offerList.add(offer1);
          offerList.add(offer2);
         }
-      //  getContentProvider().addToOrders("QBC_BTC", offerList);
-      //  getContentProvider().addToOrders("BTC_QBC", new ArrayList<Order>());
+        getContentProvider().addToOrders("QBC_BTC", offerList);
+        getContentProvider().addToOrders("BTC_QBC", new ArrayList<Order>());
 
         List<Order> myoffers = new ArrayList<Order>();
         myoffers.add(offer1);

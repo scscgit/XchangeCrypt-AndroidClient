@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import cloud.coders.sk.R;
+import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
  * Created by Peter on 21.04.2018.
@@ -67,11 +68,21 @@ public class SettingFragment extends BaseFragment {
             }
         });
         //TODO change accourding to databese user
-        nameTextView.setText("Peter");
-        surnameTextView.setText("Čerešník");
+        String name[] = getContentProvider().getUser().getName().split(" ");
+        nameTextView.setText(name[0]);
+        surnameTextView.setText(name[1]);
         emailTextView.setText("ceresnik.peter@gmail.com");
         notificationTogleButton.setChecked(false);
         passwordChangeButton.setEnabled(false);
+
+
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).clearCache();
+                switchToFragmentAndClear(FRAGMENT_LOGIN,null);
+            }
+        });
 
     }
 }
