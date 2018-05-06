@@ -657,6 +657,7 @@
                         android:text="Graf"
                         android:textSize="@dimen/item_text_size"
                         android:background="@color/gray"
+                        android:visibility="gone"
                         />
                 </LinearLayout>
 

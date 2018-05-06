@@ -22,6 +22,7 @@ import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.AccountApi;
 import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
+import io.swagger.client.auth.FastAccessTokenApiKey;
 import io.swagger.client.model.AccountWalletResponse;
 import io.swagger.client.model.Execution;
 import io.swagger.client.model.InlineResponse200;
@@ -45,6 +46,10 @@ public class TradingApiHelper {
     private Context context;
     private List<Integer> pendingTask;
 
+    public FastAccessTokenApiKey getApiAuthentication(){
+        return (FastAccessTokenApiKey) tradingApi.getAuthentications("oauth");
+    }
+
     public TradingApiHelper(MainActivity mainActivity, Context context) {
         //this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
         initializeTradingApi();
@@ -60,6 +65,7 @@ public class TradingApiHelper {
         if (tradingApi == null) {
             this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
         }
+
     }
 
     private InlineResponse200 authorizationResponses;
@@ -127,6 +133,7 @@ public class TradingApiHelper {
             @Override
             protected List<AccountWalletResponse> doInBackground(Void... voids) {
 //                mainActivity.showProgressDialog("Načítavám dáta");
+                accountApi.setInvoker(tradingApi.getInvoker());
                 pendingTask.add(taskId);
                 List<AccountWalletResponse> accountWalletResponse = null;
                 try {

@@ -207,17 +207,8 @@ public class ApiInvoker {
     INSTANCE.authentications = new HashMap<String, Authentication>();
     // TODO: comment out below as OAuth does not exist
 //    INSTANCE.authentications.put("oauth", new OAuth()    );
-    TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
-    /*
-    INSTANCE.authentications.put("oauth", new FastAccessTokenApiKey() {{
-      try {
-        TradingPanelBridgeBrokerDataOrdersApi tradingPanelBridgeBrokerDataOrdersApi = new TradingPanelBridgeBrokerDataOrdersApi();
-        setApiKey(tradingPanelBridgeBrokerDataOrdersApi.authorizePost("test","test").getD().getAccessToken());
-      } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
-        throw new RuntimeException("Authorization failed",e);
-      }
-    }}   );
-    */
+    INSTANCE.authentications.put("oauth", new FastAccessTokenApiKey());
+
     // Prevent the authentications from being modified.
     INSTANCE.authentications = Collections.unmodifiableMap(INSTANCE.authentications);
   }
@@ -372,9 +363,9 @@ public class ApiInvoker {
   private void updateParamsForAuth(String[] authNames, List<Pair> queryParams, Map<String, String> headerParams) {
     for (String authName : authNames) {
       Authentication auth = authentications.get(authName);
-   //   if (auth == null)
-   //     throw new RuntimeException("Authentication undefined: " + authName);
-   //   auth.applyToParams(queryParams, headerParams);
+      if (auth == null)
+        throw new RuntimeException("Authentication undefined: " + authName);
+      auth.applyToParams(queryParams, headerParams);
     }
   }
 
@@ -384,7 +375,8 @@ public class ApiInvoker {
       Request request = createRequest(host, path, method, queryParams, body, headerParams, formParams, contentType, authNames, future, future);
       if(request != null) {
          mRequestQueue.add(request);
-         return future.get(connectionTimeout, TimeUnit.SECONDS);
+         String value = future.get(connectionTimeout, TimeUnit.SECONDS);
+         return value;
       } else {
         return "no data";
       }

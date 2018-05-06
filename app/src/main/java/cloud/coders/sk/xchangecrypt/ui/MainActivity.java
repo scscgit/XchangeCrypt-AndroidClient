@@ -234,12 +234,16 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     authority);
             getContentProvider().setPublicClientApplication(sampleApp);
 
-            com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
-                @Override
-                public void log(String tag, com.microsoft.identity.client.Logger.LogLevel logLevel, String message, boolean containsPII) {
-                    Log.d(tag, "MSAL_LOG: " + message);
-                }
-            });
+            try {
+                com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
+                    @Override
+                    public void log(String tag, com.microsoft.identity.client.Logger.LogLevel logLevel, String message, boolean containsPII) {
+                        Log.d(tag, "MSAL_LOG: " + message);
+                    }
+                });
+            }catch (IllegalStateException e){
+             //already set
+            }
         }
 
 
@@ -311,6 +315,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 Log.d(TAG, "Successfully authenticated");
                 authResult = authenticationResult;
                 getContentProvider().setAuthResult(authResult);
+                tradingApiHelper.getApiAuthentication().setApiKey(authenticationResult.getAccessToken());
 
                 /* Start authenticated activity */
                 switchToFragment(FRAGMENT_EXCHANGE,null);
@@ -545,128 +550,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //    }
 
 
-
-
-
-//    public void signIn() {
-//        if (isOnline()) {
-//                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-//                startActivityForResult(signInIntent, RC_SIGN_IN);
-//        } else {
-//            Toast toast = Toast.makeText(getApplicationContext(), "Nie ste pripojený na internet, prihlásenie nie je možné.", Toast.LENGTH_SHORT);
-//            toast.show();
-//            new Timer().schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//                    System.exit(1);
-//                }
-//            }, 2000);
-//        }
-//    }
-//
-//    public void signOut(View v) {
-//        Auth.GoogleSignInApi.signOut(googleApiClient);
-//    }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-//        if (requestCode == RC_SIGN_IN) {
-//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-//            handleSignInResult(result);
-//
-////            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-////            try {
-////                googleAccount = task.getResult(ApiException.class);
-////            } catch (ApiException e) {
-////                Toast.makeText(this, "Prihlásenie cez google neúspešné.",
-////                        Toast.LENGTH_SHORT).show();
-////                e.printStackTrace();
-////                //    System.exit(1);
-////            }
-//        }
-//    }
-//
-//    @SuppressLint("StaticFieldLeak")
-//    private void handleSignInResult(GoogleSignInResult result) {
-//        Log.d("", "handleSignInResult: " + result.isSuccess());
-//
-//        if(result.isSuccess()) {
-//            final GoogleSignInAccount account = result.getSignInAccount();
-//
-//            final String idToken = account.getIdToken();
-//            String serverAuthCode = account.getServerAuthCode();
-//
-//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//            prefs.edit().putString("idToken", idToken).apply();
-//            prefs.edit().putString("serverAuthCode", serverAuthCode).apply();
-//
-//            new AsyncTask<Void, Void, String>() {
-//
-//                @Override
-//                protected String doInBackground(Void... params) {
-//                    try {
-//
-//                        StringBuilder scopesBuilder = new StringBuilder("oauth2:");
-//                        for(Scope scope : scopes) {
-//                            scopesBuilder//.append("https://www.googleapis.com/auth/")
-//                                    .append(scope.toString())
-//                                    .append(" ");
-//                        }
-//
-//                        String token = GoogleAuthUtil.getToken(context,
-//                                account.getEmail(), scopesBuilder.toString());
-//
-//                        return token;
-//                    } catch (IOException | GoogleAuthException e) {
-//                        e.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(String result) {
-//                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//                    prefs.edit().putString("accessToken", result).apply();
-//                    authenticateWithAzure();
-//                }
-//            }.execute();
-//        } else {
-//
-//        }
-//    }
-
-//    private void authenticateWithAzure() {
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//
-//        String idToken = prefs.getString("idToken", null);
-//        String serverAuthCode = prefs.getString("serverAuthCode", null);
-//        String accessToken = prefs.getString("accessToken", null);
-//
-//        JsonObject json = new JsonObject();
-//        json.addProperty("access_token", accessToken);
-//        json.addProperty("id_token", idToken);
-//        json.addProperty("authorization_code", serverAuthCode);
-//
-//        ListenableFuture<MobileServiceUser> loginFuture =
-//                mobileServiceClient.login(MobileServiceAuthenticationProvider.Google, json);
-//
-//        Futures.addCallback(loginFuture, new FutureCallback<MobileServiceUser>() {
-//            @Override
-//            public void onSuccess(MobileServiceUser result) {
-//               mobileServiceUser = result;
-//               Toast.makeText(context,"Login succesfull.",Toast.LENGTH_SHORT);
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable t) {
-//                Log.e(TAG, t.getMessage(), t);
-//            }
-//
-//        });
-//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -1176,8 +1059,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     }
                 }
                 showProgressDialog("Načítavám dáta");
+                tradingApiHelper.instrument(asyncTaskId++,getContentProvider().getUser());
                 tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++,getContentProvider().getActualCurrencyPair().toString());
-                //tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
+                tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                 break;
             case FRAGMENT_WALLET:
                 Date lastHistoryUpdate = getContentProvider().getLastUpdate(UpdateType.history);
@@ -1190,7 +1074,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         return;
                     }
                 }
-                //tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
+                tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                 tradingApiHelper.accountBalance(asyncTaskId++);
                 showProgressDialog("Načítavám dáta");
                 //switchToFragmentAndClear(FRAGMENT_WALLET,null);

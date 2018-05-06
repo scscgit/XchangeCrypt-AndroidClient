@@ -192,6 +192,8 @@ public class ExchangeFragment extends BaseFragment {
 
     private int lastKeyHeight = 0;
     private int lastScreenHeight = 0;
+
+    ViewGroup lastHeader;
     @Override
     protected void setViewContents() {
 
@@ -200,9 +202,10 @@ public class ExchangeFragment extends BaseFragment {
         feeEdit.setText("0,00000001");
         //priceEdit.setText(getContentProvider());
 
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketOrders().get(getContentProvider().getActualCurrencyPair().toString())));
-        listViewOrders.setClickable(false);
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketOrders().get(getContentProvider().getActualCurrencyPair().toString()),true));
+      //  listViewOrders.setClickable(false);
+        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
+        lastHeader = header;
         listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
         try {
@@ -217,17 +220,18 @@ public class ExchangeFragment extends BaseFragment {
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: handle when market orders are selected instead of my orders
 
                 // TODO: remove toast when it no longer crashes
-                if (currentUserOrders == null) {
-                    Toast.makeText(getContext(),
-                            "Couldn't delete order, current orders not available",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                    return;
+                if (myOrders) {
+                    if (currentUserOrders == null) {
+                        Toast.makeText(getContext(),
+                                "Couldn't delete order, current orders not available",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
+                    ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position - 1));
                 }
-                ((MainActivity)getActivity()).deleteOrder(currentUserOrders.get(position-1));
             }
         });
 
@@ -590,18 +594,30 @@ public class ExchangeFragment extends BaseFragment {
     private void showMarketOrders(){
         String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
         List<Order> marketOrderForPairAndSide = getContentProvider().getMarketOrderForPairAndSide(pair[0],pair[1], getContentProvider().getCurrentOrderSide());
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketOrderForPairAndSide));
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketOrderForPairAndSide,true));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
+        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
+        listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
+        listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
+        listViewOrders.removeHeaderView(lastHeader);
+        listViewOrders.addHeaderView(header);
+        lastHeader = header;
         myOrders = false;
     }
 
     private void showUserOrders(){
         String[] pair = getContentProvider().getActualCurrencyPair().toString().split("_");
         currentUserOrders = getContentProvider().getUserOrdersByCurrencyPairAndSide(pair[0],pair[1],orderSide);
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders));
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders,false));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
+        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
+        listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
+        listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
+        listViewOrders.removeHeaderView(lastHeader);
+        listViewOrders.addHeaderView(header);
+        lastHeader = header;
         myOrders = true;
     }
 

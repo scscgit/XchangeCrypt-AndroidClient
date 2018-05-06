@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:weightSum="6"
+    >
+
+
+    <TextView
+        android:id="@+id/listview_orders_item_price"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:text="price"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/listview_orders_item_coin1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:text="coin1"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/listview_orders_item_coin2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:text="coin2"
+        android:gravity="center"
+        />
+    </LinearLayout>
+

@@ -31,7 +31,7 @@ public class AccountApi {
 
 
     String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/accountapi";
-    ApiInvoker apiInvoker = ApiInvoker.getInstance();
+    ApiInvoker apiInvoker;// = ApiInvoker.getInstance();
 
     public void addHeader(String key, String value) {
         getInvoker().addDefaultHeader(key, value);
@@ -39,6 +39,10 @@ public class AccountApi {
 
     public ApiInvoker getInvoker() {
         return apiInvoker;
+    }
+
+    public void setInvoker (ApiInvoker invoker) {
+        apiInvoker = invoker;
     }
 
     public void setBasePath(String basePath) {

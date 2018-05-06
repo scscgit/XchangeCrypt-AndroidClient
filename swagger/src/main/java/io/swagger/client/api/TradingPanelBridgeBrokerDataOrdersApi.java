@@ -16,6 +16,7 @@ import io.swagger.client.ApiInvoker;
 import io.swagger.client.ApiException;
 import io.swagger.client.Pair;
 
+import io.swagger.client.auth.Authentication;
 import io.swagger.client.model.*;
 
 import java.util.*;
@@ -58,6 +59,11 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
 
   String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/tradingapi";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
+
+  public  Authentication getAuthentications(String name) {
+    return apiInvoker.getAuthentications().get(name);
+  }
+
 
   public void addHeader(String key, String value) {
     getInvoker().addDefaultHeader(key, value);
