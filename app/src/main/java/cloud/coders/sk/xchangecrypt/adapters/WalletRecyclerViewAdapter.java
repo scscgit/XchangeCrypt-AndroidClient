@@ -67,8 +67,8 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         builder.append(transaction.getBaseCurrency()).append("/").append(transaction.getQuoteCurrency());
         holder.title.setText(builder.toString());
 
-        holder.price.setText(String.format("%.8f", transaction.getPrice()));
-        holder.amount.setText(String.format("%.8f", transaction.getAmount()));
+        holder.price.setText(String.format("%.6f", transaction.getPrice()));
+        holder.amount.setText(String.format("%.6f", transaction.getAmount()));
 
         //holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
 
@@ -80,6 +80,9 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
                     break;
                 case "QBC":
                     holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
+                    break;
+                case "LTC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
             }
         }else {
             switch (transaction.getBaseCurrency()) {
@@ -88,6 +91,10 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
                     break;
                 case "QBC":
                     holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
+                    break;
+                case "LTC":
+                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
+                    break;
             }
         }
 

@@ -6,7 +6,9 @@ import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.PublicClientApplication;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.CurrencyPair;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.utils.InternalStorage;
 
@@ -43,6 +46,8 @@ public class ContentProvider {
     private PublicClientApplication publicClientApplication;
     private AuthenticationResult authResult;
     private String[] scopes;
+
+    private HashMap<UpdateType, Date> lastUpdates;
 
 
     public PublicClientApplication getPublicClientApplication() {
@@ -79,6 +84,9 @@ public class ContentProvider {
         coinsBalance = new ArrayList<>();
         marketOrders = new HashMap<>();
         marketPrices = new HashMap<>();
+        lastUpdates = new HashMap<>();
+        transactionHistoryMap = new HashMap<>();
+        instruments = new ArrayList<>();
     }
 
     public static ContentProvider getInstance(Context context) {
@@ -120,6 +128,14 @@ public class ContentProvider {
             accountOrders = cahedAccountOrder;
         }
 
+    }
+
+    public Date getLastUpdate(UpdateType updateType) {
+        return lastUpdates.get(updateType);
+    }
+
+    public void setLastUpdate(UpdateType updateType ,Date date) {
+        this.lastUpdates.put(updateType,date);
     }
 
     public void saveAccountHistory(){
@@ -253,5 +269,23 @@ public class ContentProvider {
 
     public double getMarketPricePerPair(String pair){
         return marketPrices.get(pair);
+    }
+
+    private  HashMap<String, List<MyTransaction>> transactionHistoryMap;
+    public void setAccountTransactionHistory(String pair, List<MyTransaction> transactions) {
+        transactionHistoryMap.put(pair,transactions);
+    }
+
+    private List<String> instruments;
+
+    public List<String> getInstruments() {
+        if (instruments == null){
+            return new ArrayList<>();
+        }
+        return instruments;
+    }
+
+    public void setInstruments(List<String> instruments) {
+        this.instruments = instruments;
     }
 }

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -100,6 +101,7 @@ public class ExchangeFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
 
+    private AppBarLayout appBarLayout;
     public static ExchangeFragment newInstance(Bundle args){
         ExchangeFragment fragment = new ExchangeFragment();
         fragment.setArguments(args);

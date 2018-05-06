@@ -75,14 +75,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
     return basePath;
   }
 
-  /**
-  * 
-  * Get a list of executions (i.e. fills or trades) for an account and an instrument. Executions are displayed on a chart
-   * @param accountId The account identifier
-   * @param instrument Broker instrument name
-   * @param maxCount Maximum count of executions to return
-   * @return InlineResponse20010
-  */
+
   public InlineResponse20010 accountsAccountIdExecutionsGet (String accountId, String instrument, BigDecimal maxCount) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
     Object postBody = null;
     // verify the required parameter 'accountId' is set

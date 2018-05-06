@@ -2,6 +2,7 @@ package cloud.coders.sk.xchangecrypt.ui.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.WalletListViewAdapter;
 import cloud.coders.sk.xchangecrypt.adapters.WalletRecyclerViewAdapter;
+import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
@@ -65,10 +70,16 @@ public class WalletFragment extends BaseFragment {
 
     }
 
+
+    private boolean loading = true;
+
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+
     @Override
     protected void setViewContents() {
-        balanceListView.setAdapter(new WalletListViewAdapter(getContext(), getContentProvider().getCoinsBalance()));
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        List<Coin> coinList = getContentProvider().getCoinsBalance();
+        balanceListView.setAdapter(new WalletListViewAdapter(getContext(), coinList));
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +88,37 @@ public class WalletFragment extends BaseFragment {
             appBarLayout.setExpanded(false);
             }
         });
+
+
+        final float inPixels= getResources().getDimension(R.dimen.list_item);
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)appBarLayout.getLayoutParams();
+        lp.height = (int)(inPixels*coinList.size());
+
+        recyclerView.setNestedScrollingEnabled(false);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy > 0) //check for scroll down
+                {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading)
+                    {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            loading = false;
+                            Toast.makeText(getContext(),"End",Toast.LENGTH_SHORT);
+                        }
+                    }
+                }
+            }
+        });
+
 
     }
 }

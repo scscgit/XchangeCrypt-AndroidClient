@@ -53,11 +53,11 @@
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="4"
+                    android:layout_weight="5"
                     android:id="@+id/listwiew_wallet"
                     android:divider="@null"
                     android:dividerHeight="0dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="0dp"
                     >
 
 

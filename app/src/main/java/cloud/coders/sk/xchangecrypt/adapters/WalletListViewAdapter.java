@@ -39,13 +39,17 @@ public class WalletListViewAdapter extends ArrayAdapter {
         TextView amount = (TextView) rowView.findViewById(R.id.listview_coin_amount);
         ImageView logo = (ImageView) rowView.findViewById(R.id.listview_coin_logo);
         coinTitle.setText(coin.getName());
-        amount.setText(String.format("%.8f", coin.getAmount()));
+        amount.setText(String.format("%.6f", coin.getAmount()));
         switch (coin.getName()){
             case "BTC":
                 logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
                 break;
             case "QBC":
                 logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
+                break;
+            case "LTC":
+                logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
+                break;
         }
 
 

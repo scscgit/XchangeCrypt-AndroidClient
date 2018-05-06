@@ -63,7 +63,8 @@ public class LoginFragment extends BaseFragment{
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).onCallApiClicked(((MainActivity)getActivity()).getScopes());
+               ((MainActivity)getActivity()).onCallApiClicked(((MainActivity)getActivity()).getScopes());
+             //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
          });
 //

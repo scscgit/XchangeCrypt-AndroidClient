@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -19,12 +20,18 @@ import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.exceptions.TradingException;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import io.swagger.client.ApiException;
+import io.swagger.client.api.AccountApi;
 import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
+import io.swagger.client.model.AccountWalletResponse;
+import io.swagger.client.model.Execution;
 import io.swagger.client.model.InlineResponse200;
+import io.swagger.client.model.InlineResponse20010;
+import io.swagger.client.model.InlineResponse20011;
 import io.swagger.client.model.InlineResponse20013;
 import io.swagger.client.model.InlineResponse2004;
 import io.swagger.client.model.InlineResponse2005;
 import io.swagger.client.model.InlineResponse2007;
+import io.swagger.client.model.Instrument;
 
 /**
  * Created by Peter on 29.04.2018.
@@ -33,6 +40,7 @@ import io.swagger.client.model.InlineResponse2007;
 public class TradingApiHelper {
 
     private TradingPanelBridgeBrokerDataOrdersApi tradingApi;
+    private AccountApi accountApi;
     private MainActivity mainActivity;
     private Context context;
     private List<Integer> pendingTask;
@@ -45,6 +53,7 @@ public class TradingApiHelper {
         this.accountOrders = new HashMap<>();
         this.depthData = new HashMap<>();
         this.pendingTask = new CopyOnWriteArrayList<>();
+        this.accountApi = new AccountApi();
     }
 
     public void createTradingApi(){
@@ -86,6 +95,70 @@ public class TradingApiHelper {
         return depthData.get(pair);
     }
 
+    private List<AccountWalletResponse> accountWalletResponses;
+
+    public List<AccountWalletResponse> getAccountWalletResponses() {
+        return accountWalletResponses;
+    }
+
+    private List<Instrument> instruments;
+
+    public List<Instrument> getInstruments() {
+        return instruments;
+    }
+
+    public void setInstruments(List<Instrument> instruments) {
+        this.instruments = instruments;
+    }
+
+    private HashMap<String, List<Execution>> executionHashMap;
+
+    public List<Execution> getExecution(String pair){
+        return  executionHashMap.get(pair);
+    }
+
+    public void addToExecutions(String pair, List<Execution> executions){
+        executionHashMap.put(pair,executions);
+    }
+
+    public void accountBalance(final int taskId) {
+        @SuppressLint("StaticFieldLeak")
+        AsyncTask task = new AsyncTask<Void, Void, List<AccountWalletResponse>>() {
+            @Override
+            protected List<AccountWalletResponse> doInBackground(Void... voids) {
+//                mainActivity.showProgressDialog("Načítavám dáta");
+                pendingTask.add(taskId);
+                List<AccountWalletResponse> accountWalletResponse = null;
+                try {
+                    accountWalletResponse = accountApi.walletGet();
+                } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+                    //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
+                    e.printStackTrace();
+                    Intent i = new Intent("account_offer_update");
+                    i.putExtra("error", "execution");
+                    i.putExtra("taskId", taskId);
+                    context.sendBroadcast(i);
+                }
+                return accountWalletResponse;
+            }
+
+            @Override
+            protected void onPostExecute(List<AccountWalletResponse>  accountWalletResponse) {
+                Intent i = new Intent("account_wallet_update");
+                if (accountWalletResponse != null) {
+                    accountWalletResponses = accountWalletResponse;
+                }
+                else {
+                    i.putExtra("error", "execution");
+                }
+                i.putExtra("taskId", taskId);
+                context.sendBroadcast(i);
+            }
+        }.execute();
+    }
+
+
+
 
     public void initializeTradingApi() {
         @SuppressLint("StaticFieldLeak")
@@ -117,6 +190,93 @@ public class TradingApiHelper {
         }.execute();
     }
 
+    public void instrument(final int taskId, final User user) {
+        @SuppressLint("StaticFieldLeak")
+        AsyncTask task = new AsyncTask<Void, Void, InlineResponse20011>() {
+            @Override
+            protected InlineResponse20011 doInBackground(Void... voids) {
+//                mainActivity.showProgressDialog("Načítavám dáta");
+                createTradingApi();
+                pendingTask.add(taskId);
+                InlineResponse20011 inlineResponse20011 = null;
+                try {
+                    inlineResponse20011 = tradingApi.accountsAccountIdInstrumentsGet(user.getAccountId());
+                } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+                    //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
+                    e.printStackTrace();
+                    Intent i = new Intent("account_instruments");
+                    i.putExtra("error", "execution");
+                    i.putExtra("accountId", user.getAccountId());
+                    i.putExtra("taskId", taskId);
+                    context.sendBroadcast(i);
+                }
+                return inlineResponse20011;
+            }
+
+            @Override
+            protected void onPostExecute(InlineResponse20011 inlineResponse20011) {
+                Intent i = new Intent("account_instruments");
+                if (inlineResponse20011 != null) {
+                    if (inlineResponse20011.getS().equals("ok")) {
+                        instruments = inlineResponse20011.getD();
+                    }else {
+                        i.putExtra("error", "return " + inlineResponse20011.getErrmsg());
+                    }
+                }
+                else {
+                    i.putExtra("error", "execution");
+                }
+                i.putExtra("accountId", user.getAccountId());
+                i.putExtra("taskId", taskId);
+                context.sendBroadcast(i);
+            }
+        }.execute();
+    }
+
+    public void executions(final int taskId, final User user, final String pair, final int maxCount) {
+        @SuppressLint("StaticFieldLeak")
+        AsyncTask task = new AsyncTask<Void, Void, InlineResponse20010>() {
+            @Override
+            protected InlineResponse20010 doInBackground(Void... voids) {
+//                mainActivity.showProgressDialog("Načítavám dáta");
+                createTradingApi();
+                pendingTask.add(taskId);
+                InlineResponse20010 inlineResponse20010 = null;
+                try {
+                    inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(),pair,BigDecimal.valueOf(maxCount));
+                } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+                    //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
+                    e.printStackTrace();
+                    Intent i = new Intent("account_executions");
+                    i.putExtra("error", "execution");
+                    i.putExtra("accountId", user.getAccountId());
+                    i.putExtra("pair", pair);
+                    i.putExtra("taskId", taskId);
+                    context.sendBroadcast(i);
+                }
+                return inlineResponse20010;
+            }
+
+            @Override
+            protected void onPostExecute(InlineResponse20010 inlineResponse20010) {
+                Intent i = new Intent("account_executions");
+                if (inlineResponse20010 != null) {
+                    if (inlineResponse20010.getS().equals("ok")) {
+                        addToExecutions(pair,inlineResponse20010.getD());
+                    }else {
+                        i.putExtra("error", "return " + inlineResponse20010.getErrmsg());
+                    }
+                }
+                else {
+                    i.putExtra("error", "execution");
+                }
+                i.putExtra("accountId", user.getAccountId());
+                i.putExtra("taskId", taskId);
+                i.putExtra("pair", pair);
+                context.sendBroadcast(i);
+            }
+        }.execute();
+    }
 
 
     //0

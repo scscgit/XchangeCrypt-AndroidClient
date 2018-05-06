@@ -59,6 +59,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.BrowserTabActivity;
 import com.microsoft.identity.client.ILoggerCallback;
 import com.microsoft.identity.client.MsalClientException;
 import com.microsoft.identity.client.MsalException;
@@ -91,6 +92,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
+import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.FragmentSwitcherInterface;
@@ -106,11 +108,14 @@ import cloud.coders.sk.xchangecrypt.utils.Logger;
 import cloud.coders.sk.xchangecrypt.utils.Utility;
 import cloud.coders.sk.R;
 import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
+import io.swagger.client.model.Account;
+import io.swagger.client.model.AccountWalletResponse;
 import io.swagger.client.model.DepthItem;
+import io.swagger.client.model.Execution;
 import io.swagger.client.model.InlineResponse200;
 import io.swagger.client.model.InlineResponse20013;
 import io.swagger.client.model.InlineResponse2004;
-
+import io.swagger.client.model.Instrument;
 
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants, GoogleApiClient.OnConnectionFailedListener {
@@ -126,6 +131,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private BroadcastReceiver sendOfferReceiver;
     private BroadcastReceiver removeOfferReceiver;
     private BroadcastReceiver authorizationReceiver;
+    private BroadcastReceiver accountBalanceReceiver;
+    private BroadcastReceiver instrumentsReceiver;
+    private BroadcastReceiver executionsReceiver;
 
     private Context context;
 
@@ -136,6 +144,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private TradingApiHelper tradingApiHelper;
+
 
 
     private GoogleApiClient googleApiClient;
@@ -227,11 +236,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         /* Initializes the app context using MSAL */
 
         /* Initialize the MSAL App context */
+        String authority = String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY);
         if (sampleApp == null) {
             sampleApp = new PublicClientApplication(
-                    this.getApplicationContext(),
+                    this,
                     Constants.CLIENT_ID,
-                    String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY));
+                    authority);
             getContentProvider().setPublicClientApplication(sampleApp);
 
             com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
@@ -273,6 +283,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
                         false,
                         getAuthSilentCallback());
+
             } else {
                 /* We have no user */
                 sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
@@ -819,15 +830,17 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
+                            getContentProvider().setLastUpdate(UpdateType.userOrders, new Date());
                         } else {
                             Toast.makeText(context, "Chyba pri ziskavaní dát.", Toast.LENGTH_SHORT).show();
                         }
+                    }
                         tradingApiHelper.deleteFromPendingTask(taskID);
                         if (tradingApiHelper.noPendingTask()) {
                             hideProgressDialog();
                             switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                         }
-                    }
+
 
                 }
             };
@@ -843,67 +856,68 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
                         HashMap<Double, Double> priceAndVolumes = new HashMap<>();
-                    List<Order> orders= new ArrayList<>();
-                    if (tradingApiHelper.getDepthData(pair).getD() != null) {
-                        List<DepthItem> asks = tradingApiHelper.getDepthData(pair).getD().getAsks();
-                        if (asks != null) {
-                            for (DepthItem offer : asks) {
-                                if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                    if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
-                                        priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
-                                    } else {
-                                        priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
+                        List<Order> orders = new ArrayList<>();
+                        if (tradingApiHelper.getDepthData(pair).getD() != null) {
+                            List<DepthItem> asks = tradingApiHelper.getDepthData(pair).getD().getAsks();
+                            if (asks != null) {
+                                for (DepthItem offer : asks) {
+                                    if (offer != null && offer.get(0) != null && offer.get(1) != null) {
+                                        if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
+                                            priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
+                                        } else {
+                                            priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
+                                        }
                                     }
-                                }
 
-                            }
-                            for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
-                                orders.add(new Order(
-                                        entry.getKey(),
-                                        entry.getKey(),
-                                        pair.split("_")[0],
-                                        entry.getValue(),
-                                        pair.split("_")[1],
-                                        entry.getKey() * entry.getValue(),
-                                        OrderSide.buy,
-                                        OrderType.unknown
-                                ));
-                            }
-                        }
-                        List<DepthItem> bids = tradingApiHelper.getDepthData(pair).getD().getBids();
-                        if (bids != null) {
-                            priceAndVolumes = new HashMap<>();
-                            for (DepthItem offer : tradingApiHelper.getDepthData(pair).getD().getBids()) {
-                                if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                    if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
-                                        priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
-                                    } else {
-                                        priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
-                                    }
+                                }
+                                for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
+                                    orders.add(new Order(
+                                            entry.getKey(),
+                                            entry.getKey(),
+                                            pair.split("_")[0],
+                                            entry.getValue(),
+                                            pair.split("_")[1],
+                                            entry.getKey() * entry.getValue(),
+                                            OrderSide.buy,
+                                            OrderType.unknown
+                                    ));
                                 }
                             }
-                            for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
-                                orders.add(new Order(
-                                        entry.getKey(),
-                                        entry.getKey(),
-                                        pair.split("_")[0],
-                                        entry.getValue(),
-                                        pair.split("_")[1],
-                                        entry.getKey() * entry.getValue(),
-                                        OrderSide.sell,
-                                        OrderType.unknown
-                                ));
+                            List<DepthItem> bids = tradingApiHelper.getDepthData(pair).getD().getBids();
+                            if (bids != null) {
+                                priceAndVolumes = new HashMap<>();
+                                for (DepthItem offer : tradingApiHelper.getDepthData(pair).getD().getBids()) {
+                                    if (offer != null && offer.get(0) != null && offer.get(1) != null) {
+                                        if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
+                                            priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
+                                        } else {
+                                            priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
+                                        }
+                                    }
+                                }
+                                for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
+                                    orders.add(new Order(
+                                            entry.getKey(),
+                                            entry.getKey(),
+                                            pair.split("_")[0],
+                                            entry.getValue(),
+                                            pair.split("_")[1],
+                                            entry.getKey() * entry.getValue(),
+                                            OrderSide.sell,
+                                            OrderType.unknown
+                                    ));
+                                }
                             }
                         }
-                    }
-                    getContentProvider().addToOrders(pair, orders);
+                        getContentProvider().addToOrders(pair, orders);
+                        getContentProvider().setLastUpdate(UpdateType.marketOrders, new Date());
                     } else {
                         Toast.makeText(context, "Chyba pri čítaní ponúk.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
                     if (tradingApiHelper.noPendingTask()) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                     }
 
                 }
@@ -918,30 +932,31 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     int taskID = intent.getExtras().getInt("taskId");
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
-                    InlineResponse2004 response = tradingApiHelper.getHistoryAccountOrders(getContentProvider().getUser().getAccountId());
-                    List<MyTransaction> transactions = new ArrayList<>();
+                        InlineResponse2004 response = tradingApiHelper.getHistoryAccountOrders(getContentProvider().getUser().getAccountId());
+                        List<MyTransaction> transactions = new ArrayList<>();
 
-                    for (io.swagger.client.model.Order order : response.getD()) {
-                        double price = 0;
-                        switch(order.getType()){
-                            case limit:
-                                price = order.getLimitPrice().doubleValue();
-                                break;
-                            case stop:
-                                price  = order.getStopPrice().doubleValue();
-                                break;
-                            case stoplimit:
-                                price = order.getStopPrice().doubleValue();
+                        for (io.swagger.client.model.Order order : response.getD()) {
+                            double price = 0;
+                            switch (order.getType()) {
+                                case limit:
+                                    price = order.getLimitPrice().doubleValue();
+                                    break;
+                                case stop:
+                                    price = order.getStopPrice().doubleValue();
+                                    break;
+                                case stoplimit:
+                                    price = order.getStopPrice().doubleValue();
+                            }
+                            transactions.add(new MyTransaction(
+                                    OrderSide.valueOf(order.getSide().toString()),
+                                    order.getInstrument().split("_")[0],
+                                    order.getInstrument().split("_")[1],
+                                    price,
+                                    order.getQty().doubleValue()
+                            ));
                         }
-                        transactions.add(new MyTransaction(
-                                OrderSide.valueOf(order.getSide().toString()),
-                                order.getInstrument().split("_")[0],
-                                order.getInstrument().split("_")[1],
-                                price,
-                                order.getQty().doubleValue()
-                        ));
-                    }
-                    getContentProvider().setAccountTransactionHistory(transactions);
+                        getContentProvider().setAccountTransactionHistory(transactions);
+                        getContentProvider().setLastUpdate(UpdateType.history, new Date());
                     } else {
                         Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
                     }
@@ -980,8 +995,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     int taskID = intent.getExtras().getInt("taskId");
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
-                    String orderId = intent.getExtras().getString("orderId");
-                    getContentProvider().removeOrderById(orderId);
+                        String orderId = intent.getExtras().getString("orderId");
+                        getContentProvider().removeOrderById(orderId);
                     } else {
                         Toast.makeText(context, "Chyba pri zmazaní ponuky.", Toast.LENGTH_SHORT).show();
                     }
@@ -1012,6 +1027,103 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
         registerReceiver(authorizationReceiver, new IntentFilter("auth_update"));
 
+        if (accountBalanceReceiver == null) {
+            accountBalanceReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    int taskID = intent.getExtras().getInt("taskId");
+                    String error = intent.getExtras().getString("error");
+                    if (error == null) {
+                        List<AccountWalletResponse> accountWalletResponses = tradingApiHelper.getAccountWalletResponses();
+                        System.out.print(accountWalletResponses.toString());
+                        List<Coin> coins = new ArrayList<>();
+                        for (AccountWalletResponse accountWalletResponse: accountWalletResponses) {
+                            coins.add(new Coin(
+                                    accountWalletResponse.getCoinSymbol(),
+                                    accountWalletResponse.getBalance().doubleValue()
+                            ));
+                        }
+
+                        getContentProvider().setCoinsBalance(coins);
+                        getContentProvider().setLastUpdate(UpdateType.balance, new Date());
+                    } else {
+                        Toast.makeText(context, "Chyba pri čítani zostatkov.", Toast.LENGTH_SHORT).show();
+                    }
+                    tradingApiHelper.deleteFromPendingTask(taskID);
+                    if (tradingApiHelper.noPendingTask()) {
+                        hideProgressDialog();
+                        switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                    }
+                }
+            };
+        }
+        registerReceiver(accountBalanceReceiver, new IntentFilter("account_wallet_update"));
+
+        if (executionsReceiver == null) {
+            executionsReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    int taskID = intent.getExtras().getInt("taskId");
+                    String pair = intent.getExtras().getString("pair");
+                    String error = intent.getExtras().getString("error");
+                    if (error == null) {
+                        List<Execution> executions = tradingApiHelper.getExecution(pair);
+                        List<MyTransaction> transactions = new ArrayList<>();
+                        if (executions != null) {
+                            for (Execution execution : executions) {
+                                transactions.add(new MyTransaction(
+                                        OrderSide.valueOf(execution.getSide().toString()),
+                                        execution.getInstrument().split("_")[0],
+                                        execution.getInstrument().split("_")[1],
+                                        execution.getPrice().doubleValue(),
+                                        execution.getQty().doubleValue()
+                                ));
+                            }
+                        }
+                        getContentProvider().setAccountTransactionHistory(pair, transactions);
+                        getContentProvider().setLastUpdate(UpdateType.history, new Date());
+                    } else {
+                        Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
+                    }
+                    tradingApiHelper.deleteFromPendingTask(taskID);
+                    if (tradingApiHelper.noPendingTask()) {
+                        hideProgressDialog();
+                        switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                    }
+                }
+            };
+        }
+        registerReceiver(executionsReceiver, new IntentFilter("account_executions"));
+
+        if (instrumentsReceiver == null) {
+            instrumentsReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    int taskID = intent.getExtras().getInt("taskId");
+                    String error = intent.getExtras().getString("error");
+                    if (error == null) {
+                        List<Instrument> instruments = tradingApiHelper.getInstruments();
+                        List<String> pairs = new ArrayList<>();
+                        if (instruments != null) {
+                            for (Instrument instrument : instruments) {
+                                pairs.add(instrument.getName());
+                            }
+                        }
+                        getContentProvider().setInstruments(pairs);
+                        getContentProvider().setLastUpdate(UpdateType.instruments, new Date());
+                    } else {
+                        Toast.makeText(context, "Chyba pri ziskavaní menových dvojíc.", Toast.LENGTH_SHORT).show();
+                    }
+                    tradingApiHelper.deleteFromPendingTask(taskID);
+                    if (tradingApiHelper.noPendingTask()) {
+                        hideProgressDialog();
+                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                    }
+                }
+            };
+        }
+        registerReceiver(instrumentsReceiver, new IntentFilter("account_instruments"));
+
     }
 
     @Override
@@ -1036,6 +1148,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         unregisterReceiver(accountHistoryOfferReceiver);
         unregisterReceiver(depthDataReceiver);
         unregisterReceiver(accountOfferDataReceiver);
+        unregisterReceiver(accountBalanceReceiver);
+        unregisterReceiver(executionsReceiver);
+        unregisterReceiver(instrumentsReceiver);
     }
 
     @Override
@@ -1056,13 +1171,39 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     public void getDataBeforeSwitch(int fragmentID, Bundle args){
         switch (fragmentID) {
             case FRAGMENT_EXCHANGE:
+                Date lastInstrumentUpdate = getContentProvider().getLastUpdate(UpdateType.instruments);
+                Date lastMarketUpdate = getContentProvider().getLastUpdate(UpdateType.marketOrders);
+                Date lastUserUpdate = getContentProvider().getLastUpdate(UpdateType.userOrders);
+                Date actualDate1 = new Date();
+                if (lastInstrumentUpdate != null && lastMarketUpdate != null && lastUserUpdate != null){
+                    if (lastInstrumentUpdate.getTime() - actualDate1.getTime() < 30000 &&
+                        lastMarketUpdate.getTime() - actualDate1.getTime() < 30000 &&
+                        lastUserUpdate.getTime() - actualDate1.getTime() < 30000
+                        )
+                    {
+                        switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+                        return;
+                    }
+                }
                 showProgressDialog("Načítavám dáta");
                 tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++,getContentProvider().getActualCurrencyPair().toString());
                 //tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                 break;
             case FRAGMENT_WALLET:
+                Date lastHistoryUpdate = getContentProvider().getLastUpdate(UpdateType.history);
+                Date lastBalanceUpdate = getContentProvider().getLastUpdate(UpdateType.balance);
+                Date actualDate = new Date();
+                if (lastHistoryUpdate != null && lastBalanceUpdate != null){
+                    if (lastHistoryUpdate.getTime() - actualDate.getTime() < 30000 && lastBalanceUpdate.getTime() - actualDate.getTime() < 30000)
+                    {
+                        switchToFragmentAndClear(FRAGMENT_WALLET,null);
+                        return;
+                    }
+                }
                 //tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
-                switchToFragmentAndClear(FRAGMENT_WALLET,null);
+                tradingApiHelper.accountBalance(asyncTaskId++);
+                showProgressDialog("Načítavám dáta");
+                //switchToFragmentAndClear(FRAGMENT_WALLET,null);
                 break;
         }
     }
@@ -1093,7 +1234,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     public void deleteOrder(Order order){
-        // TODO: choice to modify or delete?
         showProgressDialog("Vymázavanie ponuky");
         tradingApiHelper.deleteTradingOffer(asyncTaskId++,order,getContentProvider().getUser());
     }

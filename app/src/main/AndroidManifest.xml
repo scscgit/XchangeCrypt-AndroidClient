@@ -33,10 +33,6 @@
         </intent-filter>
     </activity>
 
-        <activity
-            android:name="cloud.coders.sk.xchangecrypt.ui.AuthenticatedActivity"
-            android:label="@string/title_activity_authenticated"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <!--Intent filter to capture System Browser calling back to our app after Sign In-->
         <activity
@@ -47,7 +43,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!--Add in your scheme/host from registered redirect URI-->
-                <data android:scheme="msal90c0fe63-bcf2-44d5-8fb7-b8bbc0b29dc6"
+                <data android:scheme="msalaeb4f22f-00af-4b54-bf7b-5652684a2f03"
                     android:host="auth" />
             </intent-filter>
         </activity>
