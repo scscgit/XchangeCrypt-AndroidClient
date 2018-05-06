@@ -357,10 +357,8 @@ public class ExchangeFragment extends BaseFragment {
                     this.alreadyChanged = true;
                     // Unlocks the price for edit until a user restarts the Fragment
                     priceEdit.setTextColor(feeEdit.getCurrentTextColor());
-                    buttonMarketOrder.setEnabled(false);
                     stopCheckbox.setEnabled(true);
                     profitCheckbox.setEnabled(true);
-                    buttonMarketOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_gray));
                     buttonLimitOrder.setEnabled(true);
                     buttonLimitOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     buttonStopOrder.setEnabled(true);

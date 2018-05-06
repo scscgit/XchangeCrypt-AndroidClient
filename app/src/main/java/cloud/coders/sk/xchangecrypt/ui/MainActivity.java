@@ -66,10 +66,6 @@ import com.microsoft.identity.client.MsalException;
 import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 
 
 import org.json.JSONException;
@@ -150,12 +146,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private GoogleApiClient googleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInAccount googleAccount;
-    private MobileServiceClient mobileServiceClient;
-  //  private Scope[] scopes;
-    private MobileServiceUser mobileServiceUser;
-
-
-    private MobileServiceClient mClient;
 
 
     /* Azure AD variables */
