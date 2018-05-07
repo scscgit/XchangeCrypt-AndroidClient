@@ -35,7 +35,7 @@ public interface Constants {
     final static String AUTHORITY = "https://login.microsoftonline.com/tfp/%s/%s";
     final static String TENANT = "XchangeCryptTest.onmicrosoft.com";
     final static String CLIENT_ID = "aeb4f22f-00af-4b54-bf7b-5652684a2f03";
-    final static String SCOPES = "https://XchangeCryptTest.onmicrosoft.com/testapi/user_impersonation";
+    final static String SCOPES = "openid https://XchangeCryptTest.onmicrosoft.com/testapi/user_impersonation";
     final static String API_URL = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api";
 
     final static String SISU_POLICY = "b2c_1_signupsignin";
