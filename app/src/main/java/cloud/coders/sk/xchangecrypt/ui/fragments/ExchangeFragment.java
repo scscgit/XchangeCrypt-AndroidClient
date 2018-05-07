@@ -39,6 +39,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
+import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -227,9 +228,17 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (myOrders) {
-                    // Header causes a need to offset all rows by negative one
-                    int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
-                    ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position + offset));
+
+                    final int position1 = position;
+                    DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
+                        @Override
+                        public void onPositiveButtonClicked(Context context) {
+                            // Header causes a need to offset all rows by negative one
+                            int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
+                            ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position1 + offset));
+                        }
+                    };
+
                 }
             }
         });
