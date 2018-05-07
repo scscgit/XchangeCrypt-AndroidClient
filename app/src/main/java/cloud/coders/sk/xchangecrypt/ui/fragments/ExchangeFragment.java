@@ -238,6 +238,7 @@ public class ExchangeFragment extends BaseFragment {
                             ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position1 + offset));
                         }
                     };
+                    ((MainActivity) getActivity()).showDialogWithAction(R.string.delete, dialogOkClickListener, true);
 
                 }
             }
