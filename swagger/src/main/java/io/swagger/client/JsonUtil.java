@@ -51,6 +51,7 @@ public class JsonUtil {
   }
 
   public static <T> T deserializeToObject(String jsonString, Class cls){
+    System.out.print(jsonString);
     return getGson().fromJson(jsonString, getTypeForDeserialization(cls));
   }
 

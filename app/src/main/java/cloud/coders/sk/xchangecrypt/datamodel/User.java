@@ -19,7 +19,7 @@ public class User extends BaseObject {
         AccountId = accountId;
     }
 
-    private String name = "a b";
+    private String name = "Peter Čerešník";
 
     public String getName() {
         return name;

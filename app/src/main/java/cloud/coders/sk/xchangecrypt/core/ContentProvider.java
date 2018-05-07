@@ -8,12 +8,10 @@ import com.microsoft.identity.client.PublicClientApplication;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
-import cloud.coders.sk.xchangecrypt.datamodel.CurrencyPair;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
@@ -39,7 +37,7 @@ public class ContentProvider {
     private HashMap<String, List<Order>> marketOrders;
     private List<Order> accountOrders;
 
-    private CurrencyPair actualCurrencyPair;
+    private String actualCurrencyPair;
     private OrderSide currentOrderSide;
 
 
@@ -76,14 +74,16 @@ public class ContentProvider {
 
     private User user;
 
-    private HashMap<String, Double> marketPrices;
+    private HashMap<String, Double> marketPricesBuy;
+    private HashMap<String, Double> marketPricesSell;
 
     private ContentProvider(Context context) {
         ContentProvider.context = context;
         accountTransactionHistory = new ArrayList<>();
         coinsBalance = new ArrayList<>();
         marketOrders = new HashMap<>();
-        marketPrices = new HashMap<>();
+        marketPricesBuy = new HashMap<>();
+        marketPricesSell = new HashMap<>();
         lastUpdates = new HashMap<>();
         transactionHistoryMap = new HashMap<>();
         instruments = new ArrayList<>();
@@ -247,11 +247,11 @@ public class ContentProvider {
         loadContentFromCache();
     }
 
-    public CurrencyPair getActualCurrencyPair() {
+    public String getActualCurrencyPair() {
         return actualCurrencyPair;
     }
 
-    public void setActualCurrencyPair(CurrencyPair actualCurrencyPair) {
+    public void setActualCurrencyPair(String actualCurrencyPair) {
         this.actualCurrencyPair = actualCurrencyPair;
     }
 
@@ -263,12 +263,20 @@ public class ContentProvider {
         this.currentOrderSide = currentOrderSide;
     }
 
-    public void addMarketPrice(String pair, double price){
-        marketPrices.put(pair,price);
+    public void addMarketPrice(String pair, double price, OrderSide side){
+        if (side == OrderSide.buy) {
+            marketPricesBuy.put(pair, price);
+        }else{
+            marketPricesSell.put(pair,price);
+        }
     }
 
-    public double getMarketPricePerPair(String pair){
-        return marketPrices.get(pair);
+    public double getMarketPricePerPair(String pair, OrderSide side){
+        if (side == OrderSide.buy) {
+            return marketPricesBuy.get(pair);
+        }else{
+            return marketPricesSell.get(pair);
+        }
     }
 
     private  HashMap<String, List<MyTransaction>> transactionHistoryMap;
@@ -280,7 +288,11 @@ public class ContentProvider {
 
     public List<String> getInstruments() {
         if (instruments == null){
-            return new ArrayList<>();
+            List<String> instruments = new ArrayList<>();
+            instruments.add("QBC_BTC");
+            instruments.add("BTC_QBC");
+            instruments.add("LTC_BTC");
+            return instruments;
         }
         return instruments;
     }
@@ -288,4 +300,6 @@ public class ContentProvider {
     public void setInstruments(List<String> instruments) {
         this.instruments = instruments;
     }
+
+
 }

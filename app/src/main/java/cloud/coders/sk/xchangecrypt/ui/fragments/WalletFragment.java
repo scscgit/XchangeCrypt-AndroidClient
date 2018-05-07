@@ -13,13 +13,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.List;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.WalletListViewAdapter;
 import cloud.coders.sk.xchangecrypt.adapters.WalletRecyclerViewAdapter;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
+import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
+import cloud.coders.sk.xchangecrypt.utils.DateFormatter;
 
 /**
  * Created by Peter on 21.04.2018.
@@ -38,6 +41,7 @@ public class WalletFragment extends BaseFragment {
     private ListView balanceListView;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
+    private TextView datetextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class WalletFragment extends BaseFragment {
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_wallet);
         balanceListView = (ListView) rootView.findViewById(R.id.listwiew_wallet);
+        datetextView = (TextView) rootView.findViewById(R.id.date_text_wallet);
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 
@@ -77,6 +82,10 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViewContents() {
+            Date date = getContentProvider().getLastUpdate(UpdateType.history);
+            if (date != null) {
+                datetextView.setText("Aktualizované " + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
+            }
         List<Coin> coinList = getContentProvider().getCoinsBalance();
         balanceListView.setAdapter(new WalletListViewAdapter(getContext(), coinList));
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -90,9 +99,10 @@ public class WalletFragment extends BaseFragment {
         });
 
 
+        final float inPixelsDate= getResources().getDimension(R.dimen.date_item);
         final float inPixels= getResources().getDimension(R.dimen.list_item);
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)appBarLayout.getLayoutParams();
-        lp.height = (int)(inPixels*coinList.size());
+        lp.height = (int)((inPixelsDate)+(inPixels*coinList.size()));
 
         recyclerView.setNestedScrollingEnabled(false);
 

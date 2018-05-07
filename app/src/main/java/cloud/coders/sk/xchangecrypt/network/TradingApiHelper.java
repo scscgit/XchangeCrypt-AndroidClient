@@ -59,6 +59,7 @@ public class TradingApiHelper {
         this.depthData = new HashMap<>();
         this.pendingTask = new CopyOnWriteArrayList<>();
         this.accountApi = new AccountApi();
+        this.historyAccountOrders = new HashMap<>();
     }
 
     public void createTradingApi(){
@@ -83,7 +84,7 @@ public class TradingApiHelper {
     private HashMap<String, InlineResponse2004> historyAccountOrders;
 
     public InlineResponse2004 getHistoryAccountOrders(String accountId) {
-        return accountOrders.get(accountId);
+        return historyAccountOrders.get(accountId);
     }
 
     private HashMap<String, InlineResponse20013> depthData;

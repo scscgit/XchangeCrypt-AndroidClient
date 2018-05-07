@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.common.base.Strings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +35,6 @@ import java.util.List;
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.ExchangeOrderListViewAdapter;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
-import cloud.coders.sk.xchangecrypt.datamodel.CurrencyPair;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
@@ -214,6 +215,7 @@ public class ExchangeFragment extends BaseFragment {
             e.printStackTrace();
             Toast.makeText(getContext(), "Header crased", Toast.LENGTH_SHORT).show();
         }
+        updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair(),true);
         //setListViewHeightBasedOnChildren(listViewOrders);
         //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
 
@@ -270,9 +272,9 @@ public class ExchangeFragment extends BaseFragment {
         coinPairLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<CurrencyPair> list1 = Arrays.asList(CurrencyPair.values());
+                final List<String> list1 = getContentProvider().getInstruments();
                 final List<String> list2 = new ArrayList<>();
-                for (CurrencyPair pair:list1) {
+                for (String pair:list1) {
                     list2.add(pair.toString().replace("_","/"));
                 }
 
@@ -281,7 +283,7 @@ public class ExchangeFragment extends BaseFragment {
                 builder.setTitle("Vyberte menový pár")
                         .setItems(cs, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                updateAfterCurrencyPairChange(list2.get(which).replace("/","_"));
+                                updateAfterCurrencyPairChange(list2.get(which).replace("/","_"),false);
                             }
                         });
                 Dialog dialog = builder.create();
@@ -315,7 +317,7 @@ public class ExchangeFragment extends BaseFragment {
                 showUserOrders();
             }
         });
-        updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair().toString());
+        //updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair().toString());
 
         imageUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,8 +438,8 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
-                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
-                    String[] pair = cp.toString().split("_");
+                    String pairs = getContentProvider().getActualCurrencyPair();
+                    String[] pair = pairs.toString().split("_");
                     double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
                     double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
                     Order order = new Order(null,null,
@@ -461,8 +463,8 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
-                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
-                    String[] pair = cp.toString().split("_");
+                    String pairs = getContentProvider().getActualCurrencyPair();
+                    String[] pair = pairs.toString().split("_");
                     double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
                     double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
 
@@ -512,8 +514,8 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0){
-                    CurrencyPair cp = getContentProvider().getActualCurrencyPair();
-                    String[] pair = cp.toString().split("_");
+                    String pairs = getContentProvider().getActualCurrencyPair();
+                    String[] pair = pairs.toString().split("_");
                     double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
                     double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
 
@@ -556,7 +558,7 @@ public class ExchangeFragment extends BaseFragment {
                 }
             }
         });
-
+        switchToBuyMode();
 
     }
 
@@ -574,6 +576,7 @@ public class ExchangeFragment extends BaseFragment {
         }else {
             showMarketOrders();
         }
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair(),getContentProvider().getCurrentOrderSide())));
     }
 
     public void switchToSellMode(){
@@ -588,6 +591,7 @@ public class ExchangeFragment extends BaseFragment {
         }else {
             showMarketOrders();
         }
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair(),getContentProvider().getCurrentOrderSide())));
     }
 
     private List<Order> currentUserOrders = null;
@@ -631,16 +635,21 @@ public class ExchangeFragment extends BaseFragment {
         }
     }
 
-    private void updateAfterCurrencyPairChange(String pair){
+    private void updateAfterCurrencyPairChange(String pair, boolean hasData){
+        if (!hasData) {
+            getContentProvider().setActualCurrencyPair(pair);
+            ((MainActivity) getActivity()).getDataBeforeSwitch(FRAGMENT_EXCHANGE, null,true);
+            return;
+        }
         //((MainActivity)getActivity()).getTradingApiHelper().tradingOffersForCurrencyPair(MainActivity.asyncTaskId++,pair);
         //((MainActivity)getActivity()).showProgressDialog("Načítavám dáta");
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(pair)));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(pair,orderSide)));
         String[] pairParts = pair.split("_");
         firstCurrencyText.setText(pairParts[0]);
         secondCurrencyText.setText(pairParts[1]);
         setLogo(pairParts[0],firstCurrencyLogo);
         setLogo(pairParts[1],secondCurrencyLogo);
-        getContentProvider().setActualCurrencyPair(CurrencyPair.valueOf(pair));
+        getContentProvider().setActualCurrencyPair(pair);
 
         amountCoin.setText(pairParts[0]);
         priceCoin.setText(pairParts[1]);

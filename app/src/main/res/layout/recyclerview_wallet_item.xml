@@ -118,7 +118,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/item_text_size"
-                        android:text="Množtvo"/>
+                        android:text="Množstvo"/>
 
                     <!-- Amount text -->
                     <TextView

@@ -38,11 +38,11 @@ public class SplashFragment extends BaseFragment {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!isOnline(getContext())) {
-                    System.exit(1);
-                } else {
+//                if (!isOnline(getContext())) {
+//                    System.exit(1);
+//                } else {
                         switchToFragmentAndClear(FRAGMENT_LOGIN, null);
-                    }
+//                    }
                 }
         }, 2000);
         return rootView;
