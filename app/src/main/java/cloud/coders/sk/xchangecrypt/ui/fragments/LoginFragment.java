@@ -51,6 +51,7 @@ public class LoginFragment extends BaseFragment{
 
     @Override
     protected void setActionBar() {
+        setToolbarTitle("");
         googleSignButton = (ImageView) rootView.findViewById(R.id.button_google_sign);
 //        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
 //        registerButton =(Button) rootView.findViewById(R.id.button_register);

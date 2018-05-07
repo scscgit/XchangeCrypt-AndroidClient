@@ -1,5 +1,7 @@
 package cloud.coders.sk.xchangecrypt.datamodel;
 
+import java.util.UUID;
+
 /**
  * Created by Peter on 23.04.2018.
  */
@@ -27,6 +29,7 @@ public class Order extends BaseObject {
         this.quoteCurrencyAmount = quoteCurrencyAmount;
         this.side = side;
         this.type = type;
+        this. orderId = UUID.randomUUID().toString();
     }
 
     public Order(Double limitPrice,Double  stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
@@ -40,6 +43,7 @@ public class Order extends BaseObject {
         this.type = type;
         this.stopLoss = stopLoss;
         this.takeProfit = takeProfit;
+        this. orderId = UUID.randomUUID().toString();
     }
 
 
@@ -141,6 +145,9 @@ public class Order extends BaseObject {
     }
 
     public String getOrderId() {
+        if (orderId == null){
+            return "0";
+        }
         return orderId;
     }
 

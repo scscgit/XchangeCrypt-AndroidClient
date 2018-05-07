@@ -71,7 +71,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="4"
                     android:orientation="horizontal"
-                    android:weightSum="5"
+                    android:weightSum="7"
                     android:gravity="center_vertical|left"
                     android:layout_marginTop="@dimen/margin_home_gridview"
                     android:layout_marginBottom="@dimen/margin_home_gridview"
@@ -81,7 +81,7 @@
                     <TextView
                         android:id="@+id/place_title"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/item_text_size"
                         android:text="Cena"/>
@@ -91,7 +91,7 @@
                     <TextView
                         android:id="@+id/price_text"
                         android:layout_width="0dp"
-                        android:layout_weight="4"
+                        android:layout_weight="5"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/item_text_size"
                         android:text="Price"/>
@@ -104,7 +104,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="3"
                     android:orientation="horizontal"
-                    android:weightSum="5"
+                    android:weightSum="7"
                     android:gravity="center_vertical|left"
                     android:layout_marginTop="@dimen/margin_home_gridview"
                     android:layout_marginBottom="@dimen/margin_home_gridview"
@@ -115,7 +115,7 @@
                     <TextView
                         android:id="@+id/amount_title"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/item_text_size"
                         android:text="Množstvo"/>
@@ -124,7 +124,7 @@
                     <TextView
                         android:id="@+id/amount_text"
                         android:layout_width="0dp"
-                        android:layout_weight="4"
+                        android:layout_weight="5"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/item_text_size"
                         android:text="Amount"/>

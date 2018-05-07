@@ -21,7 +21,7 @@
 
 
 
-
+    <string name="delete">Naozaj chcete odstrániť položku?</string>
     <string name="welcome">Welcome to Wingtip Toys</string>
     <string name="aadPlug">Identity by Azure AD B2C</string>
     <string name="callAPIText">Call API</string>

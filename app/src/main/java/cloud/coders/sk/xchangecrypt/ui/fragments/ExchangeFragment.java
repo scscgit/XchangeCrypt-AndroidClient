@@ -2,6 +2,7 @@ package cloud.coders.sk.xchangecrypt.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
+import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
@@ -232,7 +234,14 @@ public class ExchangeFragment extends BaseFragment {
                         ).show();
                         return;
                     }
-                    ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position - 1));
+                    final int position1 = position;
+                    DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
+                        @Override
+                        public void onPositiveButtonClicked(Context context) {
+                            ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position1 - 1));
+                        }
+                    };
+                    ((MainActivity) getActivity()).showDialogWithAction(R.string.delete, dialogOkClickListener, true);
                 }
             }
         });
