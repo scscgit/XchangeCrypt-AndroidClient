@@ -90,6 +90,8 @@ public class ApiInvoker {
 
   public static void setUserAgent(String userAgent) {
     INSTANCE.addDefaultHeader("User-Agent", userAgent);
+    // TODO: add to POST mappings
+    INSTANCE.addDefaultHeader("Content-Type", "application/x-www-form-urlencoded");
   }
 
   public static Date parseDateTime(String str) {
