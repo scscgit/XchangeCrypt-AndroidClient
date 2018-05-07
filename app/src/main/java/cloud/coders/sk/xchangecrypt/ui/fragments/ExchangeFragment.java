@@ -2,6 +2,7 @@ package cloud.coders.sk.xchangecrypt.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
+
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 /**
  * Created by V3502505 on 20/09/2016.
@@ -103,6 +106,8 @@ public class ExchangeFragment extends BaseFragment {
     private RecyclerView recyclerView;
 
     private AppBarLayout appBarLayout;
+    private boolean headerAlreadyCrashed;
+
     public static ExchangeFragment newInstance(Bundle args){
         ExchangeFragment fragment = new ExchangeFragment();
         fragment.setArguments(args);
@@ -211,9 +216,8 @@ public class ExchangeFragment extends BaseFragment {
         listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
         try {
             listViewOrders.addHeaderView(header);
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Header crased", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            headerCrashed();
         }
         updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair(),true);
         //setListViewHeightBasedOnChildren(listViewOrders);
@@ -222,21 +226,13 @@ public class ExchangeFragment extends BaseFragment {
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                // TODO: remove toast when it no longer crashes
                 if (myOrders) {
-                    if (currentUserOrders == null) {
-                        Toast.makeText(getContext(),
-                                "Couldn't delete order, current orders not available",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        return;
-                    }
-                    ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position - 1));
+                    // Header causes a need to offset all rows by negative one
+                    int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
+                    ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position + offset));
                 }
             }
         });
-
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -437,24 +433,20 @@ public class ExchangeFragment extends BaseFragment {
         buttonMarketOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
-                    String pairs = getContentProvider().getActualCurrencyPair();
-                    String[] pair = pairs.toString().split("_");
-                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
-                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
-                    Order order = new Order(null,null,
-                        pair[0],
-                        amount,
-                        pair[1],
-                        price*amount,
-                        orderSide,
-                        OrderType.market
-                        );
-                    ((MainActivity)getActivity()).sendOrder(order);
-
-            }
-            else{
-                    Toast.makeText(getContext(),"Musíte zadať množstvo", Toast.LENGTH_SHORT).show();
+                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
+                    confirmationDialog(
+                            getContext(),
+                            "Market ponuka",
+                            "Potvrďte prosím " + (orderSide == OrderSide.buy ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    sendMarketOrder();
+                                }
+                            }
+                    );
+                } else {
+                    Toast.makeText(getContext(), "Musíte zadať množstvo", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -462,104 +454,139 @@ public class ExchangeFragment extends BaseFragment {
         buttonLimitOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString() != null && priceEdit.getText().toString().trim().length() >0){
-                    String pairs = getContentProvider().getActualCurrencyPair();
-                    String[] pair = pairs.toString().split("_");
-                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
-                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
-
-                    Double stopLoss = null;
-                    if (stopCheckbox.isChecked()){
-                        if (stopEditText.getText().toString() != null && stopEditText.getText().toString().trim().length() > 0) {
-                            stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
-                        }else {
-                           Toast.makeText(getContext(),"Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
-                           return;
-                    }
-                    }
-                    Double takeProfit = null;
-                    if (profitCheckbox.isChecked()) {
-                        if (profitEditText.getText().toString() != null && profitEditText.getText().toString().trim().length() > 0) {
-                            takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
-                        } else {
-                            Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
-                    Order order = new Order(
-                            price,
-                            null,
-                            stopLoss,
-                            takeProfit,
-                            pair[0],
-                            Double.parseDouble(amountEdit.getText().toString().replace(",",".")),
-                            pair[1],
-                            price*amount,
-                            orderSide,
-                            OrderType.limit
+                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
+                    confirmationDialog(
+                            getContext(),
+                            "Limit ponuka",
+                            "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.buy ? "nákup" : "predaj"),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    sendLimitOrder();
+                                }
+                            }
                     );
-
-                    ((MainActivity)getActivity()).sendOrder(order);
-
+                } else {
+                    Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
                 }
-                else{
-                    Toast.makeText(getContext(),"Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
-                }
-
             }
         });
 
         buttonStopOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (amountEdit.getText().toString() != null && amountEdit.getText().toString().trim().length() > 0){
-                    String pairs = getContentProvider().getActualCurrencyPair();
-                    String[] pair = pairs.toString().split("_");
-                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",","."));
-                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",","."));
-
-                    Double stopLoss = null;
-                    if (stopCheckbox.isChecked()){
-                        if (stopEditText.getText().toString() != null && stopEditText.getText().toString().trim().length() > 0) {
-                            stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
-                        }else {
-                            Toast.makeText(getContext(),"Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                    Double takeProfit = null;
-                    if (profitCheckbox.isChecked()) {
-                        if (profitEditText.getText().toString() != null && profitEditText.getText().toString().trim().length() > 0) {
-                            takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
-                        } else {
-                            Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
-
-                    Order order = new Order(
-                            null,
-                            price,
-                            stopLoss,
-                            takeProfit,
-                            pair[0],
-                            amount,
-                            pair[1],
-                            price*amount,
-                            orderSide, OrderType.stop
+                if (amountEdit.getText().toString().trim().length() > 0) {
+                    confirmationDialog(
+                            getContext(),
+                            "Stop ponuka",
+                            "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.buy ? "nákup" : "predaj"),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    sendStopOrder();
+                                }
+                            }
                     );
-                    ((MainActivity)getActivity()).sendOrder(order);
-
-                }
-                else{
-                    Toast.makeText(getContext(),"Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        switchToBuyMode();
+    }
 
+    private void sendMarketOrder() {
+        String pairs = getContentProvider().getActualCurrencyPair();
+        String[] pair = pairs.split("_");
+        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+        Order order = new Order(null, null,
+                pair[0],
+                amount,
+                pair[1],
+                price * amount,
+                orderSide,
+                OrderType.market
+        );
+        ((MainActivity) getActivity()).sendOrder(order);
+    }
+
+    private void sendLimitOrder() {
+        String pairs = getContentProvider().getActualCurrencyPair();
+        String[] pair = pairs.split("_");
+        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+
+        Double stopLoss = null;
+        if (stopCheckbox.isChecked()) {
+            if (stopEditText.getText().toString().trim().length() > 0) {
+                stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+            } else {
+                Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Double takeProfit = null;
+        if (profitCheckbox.isChecked()) {
+            if (profitEditText.getText().toString().trim().length() > 0) {
+                takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+            } else {
+                Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        Order order = new Order(
+                price,
+                null,
+                stopLoss,
+                takeProfit,
+                pair[0],
+                Double.parseDouble(amountEdit.getText().toString().replace(",", ".")),
+                pair[1],
+                price * amount,
+                orderSide,
+                OrderType.limit
+        );
+
+        ((MainActivity) getActivity()).sendOrder(order);
+    }
+
+    private void sendStopOrder() {
+        String pairs = getContentProvider().getActualCurrencyPair();
+        String[] pair = pairs.split("_");
+        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+
+        Double stopLoss = null;
+        if (stopCheckbox.isChecked()) {
+            if (stopEditText.getText().toString().trim().length() > 0) {
+                stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+            } else {
+                Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Double takeProfit = null;
+        if (profitCheckbox.isChecked()) {
+            if (profitEditText.getText().toString().trim().length() > 0) {
+                takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+            } else {
+                Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Order order = new Order(
+                null,
+                price,
+                stopLoss,
+                takeProfit,
+                pair[0],
+                amount,
+                pair[1],
+                price * amount,
+                orderSide, OrderType.stop
+        );
+        ((MainActivity) getActivity()).sendOrder(order);
     }
 
     private boolean myOrders = false;
@@ -605,7 +632,11 @@ public class ExchangeFragment extends BaseFragment {
         listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
         listViewOrders.removeHeaderView(lastHeader);
-        listViewOrders.addHeaderView(header);
+        try {
+            listViewOrders.addHeaderView(header);
+        } catch (IllegalStateException e) {
+            headerCrashed();
+        }
         lastHeader = header;
         myOrders = false;
     }
@@ -620,7 +651,11 @@ public class ExchangeFragment extends BaseFragment {
         listViewOrderHeaderBaseCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = (TextView) header.findViewById(R.id.listview_orders_header_coin2);
         listViewOrders.removeHeaderView(lastHeader);
-        listViewOrders.addHeaderView(header);
+        try {
+            listViewOrders.addHeaderView(header);
+        } catch (IllegalStateException e) {
+            headerCrashed();
+        }
         lastHeader = header;
         myOrders = true;
     }
@@ -806,6 +841,27 @@ public class ExchangeFragment extends BaseFragment {
         secondFrameAdvancedLinearLayout.setLayoutParams(param4);
     }
 
+    private void headerCrashed() {
+        if (!this.headerAlreadyCrashed) {
+            this.headerAlreadyCrashed = true;
+            Toast.makeText(getContext(), "Cannot add header, low Android API level", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private void confirmationDialog(final Context context, String title, String message, final Runnable action) {
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (whichButton == BUTTON_POSITIVE) {
+                            action.run();
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
 }
