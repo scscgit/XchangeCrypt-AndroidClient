@@ -209,6 +209,7 @@ public class ExchangeFragment extends BaseFragment {
         feeEdit.setText("0,00000001");
         //priceEdit.setText(getContentProvider());
 
+        // TODO: handle null exception
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketOrders().get(getContentProvider().getActualCurrencyPair().toString()),true));
       //  listViewOrders.setClickable(false);
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);

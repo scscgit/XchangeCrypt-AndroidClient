@@ -25,12 +25,11 @@ import io.swagger.client.model.InlineResponse20010;
 /**
  * Created by Peter on 05.05.2018.
  */
-
 public class AccountApi {
-
-
-
-    String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/accountapi";
+    public static String API_DOMAIN = "http://192.168.0.20/api/v1/";
+    //public static String API_DOMAIN = "https://rest-demo.tradingview.com/tradingview/v1/";
+    //public static String API_DOMAIN = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/";
+    String basePath = AccountApi.API_DOMAIN + "accountapi";
     ApiInvoker apiInvoker;// = ApiInvoker.getInstance();
 
     public void addHeader(String key, String value) {
@@ -52,7 +51,6 @@ public class AccountApi {
     public String getBasePath() {
         return basePath;
     }
-
 
     public List<AccountWalletResponse> walletGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
         Object postBody = null;

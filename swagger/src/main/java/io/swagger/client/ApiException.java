@@ -12,50 +12,77 @@
 
 package io.swagger.client;
 
+import com.android.volley.VolleyError;
+
+import java.io.UnsupportedEncodingException;
+
 public class ApiException extends Exception {
-  int code = 0;
-  String message = null;
+    private int code;
+    private String message;
+    private VolleyError volleyError;
 
-  public ApiException() {}
+    public ApiException() {
+    }
 
-  public ApiException(int code, String message) {
-    this.code = code;
-    this.message = message;
-  }
+    public ApiException(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
-  /**
-   * Get the HTTP status code.
-   *
-   * @return HTTP status code
-   */
-  public int getCode() {
-    return code;
-  }
+    public ApiException(int code, VolleyError volleyError) {
+        this(code, volleyError.getMessage());
+        this.volleyError = volleyError;
+    }
 
-  /**
-   * Set the HTTP status code.
-   *
-   * @param code HTTP status code.
-   */
-  public void setCode(int code) {
-    this.code = code;
-  }
+    /**
+     * Get the HTTP status code.
+     *
+     * @return HTTP status code
+     */
+    public int getCode() {
+        return code;
+    }
 
-  /**
-   * Get the error message.
-   *
-   * @return Error message.
-   */
-  public String getMessage() {
-    return message;
-  }
+    /**
+     * Set the HTTP status code.
+     *
+     * @param code HTTP status code.
+     */
+    public void setCode(int code) {
+        this.code = code;
+    }
 
-  /**
-   * Set the error messages.
-   *
-   * @param message Error message.
-   */
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    /**
+     * Get the error message.
+     *
+     * @return Error message.
+     */
+    public String getMessage() {
+        String networkResponse = getNetworkResponse();
+        if (message == null) {
+            return networkResponse;
+        }
+        return message + (networkResponse == null ? "" : "\n" + networkResponse);
+    }
+
+    /**
+     * Set the error messages.
+     *
+     * @param message Error message.
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getNetworkResponse() {
+        try {
+            if (volleyError == null) {
+                return null;
+            }
+            return new String(volleyError.networkResponse.data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

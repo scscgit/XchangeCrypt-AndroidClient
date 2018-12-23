@@ -55,9 +55,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class TradingPanelBridgeBrokerDataOrdersApi {
- // String basePath = "https://rest-demo.tradingview.com/tradingview/v1/";
-
-  String basePath = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/tradingapi";
+  String basePath = AccountApi.API_DOMAIN + "tradingapi";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public  Authentication getAuthentications(String name) {
@@ -144,7 +142,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -279,7 +277,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -407,7 +405,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -537,7 +535,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -672,7 +670,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -811,7 +809,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -985,7 +983,7 @@ public class TradingPanelBridgeBrokerDataOrdersApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1230,7 +1228,7 @@ formParams.put("digitalSignature", ApiInvoker.parameterToString(digitalSignature
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1434,7 +1432,7 @@ formParams.put("digitalSignature", ApiInvoker.parameterToString(digitalSignature
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1568,7 +1566,7 @@ formParams.put("digitalSignature", ApiInvoker.parameterToString(digitalSignature
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1707,7 +1705,7 @@ formParams.put("digitalSignature", ApiInvoker.parameterToString(digitalSignature
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1856,7 +1854,7 @@ formParams.put("digitalSignature", ApiInvoker.parameterToString(digitalSignature
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2006,7 +2004,7 @@ formParams.put("takeProfit", ApiInvoker.parameterToString(takeProfit));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2134,7 +2132,7 @@ formParams.put("takeProfit", ApiInvoker.parameterToString(takeProfit));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2271,7 +2269,7 @@ formParams.put("takeProfit", ApiInvoker.parameterToString(takeProfit));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2415,7 +2413,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2545,7 +2543,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2698,7 +2696,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2840,7 +2838,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2964,7 +2962,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -3087,7 +3085,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -3204,7 +3202,7 @@ formParams.put("password", ApiInvoker.parameterToString(password));
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError)ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
