@@ -135,7 +135,15 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         tradingApiHelper = new TradingApiHelper(this, this);
 
         // Initial data
-        createDumbData();
+        //createDumbData();
+        // TODO: use actual user reference
+        getContentProvider().setUser(new User("0"));
+        // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
+        getContentProvider().setActualCurrencyPair("QBC_BTC");
+
+        getContentProvider().setCurrentOrderSide(OrderSide.buy);
+        getContentProvider().addMarketPrice("QBC_BTC", 0, OrderSide.buy);
+        getContentProvider().addMarketPrice("QBC_BTC", 0, OrderSide.sell);
 
 //        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestEmail()
