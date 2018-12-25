@@ -22,7 +22,7 @@ import cloud.coders.sk.xchangecrypt.adapters.WalletRecyclerViewAdapter;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
-import cloud.coders.sk.xchangecrypt.utils.DateFormatter;
+import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 
 /**
  * Created by Peter on 21.04.2018.

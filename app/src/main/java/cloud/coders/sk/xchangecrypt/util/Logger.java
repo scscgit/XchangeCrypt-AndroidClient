@@ -1,10 +1,11 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.util.Log;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
+@Deprecated
 public class Logger {
     private static boolean isDebugEnabled = false;
     private static final String TAG = "LocalVocal";

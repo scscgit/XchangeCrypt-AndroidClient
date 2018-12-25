@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import cloud.coders.sk.xchangecrypt.core.Constants;
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
+@Deprecated
 public class InfoDialog extends DialogFragment {
     String mTitle, mMessage, mButtonText;
 

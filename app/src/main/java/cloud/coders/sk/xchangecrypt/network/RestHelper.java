@@ -4,17 +4,20 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-import cloud.coders.sk.xchangecrypt.utils.Utility;
+import cloud.coders.sk.xchangecrypt.util.ConnectionHelper;
 
 /**
+ * Already implemented by ApiInvoker.
  * Created by V3502484 on 16. 9. 2016.
  */
+@Deprecated
 public class RestHelper {
     public static final String TAG = RestHelper.class.getSimpleName();
-    private static RestHelper mInstance = null;
-    private RequestQueue mRequestQueue = null;
+    private static RestHelper mInstance;
+    private RequestQueue mRequestQueue;
     private static Context mContext;
 
     private RestHelper(Context context) {
@@ -40,10 +43,10 @@ public class RestHelper {
 
     public <T> void addToRequestQueue(Request<T> request) {
         request.setTag(TAG);
-        if (Utility.isOnline(mContext))
+        if (ConnectionHelper.isOnline(mContext))
             getRequestQueue().add(request);
         else {
-            request.getErrorListener().onErrorResponse(null);
+            request.getErrorListener().onErrorResponse(new VolleyError("Connection not available"));
         }
     }
 

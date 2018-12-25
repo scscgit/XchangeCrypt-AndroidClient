@@ -1,9 +1,8 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.content.Context;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,8 +32,7 @@ public final class InternalStorage {
         try {
             fis = context.openFileInput(key);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            Object object = ois.readObject();
-            return object;
+            return ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

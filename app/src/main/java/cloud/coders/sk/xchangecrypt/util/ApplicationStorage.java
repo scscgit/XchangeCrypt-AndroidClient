@@ -1,12 +1,10 @@
-package cloud.coders.sk.xchangecrypt.core;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Set;
-
-import cloud.coders.sk.xchangecrypt.utils.Security;
 
 /**
  * Created by V3502484 on 16. 9. 2016.

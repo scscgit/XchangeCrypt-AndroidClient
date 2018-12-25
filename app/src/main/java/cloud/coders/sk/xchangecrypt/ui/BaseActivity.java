@@ -24,13 +24,11 @@ import android.widget.RelativeLayout;
 import java.io.File;
 
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.core.ApplicationStorage;
+import cloud.coders.sk.xchangecrypt.util.ApplicationStorage;
 import cloud.coders.sk.xchangecrypt.core.ContentProvider;
-import cloud.coders.sk.xchangecrypt.core.FragmentsManager;
+import cloud.coders.sk.xchangecrypt.util.FragmentsManager;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
-
-import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected Toolbar toolbar;

@@ -1,64 +1,41 @@
 package cloud.coders.sk.xchangecrypt.ui;
 
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.Task;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.JsonObject;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.BrowserTabActivity;
 import com.microsoft.identity.client.ILoggerCallback;
 import com.microsoft.identity.client.MsalClientException;
 import com.microsoft.identity.client.MsalException;
@@ -69,16 +46,12 @@ import com.microsoft.identity.client.PublicClientApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cloud.coders.sk.xchangecrypt.core.Constants;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
@@ -90,24 +63,20 @@ import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.FragmentSwitcherInterface;
-import cloud.coders.sk.xchangecrypt.network.RestHelper;
 import cloud.coders.sk.xchangecrypt.network.TradingApiHelper;
 import cloud.coders.sk.xchangecrypt.ui.fragments.ExchangeFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.LoginFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SettingFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SplashFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.WalletFragment;
-import cloud.coders.sk.xchangecrypt.utils.Helpers;
-import cloud.coders.sk.xchangecrypt.utils.Logger;
-import cloud.coders.sk.xchangecrypt.utils.Utility;
+import cloud.coders.sk.xchangecrypt.util.ConnectionHelper;
+import cloud.coders.sk.xchangecrypt.util.UserHelper;
+import cloud.coders.sk.xchangecrypt.util.Logger;
 import cloud.coders.sk.R;
-import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
-import io.swagger.client.model.Account;
+import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.AccountWalletResponse;
 import io.swagger.client.model.DepthItem;
 import io.swagger.client.model.Execution;
-import io.swagger.client.model.InlineResponse200;
-import io.swagger.client.model.InlineResponse20013;
 import io.swagger.client.model.InlineResponse2004;
 import io.swagger.client.model.Instrument;
 
@@ -252,7 +221,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         Log.d(TAG, "Call API Clicked");
         try {
             com.microsoft.identity.client.User currentUser =
-                    Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
+                    UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
             if (currentUser != null) {
                 /* We have 1 user */
                 sampleApp.acquireTokenSilentAsync(
@@ -448,7 +417,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //         */
 //        List<com.microsoft.identity.client.User> users = null;
 //        try {
-//            com.microsoft.identity.client.User currentUser = Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
+//            com.microsoft.identity.client.User currentUser = UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
 //
 //            if (currentUser != null) {
 //            /* We have 1 user */
@@ -1035,7 +1004,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     protected void onStop() {
-        RestHelper.getInstance(this).cancelAllRequests();
+        ApiInvoker.getInstance().cancelAllRequests();
         super.onStop();
     }
 
@@ -1265,7 +1234,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void createNetworkReceiver() {
-        setIsOnline(Utility.isOnline(this));
+        setIsOnline(ConnectionHelper.isOnline(this));
         networkStateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(final Context context, Intent intent) {

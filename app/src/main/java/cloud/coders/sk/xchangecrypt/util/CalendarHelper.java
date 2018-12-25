@@ -1,11 +1,9 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -16,9 +14,9 @@ import java.util.List;
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
-public class Utility {
+public class CalendarHelper {
     /* Log tag */
-    public static final String TAG = Utility.class.getSimpleName();
+    public static final String TAG = CalendarHelper.class.getSimpleName();
 
     /* Kalendar */
     // pre Ice Cream Sandwich a vyssie
@@ -49,19 +47,6 @@ public class Utility {
             if (accessLevel >= 500) return true;
             else return false;
         }
-    }
-
-    /**
-     * Checks whether an INTERNET connection is available.
-     *
-     * @param context
-     * @return true if an INTERNET connection is available
-     */
-    public static boolean isOnline(Context context) {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
     }
 
     public static float getHueColor(int color) {

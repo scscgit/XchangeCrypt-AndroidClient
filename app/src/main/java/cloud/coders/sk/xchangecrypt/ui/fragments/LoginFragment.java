@@ -4,17 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
-
-import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 
 /**
  * Created by Peter on 21.04.2018.

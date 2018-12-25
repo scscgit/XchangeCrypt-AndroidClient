@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

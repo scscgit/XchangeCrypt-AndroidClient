@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import cloud.coders.sk.xchangecrypt.core.ContentProvider;
-import cloud.coders.sk.xchangecrypt.core.FragmentsManager;
+import cloud.coders.sk.xchangecrypt.util.FragmentsManager;
 import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
 import cloud.coders.sk.xchangecrypt.listeners.FragmentSwitcherInterface;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;

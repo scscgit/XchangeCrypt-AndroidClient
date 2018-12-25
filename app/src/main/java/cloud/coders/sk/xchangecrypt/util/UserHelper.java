@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.util.Base64;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Peter on 05.05.2018.
  */
-public class Helpers {
+public class UserHelper {
     public static User getUserByPolicy(List<User> users, String policy) {
         for (int i = 0; i < users.size(); i++) {
             User curUser = users.get(i);

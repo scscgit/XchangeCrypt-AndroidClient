@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.core;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;

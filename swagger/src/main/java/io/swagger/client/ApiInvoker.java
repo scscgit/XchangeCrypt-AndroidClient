@@ -537,4 +537,15 @@ public class ApiInvoker {
   public void stopQueue() {
     mRequestQueue.stop();
   }
+
+  public void cancelAllRequests() {
+    if (mRequestQueue != null) {
+      mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
+        @Override
+        public boolean apply(Request<?> request) {
+          return true;
+        }
+      });
+    }
+  }
 }

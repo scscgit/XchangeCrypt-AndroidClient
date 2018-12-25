@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.utils;
+package cloud.coders.sk.xchangecrypt.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -17,7 +17,6 @@ import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
-import cloud.coders.sk.xchangecrypt.utils.DateFormatter;
 
 /**
  * Created by Peter on 22.04.2018.

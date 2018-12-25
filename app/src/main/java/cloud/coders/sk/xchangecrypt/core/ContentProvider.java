@@ -17,7 +17,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
-import cloud.coders.sk.xchangecrypt.utils.InternalStorage;
+import cloud.coders.sk.xchangecrypt.util.InternalStorage;
 
 /**
  * Created by V3502484 on 16. 9. 2016.

@@ -1,4 +1,4 @@
-package cloud.coders.sk.xchangecrypt.core;
+package cloud.coders.sk.xchangecrypt.util;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -11,48 +11,45 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import cloud.coders.sk.BuildConfig;
-import cloud.coders.sk.xchangecrypt.utils.Logger;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
 public class PicassoManager {
-
     private Context context;
-    private static Picasso picassoInstance = null;
+    private static Picasso picassoInstance;
     private static PicassoManager instance;
-    private okhttp3.OkHttpClient okHttp3Client;
 
     private PicassoManager(Context context) {
         this.context = context;
-        okHttp3Client = new okhttp3.OkHttpClient();
-        OkHttp3Downloader okHttp3Downloader = new OkHttp3Downloader(okHttp3Client);
 //        long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
 //        Downloader downloader = new OkHttpDownloader(((MainActivity) context).getCacheDir(), httpCacheSize);
         Picasso.Builder builder = new Picasso.Builder(context);
-        builder.downloader(okHttp3Downloader);
+        builder.downloader(new OkHttp3Downloader(new okhttp3.OkHttpClient()));
         picassoInstance = builder.build();
         picassoInstance.setIndicatorsEnabled(BuildConfig.DEBUG);
     }
 
     public static PicassoManager getInstance(Context context) {
-        if (instance == null)
+        if (instance == null) {
             instance = new PicassoManager(context);
+        }
         return instance;
     }
 
     public void downloadImageWithPlaceholder(final String url, final ImageView imageView, final ProgressBar progressBar, int errrorResourceId, int placeholderResourceId) {
         startProgressLoad(progressBar);
-        if (url == null || TextUtils.isEmpty(url))
+        if (url == null || TextUtils.isEmpty(url)) {
             picassoInstance
                     .load(errrorResourceId)
                     .into(imageView, getCallback(url, progressBar));
-        else
+        } else {
             picassoInstance
                     .load(url)
                     .placeholder(placeholderResourceId)
                     .error(errrorResourceId)
                     .into(imageView, getCallback(url, progressBar));
+        }
     }
 
     public void downloadImage(final String url, final ImageView imageView, final ProgressBar progressBar, int errrorResourceId) {
@@ -91,13 +88,15 @@ public class PicassoManager {
     }
 
     private void startProgressLoad(ProgressBar progressBar) {
-        if (progressBar != null && !progressBar.isIndeterminate())
+        if (progressBar != null && !progressBar.isIndeterminate()) {
             progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void stopProgressLoad(ProgressBar progressBar) {
-        if (progressBar != null && progressBar.isIndeterminate())
+        if (progressBar != null && progressBar.isIndeterminate()) {
             progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void clearCache() {
