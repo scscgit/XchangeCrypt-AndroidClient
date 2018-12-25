@@ -1,23 +1,16 @@
 package cloud.coders.sk.xchangecrypt.datamodel;
 
-        import java.util.Date;
-
-        import cloud.coders.sk.xchangecrypt.ui.fragments.BaseFragment;
-
 /**
  * Created by Peter on 22.04.2018.
  */
-
 public class MyTransaction extends BaseObject {
-
-
     private OrderSide side;
     private String baseCurrency;
     private String quoteCurrency;
     private double price;
     private double amount;
 
-    public MyTransaction( OrderSide side, String baseCurrency, String quoteCurrency, double price, double amount) {
+    public MyTransaction(OrderSide side, String baseCurrency, String quoteCurrency, double price, double amount) {
         this.side = side;
         this.baseCurrency = baseCurrency;
         this.quoteCurrency = quoteCurrency;

@@ -1,13 +1,9 @@
 package cloud.coders.sk.xchangecrypt.datamodel;
 
-import io.swagger.client.model.Account;
-
 /**
  * Created by Peter on 28.04.2018.
  */
-
 public class User extends BaseObject {
-
     private String AccountId;
 
     public User(String accountId) {
@@ -32,7 +28,6 @@ public class User extends BaseObject {
     public String getAccountId() {
         return AccountId;
     }
-
 
     private String idToken;
     private String accessToken;
@@ -66,7 +61,7 @@ public class User extends BaseObject {
 
     private String password;
 
- //   private String accessToken;
+    //   private String accessToken;
 
     private double expiration;
 

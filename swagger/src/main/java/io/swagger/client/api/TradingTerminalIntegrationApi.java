@@ -24,7 +24,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import io.swagger.client.model.BarsArrays;
+
 import java.math.BigDecimal;
+
 import io.swagger.client.model.InlineResponse2001;
 import io.swagger.client.model.InlineResponse20010;
 import io.swagger.client.model.InlineResponse20011;
@@ -53,8 +55,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class TradingTerminalIntegrationApi {
-  String basePath = AccountApi.API_DOMAIN + "tradingapi";
-  ApiInvoker apiInvoker = ApiInvoker.getInstance();
+  private String basePath = AccountApi.API_DOMAIN + "tradingapi";
+  private ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
     getInvoker().addDefaultHeader(key, value);

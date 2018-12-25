@@ -8,7 +8,6 @@ import java.util.Set;
 
 import cloud.coders.sk.xchangecrypt.utils.Security;
 
-
 /**
  * Created by V3502484 on 16. 9. 2016.
  */

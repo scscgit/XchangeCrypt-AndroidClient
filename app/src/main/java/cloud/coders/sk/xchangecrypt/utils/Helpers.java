@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Peter on 05.05.2018.
  */
-
 public class Helpers {
     public static User getUserByPolicy(List<User> users, String policy) {
         for (int i = 0; i < users.size(); i++) {
@@ -20,8 +19,7 @@ public class Helpers {
                 return curUser;
             }
         }
-
-        return (User) null;
+        return null;
     }
 
     private static String Base64UrlDecode(String s) {
@@ -35,6 +33,4 @@ public class Helpers {
             return output;
         }
     }
-
-
 }

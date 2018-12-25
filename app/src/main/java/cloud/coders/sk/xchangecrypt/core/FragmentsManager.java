@@ -26,7 +26,6 @@ public class FragmentsManager {
     private static final String MAIN_BACKSTACK = "mainBackStack";
     private static LinkedList<BaseFragment> mainBackStack;
 
-
     private FragmentsManager(Context context) {
         FragmentsManager.context = context;
         init();
@@ -43,30 +42,33 @@ public class FragmentsManager {
     }
 
     public void init() {
-        if (mainBackStack == null)
+        if (mainBackStack == null) {
             mainBackStack = new LinkedList<BaseFragment>();
+        }
     }
 
     public static FragmentsManager getInstance(Context context) {
-        if (instance == null)
+        if (instance == null) {
             instance = new FragmentsManager(context);
+        }
         return instance;
     }
 
     public void switchFragmentInMainBackStack(BaseFragment fragment, boolean clearBackStack, boolean hideParent) {
-        if (!((MainActivity) context).isFinishing())
+        if (!((MainActivity) context).isFinishing()) {
             switchFragment(fragment, clearBackStack, mainBackStack, R.id.content, hideParent, ANIMATION_OPEN);
+        }
     }
 
     public void switchFragmentInMainBackStack(BaseFragment fragment, boolean clearBackStack, boolean hideParent, int animation) {
-        if (!((MainActivity) context).isFinishing())
+        if (!((MainActivity) context).isFinishing()) {
             switchFragment(fragment, clearBackStack, mainBackStack, R.id.content, hideParent, animation);
+        }
     }
 
     public int getMainBackStackSize() {
         return mainBackStack.size();
     }
-
 
     public void refreshAllFragments() {
         for (Fragment f : mainBackStack) {
@@ -79,7 +81,6 @@ public class FragmentsManager {
 
     private FragmentTransaction initTransactionWithAnimation(int anim) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
         switch (anim) {
             case ANIMATION_OPEN:
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -91,8 +92,7 @@ public class FragmentsManager {
         return transaction;
     }
 
-    private void switchFragment(BaseFragment fragment, boolean clearBackStack, LinkedList<BaseFragment> backStack, int layoutId, boolean hideParent,
-                                int anim) {
+    private void switchFragment(BaseFragment fragment, boolean clearBackStack, LinkedList<BaseFragment> backStack, int layoutId, boolean hideParent, int anim) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment top = null;
         try {
@@ -118,7 +118,6 @@ public class FragmentsManager {
     public void showTopFragmentInMainBS() {
         showTopBackStackFragment(mainBackStack);
     }
-
 
     private void showTopBackStackFragment(LinkedList<BaseFragment> fragmentBackStack) {
         try {

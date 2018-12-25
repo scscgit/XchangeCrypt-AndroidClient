@@ -1,6 +1,5 @@
 package cloud.coders.sk.xchangecrypt.ui.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,8 +17,6 @@ import cloud.coders.sk.xchangecrypt.ui.MainActivity;
  * A simple {@link Fragment} subclass.
  */
 public abstract class BaseFragment extends Fragment implements FragmentSwitcherInterface {
-
-
     protected View rootView;
 
     @Override
@@ -37,6 +34,10 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
 
     protected abstract void setViewContents();
 
+    protected MainActivity getMainActivity() {
+        return (MainActivity) getActivity();
+    }
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -46,73 +47,58 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     protected void showErrorDialog(int message) {
-        ((MainActivity) getActivity()).showErrorDialog(message);
+        getMainActivity().showErrorDialog(message);
     }
 
-
     protected void hideKeyboard() {
-        ((MainActivity) getActivity()).hideKeyboard();
+        getMainActivity().hideKeyboard();
     }
 
     public void switchToFragment(int fragmentID, Bundle args) {
-        ((MainActivity) getActivity()).switchToFragment(fragmentID, args);
+        getMainActivity().switchToFragment(fragmentID, args);
     }
 
     public void switchToFragmentAndClear(int fragmentID, Bundle args) {
-        ((MainActivity) getActivity()).switchToFragmentAndClear(fragmentID, args);
+        getMainActivity().switchToFragmentAndClear(fragmentID, args);
     }
 
     public ContentProvider getContentProvider() {
-        return ((MainActivity) getActivity()).getContentProvider();
+        return getMainActivity().getContentProvider();
     }
-    public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force){};
 
-
-//    public DBHelper getDBHelper(){
-//        return ((MainActivity)getActivity()).getDBHelper();
-//    }
+    public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force) {
+    }
 
     public FragmentsManager getFragmentsManager() {
-        return ((MainActivity) getActivity()).getFragmentsManager();
+        return getMainActivity().getFragmentsManager();
     }
 
-
-//    public FeedManager getFeedManager(){
-//        return ((MainActivity)getActivity()).getFeedManager();
-//    }
-
     public void showProgressBar(int title, int message) {
-        ((MainActivity) getActivity()).showProgressDialog(title, message);
-        ;
+        getMainActivity().showProgressDialog(title, message);
     }
 
     public void showProgressBar(String message) {
-        ((MainActivity) getActivity()).showProgressDialog(message);
-        ;
+        getMainActivity().showProgressDialog(message);
     }
 
     public void hideProgressBar() {
-        ((MainActivity) getActivity()).hideProgressDialog();
+        getMainActivity().hideProgressDialog();
     }
 
     public void showDialogWindow(int message) {
-        ((MainActivity) getActivity()).showDialogWindow(message);
+        getMainActivity().showDialogWindow(message);
     }
 
     public void showDialogWithAction(int message, final DialogOkClickListener listener, boolean showNegativeButton) {
-        ((MainActivity) getActivity()).showDialogWithAction(message, listener, showNegativeButton);
+        getMainActivity().showDialogWithAction(message, listener, showNegativeButton);
     }
 
-//    public MenuAdapter getMenuAdapter() {
-//        return ((MainActivity) getActivity()).getMenuAdapter();
-//    }
-
     protected void disableGestures() {
-        ((MainActivity) getActivity()).disableGestures();
+        getMainActivity().disableGestures();
     }
 
     protected void enableGestures() {
-        ((MainActivity) getActivity()).enableGestures();
+        getMainActivity().enableGestures();
     }
 
     public void showTopFragmentInMainBS() {
@@ -120,27 +106,23 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public void showKeyboard(View view) {
-        ((MainActivity) getActivity()).showKeyboard(view);
+        getMainActivity().showKeyboard(view);
     }
 
     public void hideKeyboard(View view) {
-        ((MainActivity) getActivity()).hideKeyboard(view);
+        getMainActivity().hideKeyboard(view);
     }
 
-//    protected void changeToolbarColor(int color) {
-//        ((MainActivity) getActivity()).changeToolbarColor(color);
-//    }
-
     protected void changeStatusBarColor(int color) {
-        ((MainActivity) getActivity()).changeStatusBarColor(color);
+        getMainActivity().changeStatusBarColor(color);
     }
 
     public FragmentManager getSupportFragmentManager() {
-        return ((MainActivity) getActivity()).getSupportFragmentManager();
+        return getMainActivity().getSupportFragmentManager();
     }
 
     public ActionBar getSupportActionBar() {
-        return ((MainActivity) getActivity()).getSupportActionBar();
+        return getMainActivity().getSupportActionBar();
     }
 
     public void startLoading(ProgressBar progress, View view) {
@@ -158,31 +140,31 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public void hideActionBar() {
-        ((MainActivity) getActivity()).hideActionBar();
+        getMainActivity().hideActionBar();
     }
 
     public void showActionBar() {
-        ((MainActivity) getActivity()).showActionBar();
+        getMainActivity().showActionBar();
     }
 
     public void hideStatusBar() {
-        ((MainActivity) getActivity()).hideStatusBar();
+        getMainActivity().hideStatusBar();
     }
 
     public void showStatusBar() {
-        ((MainActivity) getActivity()).showStatusBar();
+        getMainActivity().showStatusBar();
     }
 
-    public void hideButtonLayout(){
-        ((MainActivity) getActivity()).changeBottomNavigationVisibility(View.GONE);
+    public void hideButtonLayout() {
+        getMainActivity().changeBottomNavigationVisibility(View.GONE);
     }
 
-    public void showButtonLayout(){
-        ((MainActivity) getActivity()).changeBottomNavigationVisibility(View.VISIBLE);
+    public void showButtonLayout() {
+        getMainActivity().changeBottomNavigationVisibility(View.VISIBLE);
     }
 
-    public void setToolbarTitle (String text){
-        ((MainActivity) getActivity()).setToolbarTitle(text);
+    public void setToolbarTitle(String text) {
+        getMainActivity().setToolbarTitle(text);
     }
 
     public boolean customOnBackPressed() {
@@ -190,15 +172,14 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public void onBackPressed() {
-        ((MainActivity) getActivity()).onBackPressed();
+        getMainActivity().onBackPressed();
     }
 
     public void toggleDrawerButtonHamburger() {
-        ((MainActivity) getActivity()).toggleDrawerButtonHamburger();
+        getMainActivity().toggleDrawerButtonHamburger();
     }
 
     public void toggleDrawerButtonArrow() {
-        ((MainActivity) getActivity()).toggleDrawerButtonArrow();
+        getMainActivity().toggleDrawerButtonArrow();
     }
-
 }

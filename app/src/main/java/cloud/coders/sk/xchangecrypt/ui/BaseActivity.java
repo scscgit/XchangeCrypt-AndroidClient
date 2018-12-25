@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Environment;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -23,8 +22,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.core.ApplicationStorage;
@@ -35,8 +32,7 @@ import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
 
 import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 
-public class BaseActivity extends AppCompatActivity {
-
+public abstract class BaseActivity extends AppCompatActivity {
     protected Toolbar toolbar;
     protected RelativeLayout content;
     protected ActionBarDrawerToggle mDrawerToggle;
@@ -50,8 +46,6 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isOnline;
     private ConnectionListener connectionListener;
     protected LinearLayout bottomNavigationLayout;
-
-
 
     protected File extStorageAppBasePath;
     protected File extStorageAppCachePath;
@@ -72,8 +66,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showDialogWindow(int message) {
-        if (alertDialog != null && alertDialog.isShowing())
+        if (alertDialog != null && alertDialog.isShowing()) {
             return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -86,8 +81,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showDialogWithAction(int message, final DialogOkClickListener listener, boolean showNegativeButton) {
-        if (alertDialog != null && alertDialog.isShowing())
+        if (alertDialog != null && alertDialog.isShowing()) {
             return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
                 .setCancelable(false)
@@ -96,18 +92,17 @@ public class BaseActivity extends AppCompatActivity {
                         listener.onPositiveButtonClicked(BaseActivity.this);
                     }
                 });
-
         if (showNegativeButton)
             builder.setNegativeButton(R.string.negative_btn, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();
                 }
             });
-
         alertDialog = builder.create();
         alertDialog.show();
     }
-/*
+
+    /*
     ProgressDialog progressDialog = null;
     public void showProgressDialog( CharSequence title, CharSequence message){
         progressDialog = new ProgressDialog(getApplicationContext());
@@ -123,8 +118,7 @@ public class BaseActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
-*/
-
+    */
 
     public void hideKeyboard() {
         if (getCurrentFocus() != null) {
@@ -136,10 +130,6 @@ public class BaseActivity extends AppCompatActivity {
     public ContentProvider getContentProvider() {
         return ContentProvider.getInstance(this);
     }
-
-//    public DBHelper getDBHelper() {
-//        return DBHelper.getInstance(this);
-//    }
 
     public ApplicationStorage getAppStorage() {
         return ApplicationStorage.getInstance(this);
@@ -154,35 +144,36 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog(int title, int message) {
-        if (progress != null)
+        if (progress != null) {
             hideProgressDialog();
-
-        progress = ProgressDialog.show(this, null,
-                getResources().getString(message), true);
+        }
+        progress = ProgressDialog.show(
+                this, null, getResources().getString(message), true);
     }
 
     public void showProgressDialog(String message) {
-        if (progress != null)
+        if (progress != null) {
             hideProgressDialog();
-
+        }
         progress = ProgressDialog.show(this, null, message, true);
     }
 
     public void hideProgressDialog() {
-        if (progress != null)
+        if (progress != null) {
             progress.dismiss();
+        }
         progress = null;
     }
 
     public void disableGestures() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     public void enableGestures() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
-
 
     public void showKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -222,29 +213,28 @@ public class BaseActivity extends AppCompatActivity {
         getWindow().setAttributes(attrs);
     }
 
-    public void hideBottomNavigationView(){
-        collapse(bottomNavigationLayout,0);
-
+    public void hideBottomNavigationView() {
+        collapse(bottomNavigationLayout, 0);
     }
 
-    public void showBottomNavigationView(){
-        expand(bottomNavigationLayout,500);
+    public void showBottomNavigationView() {
+        expand(bottomNavigationLayout, 500);
     }
 
     public void hideActionBarWithAnimation() {
-        collapse(toolbar,500);
+        collapse(toolbar, 500);
     }
 
-    public void hideActionBarWithoutAnimation(){
-        collapse(toolbar,0);
+    public void hideActionBarWithoutAnimation() {
+        collapse(toolbar, 0);
     }
 
     public void showActionBarWithAnimation() {
-        expand(toolbar,500);
+        expand(toolbar, 500);
     }
 
     public void showActionBarWithoutAnimation() {
-        expand(toolbar,0);
+        expand(toolbar, 0);
     }
 
     public BottomNavigationView getBottomNavigationView() {
@@ -252,13 +242,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public String getCachePath() {
-        if (extStorageAppCachePath == null)
+        if (extStorageAppCachePath == null) {
             return getCacheDir().getPath();
+        }
         return extStorageAppCachePath.getPath();
     }
 
     public void prepareCache() {
-        // Check if the external storage is writeable
+        // Check if the external storage is writable
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             // Retrieve the base path for the application in the external storage
             File externalStorageDir = Environment.getExternalStorageDirectory();
@@ -268,53 +259,52 @@ public class BaseActivity extends AppCompatActivity {
                         File.separator + "Android" + File.separator + "data" +
                         File.separator + getPackageName());
             }
-
             if (extStorageAppBasePath != null) {
                 // {SD_PATH}/Android/data/com.devahead.androidwebviewcacheonsd/cache
                 extStorageAppCachePath = new File(extStorageAppBasePath.getAbsolutePath() + File.separator + "cache");
                 boolean isCachePathAvailable = true;
-                if (!extStorageAppCachePath.exists())
+                if (!extStorageAppCachePath.exists()) {
                     isCachePathAvailable = extStorageAppCachePath.mkdirs();
-
-                if (!isCachePathAvailable)
+                }
+                if (!isCachePathAvailable) {
                     extStorageAppCachePath = null;
+                }
             }
         }
     }
 
-    public void expand(final View v,final int duration) {
-        if(duration != 0) {
-            if (v.getVisibility() != View.VISIBLE) {
-                v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                final int targetHeight = v.getMeasuredHeight();
-                v.getLayoutParams().height = 1;
-                v.setVisibility(View.VISIBLE);
-                Animation a = new Animation() {
-                    @Override
-                    protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        v.getLayoutParams().height = interpolatedTime == 1
-                                ? LinearLayout.LayoutParams.WRAP_CONTENT
-                                : (int) (targetHeight * interpolatedTime);
-                        v.requestLayout();
-                    }
-
-                    @Override
-                    public boolean willChangeBounds() {
-                        return true;
-                    }
-                };
-                a.setDuration(duration);
-                v.startAnimation(a);
-            }
-        } else{
+    public void expand(final View v, final int duration) {
+        if (duration == 0) {
             v.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (v.getVisibility() != View.VISIBLE) {
+            v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            final int targetHeight = v.getMeasuredHeight();
+            v.getLayoutParams().height = 1;
+            v.setVisibility(View.VISIBLE);
+            Animation a = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    v.getLayoutParams().height = interpolatedTime == 1
+                            ? LinearLayout.LayoutParams.WRAP_CONTENT
+                            : (int) (targetHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+            a.setDuration(duration);
+            v.startAnimation(a);
         }
     }
 
     public void collapse(final View v, final int duration) {
         final int initialHeight = v.getMeasuredHeight();
-
-        if(duration != 0) {
+        if (duration != 0) {
             if (v.getVisibility() != View.GONE) {
                 Animation a = new Animation() {
                     @Override
@@ -354,18 +344,19 @@ public class BaseActivity extends AppCompatActivity {
         return isOnline;
     }
 
-
     public void setContentMarginOn() {
-        if (content == null)
+        if (content == null) {
             return;
+        }
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) content.getLayoutParams();
         params.topMargin = getResources().getDimensionPixelSize(R.dimen.toolbar_height);
         content.setLayoutParams(params);
     }
 
     public void setContentMarginOff() {
-        if (content == null)
+        if (content == null) {
             return;
+        }
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) content.getLayoutParams();
         params.topMargin = 0;
         content.setLayoutParams(params);
@@ -373,8 +364,9 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public File getCacheDir() {
-        if (extStorageAppCachePath == null)
+        if (extStorageAppCachePath == null) {
             return super.getCacheDir();
+        }
         return extStorageAppCachePath;
     }
 
@@ -383,9 +375,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onStop();
     }
 
-
     public void setIsOnline(boolean isOnline) {
         this.isOnline = isOnline;
     }
-
 }

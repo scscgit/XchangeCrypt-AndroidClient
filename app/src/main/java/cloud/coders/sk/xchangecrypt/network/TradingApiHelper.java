@@ -37,16 +37,14 @@ import io.swagger.client.model.Instrument;
 /**
  * Created by Peter on 29.04.2018.
  */
-
 public class TradingApiHelper {
-
     private TradingPanelBridgeBrokerDataOrdersApi tradingApi;
     private AccountApi accountApi;
     private MainActivity mainActivity;
     private Context context;
     private List<Integer> pendingTask;
 
-    public FastAccessTokenApiKey getApiAuthentication(){
+    public FastAccessTokenApiKey getApiAuthentication() {
         return (FastAccessTokenApiKey) tradingApi.getAuthentications("oauth");
     }
 
@@ -62,11 +60,10 @@ public class TradingApiHelper {
         this.historyAccountOrders = new HashMap<>();
     }
 
-    public void createTradingApi(){
+    public void createTradingApi() {
         if (tradingApi == null) {
             this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
         }
-
     }
 
     private InlineResponse200 authorizationResponses;
@@ -89,11 +86,11 @@ public class TradingApiHelper {
 
     private HashMap<String, InlineResponse20013> depthData;
 
-    public void deleteFromPendingTask(int taskId){
-        pendingTask.remove((Integer)taskId);
+    public void deleteFromPendingTask(int taskId) {
+        pendingTask.remove((Integer) taskId);
     }
 
-    public boolean noPendingTask(){
+    public boolean noPendingTask() {
         return pendingTask.isEmpty();
     }
 
@@ -120,12 +117,12 @@ public class TradingApiHelper {
 
     private HashMap<String, List<Execution>> executionHashMap;
 
-    public List<Execution> getExecution(String pair){
-        return  executionHashMap.get(pair);
+    public List<Execution> getExecution(String pair) {
+        return executionHashMap.get(pair);
     }
 
-    public void addToExecutions(String pair, List<Execution> executions){
-        executionHashMap.put(pair,executions);
+    public void addToExecutions(String pair, List<Execution> executions) {
+        executionHashMap.put(pair, executions);
     }
 
     public void accountBalance(final int taskId) {
@@ -151,12 +148,11 @@ public class TradingApiHelper {
             }
 
             @Override
-            protected void onPostExecute(List<AccountWalletResponse>  accountWalletResponse) {
+            protected void onPostExecute(List<AccountWalletResponse> accountWalletResponse) {
                 Intent i = new Intent("account_wallet_update");
                 if (accountWalletResponse != null) {
                     accountWalletResponses = accountWalletResponse;
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("taskId", taskId);
@@ -164,9 +160,6 @@ public class TradingApiHelper {
             }
         }.execute();
     }
-
-
-
 
     public void initializeTradingApi() {
         @SuppressLint("StaticFieldLeak")
@@ -188,7 +181,7 @@ public class TradingApiHelper {
 
             @Override
             protected void onPostExecute(TradingPanelBridgeBrokerDataOrdersApi api) {
-                  tradingApi = api;
+                tradingApi = api;
                 //                accountOrders.put(user.getAccountId(), response2004);
 //                Intent i = new Intent("account_offer_update");
 //                i.putExtra("accountId", user.getAccountId());
@@ -227,11 +220,10 @@ public class TradingApiHelper {
                 if (inlineResponse20011 != null) {
                     if (inlineResponse20011.getS().equals("ok")) {
                         instruments = inlineResponse20011.getD();
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse20011.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("accountId", user.getAccountId());
@@ -251,7 +243,7 @@ public class TradingApiHelper {
                 pendingTask.add(taskId);
                 InlineResponse20010 inlineResponse20010 = null;
                 try {
-                    inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(),pair,BigDecimal.valueOf(maxCount));
+                    inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(), pair, BigDecimal.valueOf(maxCount));
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
                     e.printStackTrace();
@@ -270,12 +262,11 @@ public class TradingApiHelper {
                 Intent i = new Intent("account_executions");
                 if (inlineResponse20010 != null) {
                     if (inlineResponse20010.getS().equals("ok")) {
-                        addToExecutions(pair,inlineResponse20010.getD());
-                    }else {
+                        addToExecutions(pair, inlineResponse20010.getD());
+                    } else {
                         i.putExtra("error", "return " + inlineResponse20010.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("accountId", user.getAccountId());
@@ -285,7 +276,6 @@ public class TradingApiHelper {
             }
         }.execute();
     }
-
 
     //0
     public void tradingOffersPerAccount(final int taskId, final User user) {
@@ -317,11 +307,10 @@ public class TradingApiHelper {
                 if (inlineResponse2004 != null) {
                     if (inlineResponse2004.getS().equals("ok")) {
                         accountOrders.put(user.getAccountId(), inlineResponse2004);
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse2004.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("accountId", user.getAccountId());
@@ -333,13 +322,11 @@ public class TradingApiHelper {
 
     //FX_IDC:ZARPLX
     public void tradingOffersForCurrencyPair(final int taskId, final String pair) {
-
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse20013>() {
-
             @Override
             protected InlineResponse20013 doInBackground(Void... voids) {
- //               mainActivity.showProgressDialog("Načítavám dáta");
+                //               mainActivity.showProgressDialog("Načítavám dáta");
                 createTradingApi();
                 pendingTask.add(taskId);
                 InlineResponse20013 inlineResponse20013 = null;
@@ -359,11 +346,10 @@ public class TradingApiHelper {
                 if (inlineResponse20013 != null) {
                     if (inlineResponse20013.getS().equals("ok")) {
                         depthData.put(pair, inlineResponse20013);
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse20013.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("pair", pair);
@@ -376,10 +362,9 @@ public class TradingApiHelper {
     public void sendTradingOffer(final int taskId, final Order offer) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse2005>() {
-
             @Override
             protected InlineResponse2005 doInBackground(Void... offers) {
- //               mainActivity.showProgressDialog("Načítavám dáta");
+                //               mainActivity.showProgressDialog("Načítavám dáta");
                 createTradingApi();
                 pendingTask.add(taskId);
                 Order order = offer;
@@ -387,7 +372,7 @@ public class TradingApiHelper {
                 double price = 0;
                 BigDecimal limitPrice = null;
                 BigDecimal stopPrice = null;
-                switch(order.getType()){
+                switch (order.getType()) {
                     case market:
                         limitPrice = null;
                         stopPrice = null;
@@ -406,10 +391,10 @@ public class TradingApiHelper {
 //String accountId, String instrument, BigDecimal qty, String side, String type, BigDecimal limitPrice, BigDecimal stopPrice, String durationType, BigDecimal durationDateTime, BigDecimal stopLoss, BigDecimal takeProfit, String digitalSignature, String requestId)
                 BigDecimal stopLoss = null;
                 BigDecimal takeProfit = null;
-                if (order.getStopLoss() != null){
+                if (order.getStopLoss() != null) {
                     stopLoss = BigDecimal.valueOf(order.getStopLoss());
                 }
-                if (order.getTakeProfit() != null){
+                if (order.getTakeProfit() != null) {
                     takeProfit = BigDecimal.valueOf(order.getTakeProfit());
                 }
                 try {
@@ -441,11 +426,10 @@ public class TradingApiHelper {
                 if (inlineResponse2005 != null) {
                     if (inlineResponse2005.getS().equals("ok")) {
                         offer.setOrderId(inlineResponse2005.getD().getOrderId());
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse2005.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("taskId", taskId);
@@ -457,17 +441,16 @@ public class TradingApiHelper {
     public void deleteTradingOffer(final int taskId, final Order offer, final User user) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse2007>() {
-
             @Override
             protected InlineResponse2007 doInBackground(Void... offers) {
- //               mainActivity.showProgressDialog("Načítavám dáta");
+                //               mainActivity.showProgressDialog("Načítavám dáta");
                 pendingTask.add(taskId);
 
                 InlineResponse2007 response = null;
                 try {
                     response = tradingApi.accountsAccountIdOrdersOrderIdDelete(user.getAccountId(), offer.getOrderId());
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
-                   // throw new TradingException("Cannot send trading order", e);
+                    // throw new TradingException("Cannot send trading order", e);
                     e.printStackTrace();
                 }
                 return response;
@@ -480,8 +463,7 @@ public class TradingApiHelper {
                     if (!inlineResponse2007.getS().equals("ok")) {
                         i.putExtra("error", "return " + inlineResponse2007.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("orderId", offer.getOrderId());
@@ -491,14 +473,12 @@ public class TradingApiHelper {
         }.execute();
     }
 
-
     public void transactionHistoryForAccount(final int taskId, final User user, final int count) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse2004>() {
-
             @Override
             protected InlineResponse2004 doInBackground(Void... voids) {
- //               mainActivity.showProgressDialog("Načítavám dáta");
+                //               mainActivity.showProgressDialog("Načítavám dáta");
                 pendingTask.add(taskId);
                 InlineResponse2004 response = null;
                 try {
@@ -516,11 +496,10 @@ public class TradingApiHelper {
                 if (inlineResponse2004 != null) {
                     if (inlineResponse2004.getS().equals("ok")) {
                         historyAccountOrders.put(user.getAccountId(), inlineResponse2004);
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse2004.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("taskId", taskId);
@@ -532,10 +511,9 @@ public class TradingApiHelper {
     public void authorize(final int taskId, final User user) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse200>() {
-
             @Override
             protected InlineResponse200 doInBackground(Void... voids) {
-   //             mainActivity.showProgressDialog("Načítavám dáta");
+                //             mainActivity.showProgressDialog("Načítavám dáta");
                 pendingTask.add(taskId);
                 InlineResponse200 response = null;
                 try {
@@ -555,11 +533,10 @@ public class TradingApiHelper {
                         authorizationResponses = inlineResponse200;
                         user.setAccessToken(inlineResponse200.getD().getAccessToken());
                         user.setExpiration(inlineResponse200.getD().getExpiration().doubleValue());
-                    }else {
+                    } else {
                         i.putExtra("error", "return " + inlineResponse200.getErrmsg());
                     }
-                }
-                else {
+                } else {
                     i.putExtra("error", "execution");
                 }
                 i.putExtra("taskId", taskId);
@@ -567,5 +544,4 @@ public class TradingApiHelper {
             }
         }.execute();
     }
-
 }

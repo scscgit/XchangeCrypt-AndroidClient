@@ -3,12 +3,9 @@ package cloud.coders.sk.xchangecrypt.datamodel;
 /**
  * Created by Peter on 22.04.2018.
  */
-
 public class Coin extends BaseObject {
-
     private String name;
     private double amount;
-
 
     public Coin(int id, String name, double amount) {
         super(id);

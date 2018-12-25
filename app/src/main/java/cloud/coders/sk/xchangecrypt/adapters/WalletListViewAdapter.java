@@ -1,6 +1,7 @@
 package cloud.coders.sk.xchangecrypt.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
@@ -17,14 +19,13 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 /**
  * Created by Peter on 22.04.2018.
  */
-
 public class WalletListViewAdapter extends ArrayAdapter {
-
     private Context context;
     private List<Coin> coins;
 
-    public WalletListViewAdapter(Context context, List<Coin> coins) {
+    public WalletListViewAdapter(Context context, @NonNull List<Coin> coins) {
         super(context, R.layout.listview_wallet_item, coins);
+        Objects.requireNonNull(coins);
         this.context = context;
         this.coins = coins;
     }
@@ -40,7 +41,7 @@ public class WalletListViewAdapter extends ArrayAdapter {
         ImageView logo = (ImageView) rowView.findViewById(R.id.listview_coin_logo);
         coinTitle.setText(coin.getName());
         amount.setText(String.format("%.6f", coin.getAmount()));
-        switch (coin.getName()){
+        switch (coin.getName()) {
             case "BTC":
                 logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
                 break;
@@ -51,10 +52,6 @@ public class WalletListViewAdapter extends ArrayAdapter {
                 logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
                 break;
         }
-
-
         return rowView;
     }
-
-
 }

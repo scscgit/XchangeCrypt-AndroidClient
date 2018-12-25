@@ -5,9 +5,7 @@ import java.util.UUID;
 /**
  * Created by Peter on 23.04.2018.
  */
-
 public class Order extends BaseObject {
-
     private Double limitPrice;
     private Double stopPrice;
     private Double stopLoss;
@@ -29,10 +27,10 @@ public class Order extends BaseObject {
         this.quoteCurrencyAmount = quoteCurrencyAmount;
         this.side = side;
         this.type = type;
-        this. orderId = UUID.randomUUID().toString();
+        this.orderId = UUID.randomUUID().toString();
     }
 
-    public Order(Double limitPrice,Double  stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
+    public Order(Double limitPrice, Double stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
         this.limitPrice = limitPrice;
         this.stopPrice = stopPrice;
         this.baseCurrency = baseCurrency;
@@ -43,11 +41,10 @@ public class Order extends BaseObject {
         this.type = type;
         this.stopLoss = stopLoss;
         this.takeProfit = takeProfit;
-        this. orderId = UUID.randomUUID().toString();
+        this.orderId = UUID.randomUUID().toString();
     }
 
-
-    public Order(Double limitPrice, Double stopPrice,  String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type, String orderId) {
+    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type, String orderId) {
         this.limitPrice = limitPrice;
         this.stopPrice = stopPrice;
         this.baseCurrency = baseCurrency;
@@ -91,8 +88,7 @@ public class Order extends BaseObject {
         this.type = type;
     }
 
-
-    public Double getPrice(){
+    public Double getPrice() {
         return limitPrice;
     }
 
@@ -145,7 +141,7 @@ public class Order extends BaseObject {
     }
 
     public String getOrderId() {
-        if (orderId == null){
+        if (orderId == null) {
             return "0";
         }
         return orderId;

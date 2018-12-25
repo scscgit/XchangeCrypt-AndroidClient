@@ -8,7 +8,6 @@ import com.android.volley.toolbox.Volley;
 
 import cloud.coders.sk.xchangecrypt.utils.Utility;
 
-
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
@@ -49,7 +48,8 @@ public class RestHelper {
     }
 
     public void cancelAllRequests() {
-        if (mRequestQueue != null)
+        if (mRequestQueue != null) {
             mRequestQueue.cancelAll(TAG);
+        }
     }
 }

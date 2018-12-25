@@ -1,4 +1,4 @@
-package  cloud.coders.sk.xchangecrypt.core;
+package cloud.coders.sk.xchangecrypt.core;
 
 import android.content.Context;
 
@@ -13,26 +13,22 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-//Singleton Class for Picasso Downloading, Caching and Displaying Images Library
-
 /**
+ * Singleton Class for Picasso Downloading, Caching and Displaying Images Library
+ * <p>
  * Created by V3502484 on 16. 9. 2016.
  */
 public class PicassoSingleton {
-
     private static Picasso mInstance;
-    private static long mDiskCacheSize = 50*1024*1024; //Disk Cache limit 50mb
-
-//private static int mMemoryCacheSize = 50*1024*1024; //Memory Cache 50mb, not currently using this. Using default implementation
+    private static long mDiskCacheSize = 50 * 1024 * 1024; //Disk Cache limit 50mb
+    //private static int mMemoryCacheSize = 50*1024*1024; //Memory Cache 50mb, not currently using this. Using default implementation
 
     private static OkHttpClient mOkHttp3Client; //OK Http Client for downloading
     private static Cache diskCache;
     private static LruCache lruCache;//not using it currently
 
-
-    public static synchronized Picasso getSharedInstance(Context context)
-    {
-        if(mInstance == null) {
+    public static synchronized Picasso getSharedInstance(Context context) {
+        if (mInstance == null) {
             if (context != null) {
                 //Create disk cache folder if does not exist
                 File cache = new File(context.getApplicationContext().getCacheDir(), "picasso_cache");
@@ -47,32 +43,27 @@ public class PicassoSingleton {
                 //Create OK Http Client with retry enabled, timeout and disk cache
                 mOkHttp3Client = new OkHttpClient.Builder().cache(diskCache).connectTimeout(6000, TimeUnit.SECONDS).build();  //100 min cache timeout
 
-
-
-                //For better performence in Memory use set memoryCache(Cache.NONE) in this builder (If needed)
+                //For better performance in Memory use set memoryCache(Cache.NONE) in this builder (If needed)
                 mInstance = new Picasso.Builder(context).memoryCache(lruCache).downloader(new OkHttp3Downloader(mOkHttp3Client)).indicatorsEnabled(true).build();
-
             }
         }
         return mInstance;
     }
 
-    public static void deletePicassoInstance()
-    {
+    public static void deletePicassoInstance() {
         mInstance = null;
     }
 
-    public static void clearLRUCache()
-    {
-        if(lruCache!=null) {
+    public static void clearLRUCache() {
+        if (lruCache != null) {
             lruCache.clear();
         }
         lruCache = null;
     }
 
-    public static void clearDiskCache(){
+    public static void clearDiskCache() {
         try {
-            if(diskCache!=null) {
+            if (diskCache != null) {
                 diskCache.evictAll();
             }
         } catch (IOException e) {

@@ -12,10 +12,9 @@ import java.io.ObjectOutputStream;
 /**
  * Created by Peter on 01.05.2018.
  */
-
-public final class InternalStorage{
-
-    private InternalStorage() {}
+public final class InternalStorage {
+    private InternalStorage() {
+    }
 
     public static void writeObject(Context context, String key, Object object) {
         try {
@@ -29,16 +28,15 @@ public final class InternalStorage{
         }
     }
 
-    public static Object readObject(Context context, String key){
-
-        FileInputStream fis = null;
+    public static Object readObject(Context context, String key) {
+        FileInputStream fis;
         try {
-        fis = context.openFileInput(key);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        Object object = ois.readObject();
-        return object;
-        } catch (IOException|ClassNotFoundException e) {
-        e.printStackTrace();
+            fis = context.openFileInput(key);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Object object = ois.readObject();
+            return object;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
     }

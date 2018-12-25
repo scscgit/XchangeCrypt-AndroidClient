@@ -10,19 +10,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Created by V3502484 on 16. 9. 2016.
  */
 public class Utility {
-
     /* Log tag */
     public static final String TAG = Utility.class.getSimpleName();
-
 
     /* Kalendar */
     // pre Ice Cream Sandwich a vyssie
@@ -37,7 +33,6 @@ public class Utility {
 
     /**
      * Aktivny kalendar v mobilnom zariadeni
-     *
      */
     public static class Calendar {
         public long id;
@@ -51,13 +46,14 @@ public class Utility {
         }
 
         public boolean canBeModified() {
-            if(accessLevel >= 500) return true;
+            if (accessLevel >= 500) return true;
             else return false;
         }
     }
 
     /**
      * Checks whether an INTERNET connection is available.
+     *
      * @param context
      * @return true if an INTERNET connection is available
      */
@@ -89,7 +85,7 @@ public class Utility {
         Cursor cursor = null;
         ContentResolver cr = ctxt.getContentResolver();
 
-        if(Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < 14) {
             displayName = CAL_DISPLAY_NAME_ICS_BELOW;
             accessLevelString = CAL_ACCESS_LEVEL_ICS_BELOW;
         } else {
@@ -98,15 +94,15 @@ public class Utility {
         }
         contentUri = CAL_CONTENT_URI;
         calendarId = CAL_ID;
-        String[] projection = { calendarId, displayName, accessLevelString };
+        String[] projection = {calendarId, displayName, accessLevelString};
 
         cursor = cr.query(contentUri, projection, null, null, null);
-        if(null == cursor) {
+        if (null == cursor) {
             Log.w(TAG, "V zariadeni nie je ziadny kalendar");
             return calendars;
         }
 
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex(calendarId));
             String name = cursor.getString(cursor.getColumnIndex(displayName));
             int accessLevel = cursor.getInt(cursor.getColumnIndex(accessLevelString));
@@ -116,5 +112,4 @@ public class Utility {
 
         return calendars;
     }
-
 }

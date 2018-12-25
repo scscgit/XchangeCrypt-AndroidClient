@@ -27,21 +27,19 @@ import cloud.coders.sk.xchangecrypt.utils.DateFormatter;
 /**
  * Created by Peter on 21.04.2018.
  */
-
 public class WalletFragment extends BaseFragment {
-
-    public static WalletFragment newInstance(Bundle args){
-        WalletFragment fragment = new WalletFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     private RecyclerView recyclerView;
     private WalletRecyclerViewAdapter adapter;
     private ListView balanceListView;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
     private TextView datetextView;
+
+    public static WalletFragment newInstance(Bundle args) {
+        WalletFragment fragment = new WalletFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,23 +56,21 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setActionBar() {
-    setToolbarTitle("Peňaženka");
+        setToolbarTitle("Peňaženka");
     }
 
     @Override
     protected void setViews() {
-        appBarLayout = (AppBarLayout) rootView.findViewById(R.id.app_bar_layout);
-        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView_wallet);
-        balanceListView = (ListView) rootView.findViewById(R.id.listwiew_wallet);
-        datetextView = (TextView) rootView.findViewById(R.id.date_text_wallet);
+        appBarLayout = rootView.findViewById(R.id.app_bar_layout);
+        floatingActionButton = rootView.findViewById(R.id.fab);
+        recyclerView = rootView.findViewById(R.id.recyclerView_wallet);
+        balanceListView = rootView.findViewById(R.id.listwiew_wallet);
+        datetextView = rootView.findViewById(R.id.date_text_wallet);
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 
         adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountTransactionHistory(), getContext(), (MainActivity) getActivity());
-
     }
-
 
     private boolean loading = true;
 
@@ -82,10 +78,10 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViewContents() {
-            Date date = getContentProvider().getLastUpdate(UpdateType.history);
-            if (date != null) {
-                datetextView.setText("Aktualizované " + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
-            }
+        Date date = getContentProvider().getLastUpdate(UpdateType.history);
+        if (date != null) {
+            datetextView.setText("Aktualizované " + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
+        }
         List<Coin> coinList = getContentProvider().getCoinsBalance();
         balanceListView.setAdapter(new WalletListViewAdapter(getContext(), coinList));
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -94,41 +90,34 @@ public class WalletFragment extends BaseFragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            appBarLayout.setExpanded(false);
+                appBarLayout.setExpanded(false);
             }
         });
 
-
-        final float inPixelsDate= getResources().getDimension(R.dimen.date_item);
-        final float inPixels= getResources().getDimension(R.dimen.list_item);
-        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)appBarLayout.getLayoutParams();
-        lp.height = (int)((inPixelsDate)+(inPixels*coinList.size()));
+        final float inPixelsDate = getResources().getDimension(R.dimen.date_item);
+        final float inPixels = getResources().getDimension(R.dimen.list_item);
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        lp.height = (int) ((inPixelsDate) + (inPixels * coinList.size()));
 
         recyclerView.setNestedScrollingEnabled(false);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if(dy > 0) //check for scroll down
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) //check for scroll down
                 {
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
                     pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                    if (loading)
-                    {
-                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                        {
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                            Toast.makeText(getContext(),"End",Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(), "End", Toast.LENGTH_SHORT);
                         }
                     }
                 }
             }
         });
-
-
     }
 }

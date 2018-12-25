@@ -15,9 +15,7 @@ import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 /**
  * Created by Peter on 21.04.2018.
  */
-
 public class SettingFragment extends BaseFragment {
-
     private TextView nameTextView;
     private TextView surnameTextView;
     private TextView emailTextView;
@@ -25,7 +23,7 @@ public class SettingFragment extends BaseFragment {
     private Button signOutButton;
     private Button passwordChangeButton;
 
-    public static SettingFragment newInstance(Bundle args){
+    public static SettingFragment newInstance(Bundle args) {
         SettingFragment fragment = new SettingFragment();
         fragment.setArguments(args);
         return fragment;
@@ -51,12 +49,12 @@ public class SettingFragment extends BaseFragment {
 
     @Override
     protected void setViews() {
-        nameTextView = (TextView) rootView.findViewById(R.id.name_text);
-        surnameTextView = (TextView) rootView.findViewById(R.id.surname_text);
-        emailTextView = (TextView) rootView.findViewById(R.id.email_text);
-        notificationTogleButton = (ToggleButton) rootView.findViewById(R.id.notification_toogle);
-        signOutButton = (Button) rootView.findViewById(R.id.button_sign_out);
-        passwordChangeButton = (Button) rootView.findViewById(R.id.button_password_change);
+        nameTextView = rootView.findViewById(R.id.name_text);
+        surnameTextView = rootView.findViewById(R.id.surname_text);
+        emailTextView = rootView.findViewById(R.id.email_text);
+        notificationTogleButton = rootView.findViewById(R.id.notification_toogle);
+        signOutButton = rootView.findViewById(R.id.button_sign_out);
+        passwordChangeButton = rootView.findViewById(R.id.button_password_change);
     }
 
     @Override
@@ -75,14 +73,12 @@ public class SettingFragment extends BaseFragment {
         notificationTogleButton.setChecked(false);
         passwordChangeButton.setEnabled(false);
 
-
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).clearCache();
-                switchToFragmentAndClear(FRAGMENT_LOGIN,null);
+                ((MainActivity) getActivity()).clearCache();
+                switchToFragmentAndClear(FRAGMENT_LOGIN, null);
             }
         });
-
     }
 }

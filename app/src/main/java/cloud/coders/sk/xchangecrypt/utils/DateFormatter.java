@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * Created by Peter on 22.04.2018.
  */
-
 public class DateFormatter {
     public static final String FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final String FORMAT_dd_MMM_yy = "dd MMM yy";
@@ -24,7 +23,6 @@ public class DateFormatter {
     public static final String FORMAT_HH_MM = "HH:mm";
     public static final String FORMAT_HH_MM_SS = "HH:mm:ss";
     public static final String FORMAT_dd_MMM_yyyy = "dd MMM yyyy";
-
 
     public static Date getDateFromString(String date, String format) {
         if (date == null)
@@ -55,10 +53,8 @@ public class DateFormatter {
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTime(date2);
 
-
         int m1 = calendar.get(Calendar.YEAR) * 12 + calendar.get(Calendar.MONTH);
         int m2 = calendar2.get(Calendar.YEAR) * 12 + calendar2.get(Calendar.MONTH);
         return m2 - m1 + 1;
     }
-
 }

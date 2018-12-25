@@ -33,7 +33,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -66,7 +65,6 @@ import com.microsoft.identity.client.MsalException;
 import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,13 +111,9 @@ import io.swagger.client.model.InlineResponse20013;
 import io.swagger.client.model.InlineResponse2004;
 import io.swagger.client.model.Instrument;
 
-
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants, GoogleApiClient.OnConnectionFailedListener {
-
+    //private static final String TAG = "[MainActivity]";
     public static int asyncTaskId = 0;
-
-//    private static final String TAG = "[MainActivity]";
-    private TextView toolbarTitle;
 
     private BroadcastReceiver accountOfferDataReceiver;
     private BroadcastReceiver depthDataReceiver;
@@ -131,22 +125,17 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private BroadcastReceiver instrumentsReceiver;
     private BroadcastReceiver executionsReceiver;
 
-    private Context context;
+    private TextView toolbarTitle;
 
-
+    private TradingApiHelper tradingApiHelper;
 
     public TradingApiHelper getTradingApiHelper() {
         return tradingApiHelper;
     }
 
-    private TradingApiHelper tradingApiHelper;
-
-
-
     private GoogleApiClient googleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInAccount googleAccount;
-
 
     /* Azure AD variables */
     private PublicClientApplication sampleApp;
@@ -161,13 +150,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /* Global App State */
-  //  AppSubClass state;
+    //AppSubClass state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.initialize(true);
-        this.context = this;
         prepareCache();
         setContentView(R.layout.activity_main);
         setToolbarAndDrawer(savedInstanceState);
@@ -175,7 +163,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         createNetworkReceiver();
         getFragmentsManager().clearAndInit(this, true);
         switchToFragmentAndClear(FRAGMENT_SPLASH, null);
-        tradingApiHelper = new TradingApiHelper(this,this);
+        tradingApiHelper = new TradingApiHelper(this, this);
+
+        // Initial data
         createDumbData();
 
 //        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -197,7 +187,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //                .enableAutoManage(this, this)
 //                .addApi(Auth.GOOGLE_SIGN_IN_API, gso1)
 //                .build();
-//
 //
 //        try {
 //            mobileServiceClient = new MobileServiceClient("https://xchangecrypttest-convergencebackend.azurewebsites.net",this);
@@ -233,7 +222,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     Constants.CLIENT_ID,
                     authority);
             getContentProvider().setPublicClientApplication(sampleApp);
-
             try {
                 com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                     @Override
@@ -241,12 +229,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         Log.d(tag, "MSAL_LOG: " + message);
                     }
                 });
-            }catch (IllegalStateException e){
-             //already set
+            } catch (IllegalStateException e) {
+                //already set
             }
         }
-
-
     }
 
     @Override
@@ -254,30 +240,27 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         sampleApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
     }
 
-    /* Use MSAL to acquireToken for the end-user
-    *  Call API
-    *  Pass UserInfo response data to AuthenticatedActivity
-    */
+    /**
+     * Use MSAL to acquireToken for the end-user
+     * Call API
+     * Pass UserInfo response data to AuthenticatedActivity
+     */
     public void onCallApiClicked(String[] scopes) {
-
         /* Attempt to get a user and acquireTokenSilently
          * If this fails we will do an interactive request
          */
         Log.d(TAG, "Call API Clicked");
-
         try {
-            com.microsoft.identity.client.User currentUser = Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
-
+            com.microsoft.identity.client.User currentUser =
+                    Helpers.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
             if (currentUser != null) {
                 /* We have 1 user */
-
                 sampleApp.acquireTokenSilentAsync(
                         scopes,
                         currentUser,
                         String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
                         false,
                         getAuthSilentCallback());
-
             } else {
                 /* We have no user */
                 sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
@@ -285,7 +268,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         } catch (MsalClientException e) {
             /* No token in cache, proceed with normal unauthenticated app experience */
             Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-
         } catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
@@ -318,8 +300,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 tradingApiHelper.getApiAuthentication().setApiKey(authenticationResult.getAccessToken());
 
                 /* Start authenticated activity */
-                getDataBeforeSwitch(FRAGMENT_EXCHANGE,null);
-                //switchToFragment(FRAGMENT_EXCHANGE,null);
+                getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
+                //switchToFragment(FRAGMENT_EXCHANGE, null);
                 callAPI();
             }
 
@@ -327,15 +309,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public void onError(MsalException exception) {
                 /* Failed to acquireToken */
                 Log.d(TAG, "Authentication failed: " + exception.toString());
-
                 if (exception instanceof MsalClientException) {
                     /* Exception inside MSAL, more info inside MsalError.java */
                     assert true;
-
                 } else if (exception instanceof MsalServiceException) {
                     /* Exception when communicating with the STS, likely config issue */
                     assert true;
-
                 } else if (exception instanceof MsalUiRequiredException) {
                     /* Tokens expired or no session, retry with interactive */
                     sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
@@ -365,7 +344,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 tradingApiHelper.getApiAuthentication().setApiKey(authenticationResult.getAccessToken());
 
                 /* Start authenticated activity */
-                getDataBeforeSwitch(FRAGMENT_EXCHANGE,null);
+                getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
                 callAPI();
             }
 
@@ -373,15 +352,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public void onError(MsalException exception) {
                 /* Failed to acquireToken */
                 Log.d(TAG, "Authentication failed: " + exception.toString());
-
                 if (exception instanceof MsalClientException) {
                     /* Exception inside MSAL, more info inside MsalError.java */
                     assert true;
-                } else if (exception instanceof MsalServiceException) {
-                    /* Exception when communicating with the STS, likely config issue */
-                    assert true;
-
-                }
+                } else assert !(exception instanceof MsalServiceException) || true;
             }
 
             @Override
@@ -392,93 +366,78 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         };
     }
 
-
     public void clearCache() {
         List<com.microsoft.identity.client.User> users = null;
         try {
             Log.d(TAG, "Clearing app cache");
             users = sampleApp.getUsers();
-
             if (users == null) {
                 /* We have no users */
-
-                Log.d(TAG, "Faield to Sign out/clear cache, no user");
+                Log.d(TAG, "Failed to Sign out/clear cache, no user");
             } else if (users.size() == 1) {
                 /* We have 1 user */
-
                 /* Remove from token cache */
                 sampleApp.remove(users.get(0));
-
                 Log.d(TAG, "Signed out/cleared cache");
-
-            }
-            else {
+            } else {
                 /* We have multiple users */
-
                 for (int i = 0; i < users.size(); i++) {
                     sampleApp.remove(users.get(i));
                 }
-
                 Log.d(TAG, "Signed out/cleared cache for multiple users");
             }
-
-            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT)
-                    .show();
-
+            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
         } catch (MsalClientException e) {
             /* No token in cache, proceed with normal unauthenticated app experience */
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-
+            Log.e(TAG, "MSAL Exception Generated while getting users: " + e.toString());
         } catch (IndexOutOfBoundsException e) {
-            Log.d(TAG, "User at this position does not exist: " + e.toString());
+            Log.e(TAG, "User at this position does not exist: " + e.toString());
         }
     }
 
-    /* Use Volley to request the /me endpoint from API
-    *  Sets the UI to what we get back
-    */
+    /**
+     * Use Volley to request the /me endpoint from API
+     * Sets the UI to what we get back
+     */
     private void callAPI() {
-
         Log.d(TAG, "Starting volley request to API");
-
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject parameters = new JSONObject();
-
         try {
             parameters.put("key", "value");
         } catch (Exception e) {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Constants.API_URL,
-                parameters,new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                /* Successfully called API */
-                Log.d(TAG, "Response: " + response);
-                try {
-                    getContentProvider().getUser().setName(response.getString("name"));
-
-                    Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT)
-                            .show();
-                } catch (JSONException e) {
-                    Log.d(TAG, "JSONEXception Error: " + e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                Constants.API_URL,
+                parameters,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        /* Successfully called API */
+                        Log.d(TAG, "Response: " + response);
+                        try {
+                            getContentProvider().getUser().setName(response.getString("name"));
+                            Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            Log.d(TAG, "JSONEXception Error: " + e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
             }
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                Log.d(TAG, "Token: " + authResult.getAccessToken().toString());
+                Log.d(TAG, "Token: " + authResult.getAccessToken());
                 headers.put("Authorization", "Bearer " + authResult.getAccessToken());
                 return headers;
             }
         };
-
         queue.add(request);
     }
 
@@ -551,66 +510,62 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //        };
 //    }
 
-
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Log.i(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Chyba pri komunikácii " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
-        private void createDumbData() {
+    private void createDumbData() {
         getContentProvider().setUser(new User("0"));
-        MyTransaction transaction0 = new MyTransaction(OrderSide.buy, "QBC", "BTC", (float)0.00000311, (float)258.00058265);
-      //  MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "BTC", "QBC", (float)0.02000311, (float)0.058265);
-            MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "LTC", "BTC", (float)0.02000235, (float)0.158265);
-            MyTransaction transaction2 = new MyTransaction(OrderSide.sell, "LTC", "BTC", (float)0.02100235, (float)0.101515);
-            MyTransaction transaction3 = new MyTransaction(OrderSide.sell, "QBC", "BTC", (float)0.00000299, (float)21.00021215);
+        MyTransaction transaction0 = new MyTransaction(OrderSide.buy, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265);
+        //MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "BTC", "QBC", (float)0.02000311, (float)0.058265);
+        MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "LTC", "BTC", (float) 0.02000235, (float) 0.158265);
+        MyTransaction transaction2 = new MyTransaction(OrderSide.sell, "LTC", "BTC", (float) 0.02100235, (float) 0.101515);
+        MyTransaction transaction3 = new MyTransaction(OrderSide.sell, "QBC", "BTC", (float) 0.00000299, (float) 21.00021215);
         List<MyTransaction> transactionList = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             transactionList.add(transaction0);
             transactionList.add(transaction1);
             transactionList.add(transaction2);
             transactionList.add(transaction3);
         }
         getContentProvider().setAccountTransactionHistory(transactionList);
-
-         //   getContentProvider().setLastUpdate(UpdateType.history, new Date());
+        //getContentProvider().setLastUpdate(UpdateType.history, new Date());
 
         Coin coin1 = new Coin("BTC", 0.00025638);
         Coin coin2 = new Coin("QBC", 1.90025211);
-            Coin coin3 = new Coin("LTC", 5.10015111);
+        Coin coin3 = new Coin("LTC", 5.10015111);
         List<Coin> coins = new ArrayList<>();
         coins.add(coin1);
         coins.add(coin2);
-            coins.add(coin3);
+        coins.add(coin3);
         getContentProvider().setCoinsBalance(coins);
 
-        Order offer1 = new Order(0.00000268,0.00000268, "LTC",1252.1965919,"BTC",0.034565856, OrderSide.buy,OrderType.limit,"1" );
-        Order offer2 = new Order(0.00000270,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-        Order offer3 = new Order(0.00000272,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer4 = new Order(0.00000274,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer5 = new Order(0.00000282,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer6 = new Order(0.00000284,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer7 = new Order(0.00000295,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer8 = new Order(0.00000296,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer9 = new Order(0.00000299,0.00000268, "LTC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
+        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.buy, OrderType.limit, "1");
+        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
 
-            Order offer11 = new Order(0.00000268,0.00000268, "QBC",1252.1965919,"BTC",0.034565856, OrderSide.buy,OrderType.limit,"1" );
-            Order offer21 = new Order(0.00000270,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer31 = new Order(0.00000272,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer41 = new Order(0.00000274,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer51 = new Order(0.00000282,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer61 = new Order(0.00000284,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer71 = new Order(0.00000295,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer81 = new Order(0.00000296,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
-            Order offer91 = new Order(0.00000299,0.00000268, "QBC",3000.0000000,"BTC",0.008100000, OrderSide.buy,OrderType.limit,"2" );
+        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.buy, OrderType.limit, "1");
+        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
 
-
-            List<Order> offerList = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-         offerList.add(offer1);
-         offerList.add(offer2);
+        List<Order> offerList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            offerList.add(offer1);
+            offerList.add(offer2);
             offerList.add(offer3);
             offerList.add(offer4);
             offerList.add(offer5);
@@ -620,23 +575,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             offerList.add(offer9);
 
         }
-            List<Order> offerList1 = new ArrayList<>();
-            for(int i = 0; i < 10; i++){
-                offerList1.add(offer11);
-                offerList1.add(offer21);
-                offerList1.add(offer31);
-                offerList1.add(offer41);
-                offerList1.add(offer51);
-                offerList1.add(offer61);
-                offerList1.add(offer71);
-                offerList1.add(offer81);
-                offerList1.add(offer91);
+        List<Order> offerList1 = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            offerList1.add(offer11);
+            offerList1.add(offer21);
+            offerList1.add(offer31);
+            offerList1.add(offer41);
+            offerList1.add(offer51);
+            offerList1.add(offer61);
+            offerList1.add(offer71);
+            offerList1.add(offer81);
+            offerList1.add(offer91);
+        }
 
-            }
-
-
-
-            getContentProvider().addToOrders("QBC_BTC", offerList1);
+        getContentProvider().addToOrders("QBC_BTC", offerList1);
         getContentProvider().addToOrders("LTC_QBC", offerList);
 
         List<Order> myoffers = new ArrayList<Order>();
@@ -648,59 +600,49 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().setActualCurrencyPair("QBC_BTC");
         getContentProvider().setCurrentOrderSide(OrderSide.buy);
 
-        getContentProvider().addMarketPrice("QBC_BTC",0.00000311, OrderSide.buy);
-            getContentProvider().addMarketPrice("QBC_BTC",0.00000301, OrderSide.sell);
-        getContentProvider().addMarketPrice("BTC_QBC",0.901311, OrderSide.buy);
-            getContentProvider().addMarketPrice("BTC_QBC",0.91000311, OrderSide.sell);
-            getContentProvider().addMarketPrice("LTC_BTC",0.92000311, OrderSide.buy);
-            getContentProvider().addMarketPrice("LTC_BTC",0.90001311, OrderSide.sell);
-
-
-
+        getContentProvider().addMarketPrice("QBC_BTC", 0.00000311, OrderSide.buy);
+        getContentProvider().addMarketPrice("QBC_BTC", 0.00000301, OrderSide.sell);
+        getContentProvider().addMarketPrice("BTC_QBC", 0.901311, OrderSide.buy);
+        getContentProvider().addMarketPrice("BTC_QBC", 0.91000311, OrderSide.sell);
+        getContentProvider().addMarketPrice("LTC_BTC", 0.92000311, OrderSide.buy);
+        getContentProvider().addMarketPrice("LTC_BTC", 0.90001311, OrderSide.sell);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
-
-
-    private void setBottomNavigationView(){
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-        bottomNavigationLayout = (LinearLayout) findViewById(R.id.bottom_navigation_layout);
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        bottomNavigationView.setOnNavigationItemSelectedListener
-                (new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.home_item:
-                                getDataBeforeSwitch(FRAGMENT_EXCHANGE,null);
-                                break;
-                            case R.id.wallet_item:
-                                getDataBeforeSwitch(FRAGMENT_WALLET,  null);
-                                break;
-                            case R.id.settings_item:
-                                switchToFragmentAndClear(FRAGMENT_SETTINGS, null);
-                                break;
-                        }
-                        return true;
-                    }
-                });
+    private void setBottomNavigationView() {
+        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationLayout = findViewById(R.id.bottom_navigation_layout);
+        toolbarTitle = findViewById(R.id.toolbar_title);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home_item:
+                        getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
+                        break;
+                    case R.id.wallet_item:
+                        getDataBeforeSwitch(FRAGMENT_WALLET, null);
+                        break;
+                    case R.id.settings_item:
+                        switchToFragmentAndClear(FRAGMENT_SETTINGS, null);
+                        break;
+                }
+                return true;
+            }
+        });
     }
-
 
     private void setToolbarAndDrawer(Bundle savedInstanceState) {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        content = (RelativeLayout) findViewById(R.id.content);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toolbar = findViewById(R.id.toolbar);
+        content = findViewById(R.id.content);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         setSupportActionBar(toolbar);
         //setContentMarginOn();
-
     }
-
 
 //    @Override
 //    protected void onPostCreate(Bundle savedInstanceState) {
@@ -714,14 +656,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //        mDrawerToggle.onConfigurationChanged(newConfig);
 //    }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        if (networkStateReceiver != null)
-            registerReceiver(networkStateReceiver, intentFilter);
+        registerReceiver(networkStateReceiver, intentFilter);
 
         if (accountOfferDataReceiver == null) {
             accountOfferDataReceiver = new BroadcastReceiver() {
@@ -735,9 +675,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             List<Order> offers = new ArrayList<>();
                             for (io.swagger.client.model.Order order : tradingApiHelper.getAccountOrders(accountID).getD()) {
                                 double price = 0;
-
                                 if (order.getType() == io.swagger.client.model.Order.TypeEnum.market) {
-                                //    continue;
+                                    // continue;
                                 }
                                 switch (order.getType()) {
                                     case limit:
@@ -751,9 +690,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 }
                                 String base = order.getInstrument().split("_")[0];
                                 String quote;
-                                try{
+                                try {
                                     quote = order.getInstrument().split("_")[1];
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     quote = base;
                                 }
                                 offers.add(new Order(
@@ -773,13 +712,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             Toast.makeText(context, "Chyba pri ziskavaní dát.", Toast.LENGTH_SHORT).show();
                         }
                     }
-                        tradingApiHelper.deleteFromPendingTask(taskID);
-                        if (tradingApiHelper.noPendingTask()) {
-                            hideProgressDialog();
-                            switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
-                        }
-
-
+                    tradingApiHelper.deleteFromPendingTask(taskID);
+                    if (tradingApiHelper.noPendingTask()) {
+                        hideProgressDialog();
+                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                    }
                 }
             };
         }
@@ -802,10 +739,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             if (asks != null) {
                                 for (DepthItem offer : asks) {
                                     if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                        if (marketValueBuy == null){
+                                        if (marketValueBuy == null) {
                                             marketValueBuy = offer.get(0).doubleValue();
-                                        }else {
-                                            if (offer.get(0).doubleValue() < marketValueBuy){
+                                        } else {
+                                            if (offer.get(0).doubleValue() < marketValueBuy) {
                                                 marketValueBuy = offer.get(0).doubleValue();
                                             }
                                         }
@@ -815,7 +752,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                             priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
                                         }
                                     }
-
                                 }
                                 for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
                                     orders.add(new Order(
@@ -835,10 +771,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 priceAndVolumes = new HashMap<>();
                                 for (DepthItem offer : tradingApiHelper.getDepthData(pair).getD().getBids()) {
                                     if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                        if (marketValueSell == null){
+                                        if (marketValueSell == null) {
                                             marketValueSell = offer.get(0).doubleValue();
-                                        }else {
-                                            if (offer.get(0).doubleValue() > marketValueSell){
+                                        } else {
+                                            if (offer.get(0).doubleValue() > marketValueSell) {
                                                 marketValueSell = offer.get(0).doubleValue();
                                             }
                                         }
@@ -863,11 +799,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 }
                             }
                         }
-                        if (marketValueBuy != null){
+                        if (marketValueBuy != null) {
                             getContentProvider().addMarketPrice(pair, marketValueBuy, OrderSide.buy);
                         }
-                        if (marketValueSell != null){
-                            getContentProvider().addMarketPrice(pair, marketValueSell,OrderSide.sell);
+                        if (marketValueSell != null) {
+                            getContentProvider().addMarketPrice(pair, marketValueSell, OrderSide.sell);
                         }
                         getContentProvider().addToOrders(pair, orders);
                         getContentProvider().setLastUpdate(UpdateType.marketOrders, new Date());
@@ -879,7 +815,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         hideProgressDialog();
                         switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                     }
-
                 }
             };
         }
@@ -910,9 +845,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             }
                             String base = order.getInstrument().split("_")[0];
                             String quote;
-                            try{
+                            try {
                                 quote = order.getInstrument().split("_")[1];
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 quote = base;
                             }
                             transactions.add(new MyTransaction(
@@ -966,12 +901,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         String orderId = intent.getExtras().getString("orderId");
                         getContentProvider().removeOrderById(orderId);
                     } else {
-                        Toast.makeText(context, "Chyba pri zmazaní ponuky.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Chyba pri odstraňovaní ponuky.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
                     if (tradingApiHelper.noPendingTask()) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                     }
                 }
             };
@@ -1006,13 +941,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         List<AccountWalletResponse> accountWalletResponses = tradingApiHelper.getAccountWalletResponses();
                         System.out.print(accountWalletResponses.toString());
                         List<Coin> coins = new ArrayList<>();
-                        for (AccountWalletResponse accountWalletResponse: accountWalletResponses) {
+                        for (AccountWalletResponse accountWalletResponse : accountWalletResponses) {
                             coins.add(new Coin(
                                     accountWalletResponse.getCoinSymbol(),
                                     accountWalletResponse.getBalance().doubleValue()
                             ));
                         }
-
                         getContentProvider().setCoinsBalance(coins);
                         getContentProvider().setLastUpdate(UpdateType.balance, new Date());
                     } else {
@@ -1092,7 +1026,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             };
         }
         registerReceiver(instrumentsReceiver, new IntentFilter("account_instruments"));
-
     }
 
     @Override
@@ -1129,21 +1062,23 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     public void switchToFragment(int fragmentID, Bundle args) {
-        switchToFragment(fragmentID, args, false,false);
+        switchToFragment(fragmentID, args, false, false);
     }
 
     @Override
     public void switchToFragmentAndClear(int fragmentID, Bundle args) {
-        switchToFragment(fragmentID, args, true,false);
+        switchToFragment(fragmentID, args, true, false);
     }
-    public void getDataBeforeSwitch(int fragmentID, Bundle args){
-        getDataBeforeSwitch(fragmentID,args,false);
+
+    public void getDataBeforeSwitch(int fragmentID, Bundle args) {
+        getDataBeforeSwitch(fragmentID, args, false);
     }
+
     @Override
     public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force) {
         switch (fragmentID) {
             case FRAGMENT_EXCHANGE:
-                if (!isOnline()){
+                if (!isOnline()) {
                     switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                     return;
                 }
@@ -1155,8 +1090,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
                     if (lastInstrumentUpdate != null && lastMarketUpdate != null && lastUserUpdate != null) {
                         if (actualDate1.getTime() - lastInstrumentUpdate.getTime() < 30000 &&
-                            actualDate1.getTime() -  lastMarketUpdate.getTime() < 30000 &&
-                            actualDate1.getTime() - lastUserUpdate.getTime()  < 30000
+                                actualDate1.getTime() - lastMarketUpdate.getTime() < 30000 &&
+                                actualDate1.getTime() - lastUserUpdate.getTime() < 30000
                                 ) {
                             switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                             return;
@@ -1165,11 +1100,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
                 showProgressDialog("Načítavám dáta");
                 tradingApiHelper.instrument(asyncTaskId++, getContentProvider().getUser());
-                tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++, getContentProvider().getActualCurrencyPair().toString());
+                tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++, getContentProvider().getActualCurrencyPair());
                 tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                 break;
             case FRAGMENT_WALLET:
-                if (!isOnline()){
+                if (!isOnline()) {
                     switchToFragmentAndClear(FRAGMENT_WALLET, null);
                     return;
                 }
@@ -1215,39 +1150,39 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
     }
 
-    public void sendOrder(Order order){
+    public void sendOrder(Order order) {
         if (isOnline()) {
             showProgressDialog("Spracovanie ponuky");
             tradingApiHelper.sendTradingOffer(asyncTaskId++, order);
-        }else {
+        } else {
             Toast.makeText(this, "Nie ste pripojený na internet", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void deleteOrder(Order order){
+    public void deleteOrder(Order order) {
         if (isOnline()) {
-        showProgressDialog("Vymázavanie ponuky");
-        tradingApiHelper.deleteTradingOffer(asyncTaskId++,order,getContentProvider().getUser());
-        }else {
+            showProgressDialog("Odstraňovanie ponuky");
+            tradingApiHelper.deleteTradingOffer(asyncTaskId++, order, getContentProvider().getUser());
+        } else {
             Toast.makeText(this, "Nie ste pripojený na internet", Toast.LENGTH_LONG).show();
         }
     }
-
-
 
     protected void setHamburgerFunction() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open,
-                R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                // creates call to onPrepareOptionsMenu()
+                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                // creates call to onPrepareOptionsMenu()
+                invalidateOptionsMenu();
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -1291,7 +1226,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         anim.start();
     }
 
-
     public void changeBottomNavigationVisibility(int visibility) {
         bottomNavigationView.setVisibility(visibility);
     }
@@ -1324,11 +1258,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             if (getFragmentsManager().getTopFragmentInMainBackstack().customOnBackPressed())
                 finish();
         } else {
+            // TODO: cleanup, always returns false
             getFragmentsManager().getTopFragmentInMainBackstack().customOnBackPressed();
             showTopFragmentInMainBS();
         }
     }
-
 
     private void createNetworkReceiver() {
         setIsOnline(Utility.isOnline(this));
@@ -1336,34 +1270,29 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             @Override
             public void onReceive(final Context context, Intent intent) {
                 if (intent.getExtras() != null) {
-                    final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                    final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
+                    final ConnectivityManager connectivityManager = (ConnectivityManager)
+                            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     ConnectionListener listener = getConnectionListener();
-                    if (ni != null && ni.isConnectedOrConnecting()) { //offline > online
-                        Logger.e(TAG,"isConnecting");
+                    if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+                        // offline > online
+                        Logger.d(TAG, "isConnecting");
                         setIsOnline(true);
-
-                        if (isOnline()) {
-                            Snackbar.make(MainActivity.this.content,"Pripojené",Snackbar.LENGTH_SHORT).show();
-                            if (listener != null)
-                                listener.onReconnection();
+                        Snackbar.make(MainActivity.this.content, "Spojenie obnovené", Snackbar.LENGTH_SHORT).show();
+                        if (listener != null) {
+                            listener.onReconnection();
                         }
-
-                    } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) { //online > offline
-                        Logger.e(TAG,"isDisconnecting");
+                    } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
+                        // online > offline
+                        Logger.d(TAG, "isDisconnecting");
                         setIsOnline(false);
-                        if (!isOnline()) {
-                            Snackbar.make(MainActivity.this.content,"Žiadne pripojenie na internet",Snackbar.LENGTH_SHORT).show();
-                            if (listener != null)
-                                listener.onConnectionLost();
+                        Snackbar.make(MainActivity.this.content, "Žiadne spojenie cez internet", Snackbar.LENGTH_SHORT).show();
+                        if (listener != null) {
+                            listener.onConnectionLost();
                         }
-
                     }
                 }
             }
         };
     }
-
-
 }
-

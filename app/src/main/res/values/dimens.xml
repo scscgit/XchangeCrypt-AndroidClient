@@ -19,5 +19,4 @@
     <dimen name="border_height">2dp</dimen>
     <dimen name="list_item">55dp</dimen>
     <dimen name="date_item">25dp</dimen>
-
 </resources>

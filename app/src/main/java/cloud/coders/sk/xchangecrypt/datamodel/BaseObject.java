@@ -1,4 +1,4 @@
-package  cloud.coders.sk.xchangecrypt.datamodel;
+package cloud.coders.sk.xchangecrypt.datamodel;
 
 import java.io.Serializable;
 
@@ -18,12 +18,12 @@ public abstract class BaseObject implements Serializable, Constants {
         this.id = id;
     }
 
-
     public BaseObject(int id) {
         this.id = id;
     }
 
-    public BaseObject(){}
+    public BaseObject() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -33,12 +33,10 @@ public abstract class BaseObject implements Serializable, Constants {
         BaseObject that = (BaseObject) o;
 
         return getId() == that.getId();
-
     }
 
     @Override
     public int hashCode() {
         return getId();
     }
-
 }

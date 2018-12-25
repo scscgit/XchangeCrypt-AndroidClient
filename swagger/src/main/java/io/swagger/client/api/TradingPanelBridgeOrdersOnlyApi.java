@@ -24,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import java.math.BigDecimal;
+
 import io.swagger.client.model.InlineResponse200;
 import io.swagger.client.model.InlineResponse2001;
 import io.swagger.client.model.InlineResponse20010;
@@ -51,8 +52,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class TradingPanelBridgeOrdersOnlyApi {
-  String basePath = AccountApi.API_DOMAIN + "tradingapi";
-  ApiInvoker apiInvoker = ApiInvoker.getInstance();
+  private String basePath = AccountApi.API_DOMAIN + "tradingapi";
+  private ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
     getInvoker().addDefaultHeader(key, value);

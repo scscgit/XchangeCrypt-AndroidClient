@@ -1,6 +1,7 @@
 package cloud.coders.sk.xchangecrypt.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
@@ -19,49 +21,42 @@ import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 /**
  * Created by Peter on 05.05.2018.
  */
-
 public class WalletHistoryListViewAdapter extends ArrayAdapter {
-
     private Context context;
     private List<MyTransaction> transactions;
 
-    public WalletHistoryListViewAdapter(Context context, List<MyTransaction> transactions) {
+    public WalletHistoryListViewAdapter(Context context, @NonNull List<MyTransaction> transactions) {
         super(context, R.layout.listview_wallet_item, transactions);
+        Objects.requireNonNull(transactions);
         this.context = context;
         this.transactions = transactions;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.recyclerview_wallet_item, parent, false);
 
         MyTransaction transaction = transactions.get(position);
 
-        TextView title = (TextView) rowView .findViewById(R.id.title_text);
-        TextView price = (TextView) rowView .findViewById(R.id.price_text);
-        TextView amount = (TextView) rowView .findViewById(R.id.amount_text);
-        //  date = (TextView) view.findViewById(R.id.date_text);
-        ImageView logo = (ImageView) rowView .findViewById(R.id.coin_image);
-
+        TextView title = rowView.findViewById(R.id.title_text);
+        TextView price = rowView.findViewById(R.id.price_text);
+        TextView amount = rowView.findViewById(R.id.amount_text);
+        //date = view.findViewById(R.id.date_text);
+        ImageView logo = rowView.findViewById(R.id.coin_image);
 
         StringBuilder builder = new StringBuilder();
-        if (transaction.getSide() == OrderSide.sell){
+        if (transaction.getSide() == OrderSide.sell) {
             builder.append("Predaj ");
-        }else {
+        } else {
             builder.append("Nákup ");
         }
-
-
-
         builder.append(transaction.getBaseCurrency()).append("/").append(transaction.getQuoteCurrency());
         title.setText(builder.toString());
 
         price.setText(String.format("%.6f", transaction.getPrice()));
         amount.setText(String.format("%.6f", transaction.getAmount()));
-
         //date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
-
 
         if (transaction.getSide() == OrderSide.buy) {
             switch (transaction.getQuoteCurrency()) {
@@ -74,7 +69,7 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
                 case "LTC":
                     logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
             }
-        }else {
+        } else {
             switch (transaction.getBaseCurrency()) {
                 case "BTC":
                     logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
@@ -87,10 +82,6 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
                     break;
             }
         }
-
-
-
-
         return rowView;
     }
 }

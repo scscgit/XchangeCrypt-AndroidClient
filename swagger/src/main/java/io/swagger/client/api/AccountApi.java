@@ -29,8 +29,8 @@ public class AccountApi {
     public static String API_DOMAIN = "http://192.168.0.20/api/v1/";
     //public static String API_DOMAIN = "https://rest-demo.tradingview.com/tradingview/v1/";
     //public static String API_DOMAIN = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/";
-    String basePath = AccountApi.API_DOMAIN + "accountapi";
-    ApiInvoker apiInvoker;// = ApiInvoker.getInstance();
+    private String basePath = AccountApi.API_DOMAIN + "accountapi";
+    private ApiInvoker apiInvoker;// = ApiInvoker.getInstance();
 
     public void addHeader(String key, String value) {
         getInvoker().addDefaultHeader(key, value);
@@ -106,5 +106,4 @@ public class AccountApi {
             return null;
         }
     }
-
 }

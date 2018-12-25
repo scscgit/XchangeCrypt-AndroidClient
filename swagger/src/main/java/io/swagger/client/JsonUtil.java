@@ -402,5 +402,4 @@ public class JsonUtil {
     
     return new TypeToken<Object>(){}.getType();
   }
-
-};
+}

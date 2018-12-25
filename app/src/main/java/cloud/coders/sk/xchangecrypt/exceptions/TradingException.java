@@ -5,12 +5,11 @@ package cloud.coders.sk.xchangecrypt.exceptions;
  */
 
 public class TradingException extends RuntimeException {
-
-    public TradingException(String message){
+    public TradingException(String message) {
         super(message);
     }
 
-    public TradingException(String message, Exception e){
-        super(message,e);
+    public TradingException(String message, Exception e) {
+        super(message, e);
     }
 }

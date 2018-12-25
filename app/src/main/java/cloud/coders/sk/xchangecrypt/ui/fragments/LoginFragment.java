@@ -19,17 +19,14 @@ import static cloud.coders.sk.xchangecrypt.utils.Utility.isOnline;
 /**
  * Created by Peter on 21.04.2018.
  */
-
-public class LoginFragment extends BaseFragment{
-
+public class LoginFragment extends BaseFragment {
     private ImageView googleSignButton;
 //    private Button signButton;
 //    private Button registerButton;
 //    private EditText emailEditText;
 //    private EditText passwordEditText;
 
-
-    public static LoginFragment newInstance(Bundle args){
+    public static LoginFragment newInstance(Bundle args) {
         LoginFragment fragment = new LoginFragment();
         fragment.setArguments(args);
         return fragment;
@@ -48,11 +45,10 @@ public class LoginFragment extends BaseFragment{
         return rootView;
     }
 
-
     @Override
     protected void setActionBar() {
         setToolbarTitle("");
-        googleSignButton = (ImageView) rootView.findViewById(R.id.button_google_sign);
+        googleSignButton = rootView.findViewById(R.id.button_google_sign);
 //        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
 //        registerButton =(Button) rootView.findViewById(R.id.button_register);
 //        emailEditText = (EditText) rootView.findViewById(R.id.edit_text_email);
@@ -64,10 +60,10 @@ public class LoginFragment extends BaseFragment{
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               ((MainActivity)getActivity()).onCallApiClicked(((MainActivity)getActivity()).getScopes());
-             //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
+                ((MainActivity) getActivity()).onCallApiClicked(((MainActivity) getActivity()).getScopes());
+                //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
-         });
+        });
 //
 //        signButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -82,12 +78,9 @@ public class LoginFragment extends BaseFragment{
 //                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
 //            }
 //        });
-
     }
-
 
     @Override
     protected void setViewContents() {
-
     }
 }
