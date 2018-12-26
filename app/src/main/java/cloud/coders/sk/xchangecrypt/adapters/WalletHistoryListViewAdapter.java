@@ -11,15 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 
 /**
  * Created by Peter on 05.05.2018.
  */
+@Deprecated
 public class WalletHistoryListViewAdapter extends ArrayAdapter {
     private Context context;
     private List<MyTransaction> transactions;
@@ -40,7 +41,7 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
         TextView title = rowView.findViewById(R.id.title_text);
         TextView price = rowView.findViewById(R.id.price_text);
         TextView amount = rowView.findViewById(R.id.amount_text);
-        //date = view.findViewById(R.id.date_text);
+        TextView date = rowView.findViewById(R.id.date_text);
         ImageView logo = rowView.findViewById(R.id.coin_image);
 
         StringBuilder builder = new StringBuilder();
@@ -54,7 +55,7 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
 
         price.setText(String.format("%.6f", transaction.getPrice()));
         amount.setText(String.format("%.6f", transaction.getAmount()));
-        //date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
+        date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
 
         if (transaction.getSide() == OrderSide.BUY) {
             switch (transaction.getQuoteCurrency()) {

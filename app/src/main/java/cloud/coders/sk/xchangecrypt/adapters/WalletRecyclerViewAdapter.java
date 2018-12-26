@@ -11,12 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
+import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 
 /**
  * Created by Peter on 22.04.2018.
@@ -35,7 +35,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
             title = view.findViewById(R.id.title_text);
             price = view.findViewById(R.id.price_text);
             amount = view.findViewById(R.id.amount_text);
-            //date = view.findViewById(R.id.date_text);
+            date = view.findViewById(R.id.date_text);
             logo = view.findViewById(R.id.coin_image);
         }
     }
@@ -67,8 +67,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
 
         holder.price.setText(String.format("%.6f", transaction.getPrice()));
         holder.amount.setText(String.format("%.6f", transaction.getAmount()));
-
-        //holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
+        holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
 
         if (transaction.getSide() == OrderSide.BUY) {
             switch (transaction.getQuoteCurrency()) {

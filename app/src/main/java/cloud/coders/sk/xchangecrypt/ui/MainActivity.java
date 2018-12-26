@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.core.Constants;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.ContentCacheType;
@@ -69,9 +70,8 @@ import cloud.coders.sk.xchangecrypt.ui.fragments.SettingFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SplashFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.WalletFragment;
 import cloud.coders.sk.xchangecrypt.util.ConnectionHelper;
-import cloud.coders.sk.xchangecrypt.util.UserHelper;
 import cloud.coders.sk.xchangecrypt.util.Logger;
-import cloud.coders.sk.R;
+import cloud.coders.sk.xchangecrypt.util.UserHelper;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.AccountWalletResponse;
 import io.swagger.client.model.Depth;
@@ -123,7 +123,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.initialize(true);
-        prepareCache();
         setContentView(R.layout.activity_main);
         setToolbarAndDrawer(savedInstanceState);
         setBottomNavigationView();
@@ -492,11 +491,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().setUser(new User("0"));
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
         getContentProvider().setCurrentOrderSide(OrderSide.BUY);
-        MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265);
-        //MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "BTC", "QBC", (float)0.02000311, (float)0.058265);
-        MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "LTC", "BTC", (float) 0.02000235, (float) 0.158265);
-        MyTransaction transaction2 = new MyTransaction(OrderSide.SELL, "LTC", "BTC", (float) 0.02100235, (float) 0.101515);
-        MyTransaction transaction3 = new MyTransaction(OrderSide.SELL, "QBC", "BTC", (float) 0.00000299, (float) 21.00021215);
+        MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265, new Date());
+        //MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "BTC", "QBC", (float)0.02000311, (float)0.058265, new Date());
+        MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "LTC", "BTC", (float) 0.02000235, (float) 0.158265, new Date());
+        MyTransaction transaction2 = new MyTransaction(OrderSide.SELL, "LTC", "BTC", (float) 0.02100235, (float) 0.101515, new Date());
+        MyTransaction transaction3 = new MyTransaction(OrderSide.SELL, "QBC", "BTC", (float) 0.00000299, (float) 21.00021215, new Date());
         List<MyTransaction> transactionList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             transactionList.add(transaction0);
@@ -808,6 +807,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     if (error == null) {
                         String orderId = intent.getExtras().getString("orderId");
                         getContentProvider().removeAccountOrderById(orderId);
+                        // Refresh the fragment's user orders
+                        for (android.support.v4.app.Fragment fragment :
+                                getSupportFragmentManager().getFragments()) {
+                            if (fragment instanceof ExchangeFragment) {
+                                ((ExchangeFragment) fragment).showUserOrders();
+                            }
+                        }
                     } else {
                         Toast.makeText(context, "Chyba pri odstraňovaní ponuky.", Toast.LENGTH_SHORT).show();
                     }
@@ -881,11 +887,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         if (executions != null) {
                             for (Execution execution : executions) {
                                 transactions.add(new MyTransaction(
-                                        OrderSide.valueOf(execution.getSide().toString()),
+                                        OrderSide.valueOf(execution.getSide().toString().toUpperCase()),
                                         execution.getInstrument().split("_")[0],
                                         execution.getInstrument().split("_")[1],
                                         execution.getPrice().doubleValue(),
-                                        execution.getQty().doubleValue()
+                                        execution.getQty().doubleValue(),
+                                        new Date(execution.getTime().longValue())
                                 ));
                             }
                         }

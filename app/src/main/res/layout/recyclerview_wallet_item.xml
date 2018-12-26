@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="115dp"
-    android:background="@color/gray">
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="115dp"-->
+    <!--android:background="@color/gray">-->
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/linearLayout_item_home"
         android:layout_width="fill_parent"
         android:layout_height="110dp"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:layout_marginBottom="@dimen/margin_home_gridview"
+        android:layout_marginBottom="@dimen/margin_wallet_item"
         >
 
         <LinearLayout
@@ -59,7 +59,7 @@
                     android:id="@+id/title_text"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="8"
+                    android:layout_weight="6"
                     android:textSize="@dimen/title_text_size"
                     android:gravity="center_vertical"
                     android:text="Title"/>
@@ -69,12 +69,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="4"
+                    android:layout_weight="3"
                     android:orientation="horizontal"
                     android:weightSum="7"
                     android:gravity="center_vertical|left"
-                    android:layout_marginTop="@dimen/margin_home_gridview"
-                    android:layout_marginBottom="@dimen/margin_home_gridview"
+                    android:layout_marginTop="@dimen/margin_wallet_item"
+                    android:layout_marginBottom="@dimen/margin_wallet_item"
                     >
 
                     <!-- Price title-->
@@ -106,8 +106,8 @@
                     android:orientation="horizontal"
                     android:weightSum="7"
                     android:gravity="center_vertical|left"
-                    android:layout_marginTop="@dimen/margin_home_gridview"
-                    android:layout_marginBottom="@dimen/margin_home_gridview"
+                    android:layout_marginTop="@dimen/margin_wallet_item"
+                    android:layout_marginBottom="@dimen/margin_wallet_item"
                     >
 
                     <!-- Amount icon -->
@@ -132,46 +132,42 @@
 
                 </LinearLayout>
 
-                <!--<LinearLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="0dp"-->
-                    <!--android:layout_weight="4"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:weightSum="5"-->
-                    <!--android:gravity="center_vertical|left"-->
-                    <!--android:layout_marginTop="@dimen/margin_home_gridview"-->
-                    <!--android:layout_marginBottom="@dimen/margin_home_gridview"-->
-                    <!--&gt;-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:orientation="horizontal"
+                    android:weightSum="7"
+                    android:gravity="center_vertical|start"
+                    android:layout_marginTop="@dimen/margin_wallet_item"
+                    android:layout_marginBottom="@dimen/margin_wallet_item"
+                    >
 
-                    <!--&lt;!&ndash; Date icon &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--android:id="@+id/date_title"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:textSize="@dimen/item_text_size"-->
-                        <!--android:text="Dátum"/>-->
-                    <!--&lt;!&ndash; android:layout_marginStart="@dimen/margin_home_gridview" &ndash;&gt;-->
-                    <!--&lt;!&ndash;   android:layout_marginLeft="@dimen/margin_home_gridview"&ndash;&gt;-->
-                    <!--&lt;!&ndash;  />&ndash;&gt;-->
+                    <!-- Date icon -->
+                    <TextView
+                        android:id="@+id/date_title"
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/item_text_size"
+                        android:text="Dátum"
+                      />
 
-                    <!--&lt;!&ndash; Date text &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--android:id="@+id/date_text"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="4"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:textSize="@dimen/item_text_size"-->
-                        <!--android:text="Date"/>-->
-                    <!--&lt;!&ndash;android:layout_marginStart="@dimen/margin_home_gridview"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_marginLeft="@dimen/margin_home_gridview"&ndash;&gt;-->
-                    <!--&lt;!&ndash;/>&ndash;&gt;-->
+                    <!-- Date text -->
+                    <TextView
+                        android:id="@+id/date_text"
+                        android:layout_width="0dp"
+                        android:layout_weight="5"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/item_text_size"
+                        android:text="Date"
+                    />
 
-                <!--</LinearLayout>-->
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+<!--</LinearLayout>-->

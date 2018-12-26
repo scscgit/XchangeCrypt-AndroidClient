@@ -3,6 +3,7 @@ package cloud.coders.sk.xchangecrypt.core;
 import android.content.Context;
 import android.util.Log;
 
+import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -253,6 +254,7 @@ public class ContentProvider {
     }
 
     public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
+        orders = Stream.of(orders).sortBy(Order::getLimitPrice).collect(Collectors.toList());
         marketDepthMap.put(currencyPair, orders);
         saveDepthOrders();
         setLastUpdateTime(ContentCacheType.MARKET_DEPTH, new Date());
@@ -266,6 +268,7 @@ public class ContentProvider {
             marketPriceSell.put(currencyPair, 0.0);
             return;
         }
+        // TODO: if sorted, then just take a first entry
         marketPriceBuy.put(currencyPair,
                 Stream.of(marketDepthMap.get(currencyPair))
                         .filter(depthItem -> depthItem.getSide() == OrderSide.SELL)
@@ -298,6 +301,11 @@ public class ContentProvider {
     }
 
     public void setAccountOrders(List<Order> accountOrders) {
+        accountOrders = Stream.of(accountOrders)
+                .sortBy(accountOrder -> null != accountOrder.getStopPrice()
+                        ? accountOrder.getStopPrice()
+                        : accountOrder.getLimitPrice())
+                .collect(Collectors.toList());
         this.accountOrders = accountOrders;
         saveAccountOrders();
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS, new Date());
@@ -329,6 +337,9 @@ public class ContentProvider {
     }
 
     public void setAccountOrderHistory(List<Order> accountOrderHistory) {
+        accountOrderHistory = Stream.of(accountOrderHistory)
+                .sortBy(Order::getOrderId)
+                .collect(Collectors.toList());
         this.accountOrderHistory = accountOrderHistory;
         saveAccountOrderHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDER_HISTORY, new Date());
@@ -339,6 +350,9 @@ public class ContentProvider {
     }
 
     public void setAccountTransactionHistory(String currencyPair, List<MyTransaction> accountTransactionHistory) {
+        accountTransactionHistory = Stream.of(accountTransactionHistory)
+                .sortBy(MyTransaction::getDate)
+                .collect(Collectors.toList());
         accountTransactionHistoryMap.put(currencyPair, accountTransactionHistory);
         saveAccountTransactionHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY, new Date());

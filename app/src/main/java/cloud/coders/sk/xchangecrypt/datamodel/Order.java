@@ -88,10 +88,6 @@ public class Order extends BaseObject {
         this.type = type;
     }
 
-    public Double getPrice() {
-        return limitPrice;
-    }
-
     public Double getLimitPrice() {
         return limitPrice;
     }

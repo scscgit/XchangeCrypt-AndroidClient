@@ -9,10 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
+import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 
 /**
  * Created by Peter on 23.04.2018.
@@ -45,7 +45,7 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter {
         TextView coin1 = rowView.findViewById(R.id.listview_orders_item_coin1);
         TextView coin2 = rowView.findViewById(R.id.listview_orders_item_coin2);
 
-        price.setText(String.format("%.8f", offer.getPrice()));
+        price.setText(String.format("%.8f", offer.getType() == OrderType.limit ? offer.getLimitPrice() : offer.getStopPrice()));
         coin1.setText(String.format("%.8f", offer.getBaseCurrencyAmount()));
         coin2.setText(String.format("%.8f", offer.getQuoteCurrencyAmount()));
 

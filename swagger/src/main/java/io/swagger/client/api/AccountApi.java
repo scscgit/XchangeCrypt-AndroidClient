@@ -1,14 +1,10 @@
 package io.swagger.client.api;
 
-import com.android.volley.VolleyError;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +16,6 @@ import io.swagger.client.ApiException;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.Pair;
 import io.swagger.client.model.AccountWalletResponse;
-import io.swagger.client.model.InlineResponse20010;
 
 /**
  * Created by Peter on 05.05.2018.

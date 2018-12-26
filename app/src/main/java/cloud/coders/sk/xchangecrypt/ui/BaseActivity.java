@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Environment;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,14 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import java.io.File;
-
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.util.ApplicationStorage;
 import cloud.coders.sk.xchangecrypt.core.ContentProvider;
-import cloud.coders.sk.xchangecrypt.util.FragmentsManager;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
+import cloud.coders.sk.xchangecrypt.util.ApplicationStorage;
+import cloud.coders.sk.xchangecrypt.util.FragmentsManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected Toolbar toolbar;
@@ -45,9 +42,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ConnectionListener connectionListener;
     protected LinearLayout bottomNavigationLayout;
 
-    protected File extStorageAppBasePath;
-    protected File extStorageAppCachePath;
-
     public void showErrorDialog(int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
@@ -58,7 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 finish();
             }
         });
-
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -239,38 +232,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return bottomNavigationView;
     }
 
-    public String getCachePath() {
-        if (extStorageAppCachePath == null) {
-            return getCacheDir().getPath();
-        }
-        return extStorageAppCachePath.getPath();
-    }
-
-    public void prepareCache() {
-        // Check if the external storage is writable
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            // Retrieve the base path for the application in the external storage
-            File externalStorageDir = Environment.getExternalStorageDirectory();
-            if (externalStorageDir != null) {
-                // {SD_PATH}/Android/data/com.devahead.androidwebviewcacheonsd
-                extStorageAppBasePath = new File(externalStorageDir.getAbsolutePath() +
-                        File.separator + "Android" + File.separator + "data" +
-                        File.separator + getPackageName());
-            }
-            if (extStorageAppBasePath != null) {
-                // {SD_PATH}/Android/data/com.devahead.androidwebviewcacheonsd/cache
-                extStorageAppCachePath = new File(extStorageAppBasePath.getAbsolutePath() + File.separator + "cache");
-                boolean isCachePathAvailable = true;
-                if (!extStorageAppCachePath.exists()) {
-                    isCachePathAvailable = extStorageAppCachePath.mkdirs();
-                }
-                if (!isCachePathAvailable) {
-                    extStorageAppCachePath = null;
-                }
-            }
-        }
-    }
-
     public void expand(final View v, final int duration) {
         if (duration == 0) {
             v.setVisibility(View.VISIBLE);
@@ -358,14 +319,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) content.getLayoutParams();
         params.topMargin = 0;
         content.setLayoutParams(params);
-    }
-
-    @Override
-    public File getCacheDir() {
-        if (extStorageAppCachePath == null) {
-            return super.getCacheDir();
-        }
-        return extStorageAppCachePath;
     }
 
     @Override

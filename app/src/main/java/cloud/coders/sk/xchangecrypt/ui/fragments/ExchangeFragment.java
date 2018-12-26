@@ -218,15 +218,14 @@ public class ExchangeFragment extends BaseFragment {
 
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (myOrders) {
-                    final int position1 = position;
                     DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
                         @Override
                         public void onPositiveButtonClicked(Context context) {
                             // Header causes a need to offset all rows by negative one
                             int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
-                            ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position1 + offset));
+                            ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position + offset));
                         }
                     };
                     ((MainActivity) getActivity()).showDialogWithAction(R.string.delete, dialogOkClickListener, true);
@@ -583,7 +582,8 @@ public class ExchangeFragment extends BaseFragment {
                 amount,
                 pair[1],
                 price * amount,
-                orderSide, OrderType.stop
+                orderSide,
+                OrderType.stop
         );
         ((MainActivity) getActivity()).sendOrder(order);
     }
@@ -641,7 +641,7 @@ public class ExchangeFragment extends BaseFragment {
         myOrders = false;
     }
 
-    private void showUserOrders() {
+    public void showUserOrders() {
         String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
         currentUserOrders = getContentProvider().getAccountOrdersByCurrencyPairAndSide(pair[0], pair[1], orderSide);
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
@@ -845,7 +845,6 @@ public class ExchangeFragment extends BaseFragment {
                 .setMessage(message)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (whichButton == BUTTON_POSITIVE) {
                             action.run();
