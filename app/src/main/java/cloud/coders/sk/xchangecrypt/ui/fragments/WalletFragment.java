@@ -20,7 +20,7 @@ import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.WalletListViewAdapter;
 import cloud.coders.sk.xchangecrypt.adapters.WalletRecyclerViewAdapter;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
-import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
+import cloud.coders.sk.xchangecrypt.datamodel.ContentCacheType;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 
@@ -69,7 +69,7 @@ public class WalletFragment extends BaseFragment {
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 
-        adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountTransactionHistory(), getContext(), (MainActivity) getActivity());
+        adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountOrderHistory(), getContext(), (MainActivity) getActivity());
     }
 
     private boolean loading = true;
@@ -78,7 +78,7 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViewContents() {
-        Date date = getContentProvider().getLastUpdate(UpdateType.history);
+        Date date = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
         if (date != null) {
             datetextView.setText("Aktualizované " + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         }

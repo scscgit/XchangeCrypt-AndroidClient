@@ -4,26 +4,26 @@ package cloud.coders.sk.xchangecrypt.datamodel;
  * Created by Peter on 22.04.2018.
  */
 public class Coin extends BaseObject {
-    private String name;
+    private String symbolName;
     private double amount;
 
-    public Coin(int id, String name, double amount) {
+    public Coin(int id, String symbolName, double amount) {
         super(id);
-        this.name = name;
+        this.symbolName = symbolName;
         this.amount = amount;
     }
 
-    public Coin(String name, double amount) {
-        this.name = name;
+    public Coin(String symbolName, double amount) {
+        this.symbolName = symbolName;
         this.amount = amount;
     }
 
-    public String getName() {
-        return name;
+    public String getSymbolName() {
+        return symbolName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSymbolName(String symbolName) {
+        this.symbolName = symbolName;
     }
 
     public double getAmount() {

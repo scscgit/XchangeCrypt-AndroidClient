@@ -26,10 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cloud.coders.sk.R;
@@ -204,7 +201,7 @@ public class ExchangeFragment extends BaseFragment {
         //priceEdit.setText(getContentProvider());
 
         // TODO: handle null exception
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketOrders().get(getContentProvider().getActualCurrencyPair()), true));
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair()), true));
         //listViewOrders.setClickable(false);
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
         lastHeader = header;
@@ -215,7 +212,7 @@ public class ExchangeFragment extends BaseFragment {
         } catch (Exception e) {
             headerCrashed();
         }
-        updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair(), true);
+        updateAfterCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
         //setListViewHeightBasedOnChildren(listViewOrders);
         //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
 
@@ -315,7 +312,7 @@ public class ExchangeFragment extends BaseFragment {
                 showUserOrders();
             }
         });
-        //updateAfterCurrencyPairChange(getContentProvider().getActualCurrencyPair().toString());
+        //updateAfterCurrencyPairChange(getContentProvider().getCurrentCurrencyPair().toString());
 
         imageUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -497,7 +494,7 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void sendMarketOrder() {
-        String pairs = getContentProvider().getActualCurrencyPair();
+        String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
         double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
@@ -513,7 +510,7 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void sendLimitOrder() {
-        String pairs = getContentProvider().getActualCurrencyPair();
+        String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
         double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
@@ -554,7 +551,7 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void sendStopOrder() {
-        String pairs = getContentProvider().getActualCurrencyPair();
+        String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
         double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
@@ -597,37 +594,37 @@ public class ExchangeFragment extends BaseFragment {
         getContentProvider().setCurrentOrderSide(OrderSide.buy);
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.gray));
-        String[] pairParts = getContentProvider().getActualCurrencyPair().split("_");
-        Coin quoteCoin = getContentProvider().getCoinByName(pairParts[1]);
-        ballanceText.setText(String.format("%.8f", quoteCoin.getAmount()) + " " + quoteCoin.getName());
+        String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");
+        Coin quoteCoin = getContentProvider().getCoinBalanceByName(pairParts[1]);
+        ballanceText.setText(String.format("%.8f", quoteCoin.getAmount()) + " " + quoteCoin.getSymbolName());
         if (myOrders) {
             showUserOrders();
         } else {
             showMarketOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair(), getContentProvider().getCurrentOrderSide())));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
     }
 
     public void switchToSellMode() {
         getContentProvider().setCurrentOrderSide(OrderSide.sell);
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.orange));
-        String[] pairParts = getContentProvider().getActualCurrencyPair().split("_");
-        Coin baseCoin = getContentProvider().getCoinByName(pairParts[0]);
-        ballanceText.setText(String.format("%.8f", baseCoin.getAmount()) + " " + baseCoin.getName());
+        String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");
+        Coin baseCoin = getContentProvider().getCoinBalanceByName(pairParts[0]);
+        ballanceText.setText(String.format("%.8f", baseCoin.getAmount()) + " " + baseCoin.getSymbolName());
         if (myOrders) {
             showUserOrders();
         } else {
             showMarketOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(getContentProvider().getActualCurrencyPair(), getContentProvider().getCurrentOrderSide())));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
     }
 
     private List<Order> currentUserOrders = null;
 
     private void showMarketOrders() {
-        String[] pair = getContentProvider().getActualCurrencyPair().split("_");
-        List<Order> marketOrderForPairAndSide = getContentProvider().getMarketOrderForPairAndSide(pair[0], pair[1], getContentProvider().getCurrentOrderSide());
+        String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
+        List<Order> marketOrderForPairAndSide = getContentProvider().getMarketDepthOrdersForPairAndSide(pair[0], pair[1], getContentProvider().getCurrentOrderSide());
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketOrderForPairAndSide, true));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
@@ -645,8 +642,8 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void showUserOrders() {
-        String[] pair = getContentProvider().getActualCurrencyPair().split("_");
-        currentUserOrders = getContentProvider().getUserOrdersByCurrencyPairAndSide(pair[0], pair[1], orderSide);
+        String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
+        currentUserOrders = getContentProvider().getAccountOrdersByCurrencyPairAndSide(pair[0], pair[1], orderSide);
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
@@ -675,19 +672,19 @@ public class ExchangeFragment extends BaseFragment {
 
     private void updateAfterCurrencyPairChange(String pair, boolean hasData) {
         if (!hasData) {
-            getContentProvider().setActualCurrencyPair(pair);
+            getContentProvider().setCurrentCurrencyPair(pair);
             ((MainActivity) getActivity()).getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
             return;
         }
         //getMainActivity().getTradingApiHelper().tradingOffersForCurrencyPair(MainActivity.asyncTaskId++,pair);
         //getMainActivity().showProgressDialog("Načítavám dáta");
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPricePerPair(pair, orderSide)));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(pair, orderSide)));
         String[] pairParts = pair.split("_");
         firstCurrencyText.setText(pairParts[0]);
         secondCurrencyText.setText(pairParts[1]);
         setLogo(pairParts[0], firstCurrencyLogo);
         setLogo(pairParts[1], secondCurrencyLogo);
-        getContentProvider().setActualCurrencyPair(pair);
+        getContentProvider().setCurrentCurrencyPair(pair);
 
         amountCoin.setText(pairParts[0]);
         priceCoin.setText(pairParts[1]);

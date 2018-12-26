@@ -31,7 +31,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.microsoft.identity.client.AuthenticationCallback;
@@ -55,11 +54,11 @@ import java.util.Random;
 
 import cloud.coders.sk.xchangecrypt.core.Constants;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
+import cloud.coders.sk.xchangecrypt.datamodel.ContentCacheType;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
-import cloud.coders.sk.xchangecrypt.datamodel.UpdateType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.FragmentSwitcherInterface;
@@ -84,9 +83,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     //private static final String TAG = "[MainActivity]";
     public static int asyncTaskId = 0;
 
-    private BroadcastReceiver accountOfferDataReceiver;
+    private BroadcastReceiver accountOrdersHistory;
     private BroadcastReceiver depthDataReceiver;
-    private BroadcastReceiver accountHistoryOfferReceiver;
+    private BroadcastReceiver accountOrdersHistoryReceiver;
     private BroadcastReceiver sendOfferReceiver;
     private BroadcastReceiver removeOfferReceiver;
     private BroadcastReceiver authorizationReceiver;
@@ -98,27 +97,22 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private TradingApiHelper tradingApiHelper;
 
-    public TradingApiHelper getTradingApiHelper() {
-        return tradingApiHelper;
-    }
+    //private GoogleApiClient googleApiClient;
+    //private static final int RC_SIGN_IN = 9001;
+    //private GoogleSignInAccount googleAccount;
 
-    private GoogleApiClient googleApiClient;
-    private static final int RC_SIGN_IN = 9001;
-    private GoogleSignInAccount googleAccount;
-
-    /* Azure AD variables */
+    // Azure AD MSAL context variables
     private PublicClientApplication sampleApp;
-    private AuthenticationResult authResult;
     private String[] scopes;
 
     public String[] getScopes() {
         return scopes;
     }
 
-    /* UI & Debugging Variables */
+    // UI & Debugging Variables
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    /* Global App State */
+    // Global App State
     //AppSubClass state;
 
     @Override
@@ -139,11 +133,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // TODO: use actual user reference
         getContentProvider().setUser(new User("0"));
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
-        getContentProvider().setActualCurrencyPair("QBC_BTC");
+        getContentProvider().setCurrentCurrencyPair("QBC_BTC");
 
         getContentProvider().setCurrentOrderSide(OrderSide.buy);
-        getContentProvider().addMarketPrice("QBC_BTC", 0, OrderSide.buy);
-        getContentProvider().addMarketPrice("QBC_BTC", 0, OrderSide.sell);
+        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.buy);
+        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.sell);
 
 //        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestEmail()
@@ -198,7 +192,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     this,
                     Constants.CLIENT_ID,
                     authority);
-            getContentProvider().setPublicClientApplication(sampleApp);
             try {
                 com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                     @Override
@@ -272,14 +265,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public void onSuccess(AuthenticationResult authenticationResult) {
                 /* Successfully got a token, call api now */
                 Log.d(TAG, "Successfully authenticated");
-                authResult = authenticationResult;
-                getContentProvider().setAuthResult(authResult);
-                tradingApiHelper.getApiAuthentication().setApiKey(authenticationResult.getAccessToken());
+                String accessToken = authenticationResult.getAccessToken();
+                tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
 
                 /* Start authenticated activity */
                 getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
                 //switchToFragment(FRAGMENT_EXCHANGE, null);
-                callAPI();
+                callAPI(accessToken);
             }
 
             @Override
@@ -316,13 +308,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 /* Successfully got a token, call api now */
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
-                authResult = authenticationResult;
-                getContentProvider().setAuthResult(authResult);
-                tradingApiHelper.getApiAuthentication().setApiKey(authenticationResult.getAccessToken());
+                String accessToken = authenticationResult.getAccessToken();
+                tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
 
                 /* Start authenticated activity */
                 getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
-                callAPI();
+                callAPI(accessToken);
             }
 
             @Override
@@ -376,7 +367,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
      * Use Volley to request the /me endpoint from API
      * Sets the UI to what we get back
      */
-    private void callAPI() {
+    private void callAPI(final String accessToken) {
         Log.d(TAG, "Starting volley request to API");
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject parameters = new JSONObject();
@@ -410,8 +401,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                Log.d(TAG, "Token: " + authResult.getAccessToken());
-                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+                Log.d(TAG, "Token: " + accessToken);
+                headers.put("Authorization", "Bearer " + accessToken);
                 return headers;
             }
         };
@@ -507,8 +498,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             transactionList.add(transaction2);
             transactionList.add(transaction3);
         }
-        getContentProvider().setAccountTransactionHistory(transactionList);
-        //getContentProvider().setLastUpdate(UpdateType.history, new Date());
+        getContentProvider().setAccountOrderHistory(transactionList);
+        //getContentProvider().setLastUpdateTime(ContentCacheType.history, new Date());
 
         Coin coin1 = new Coin("BTC", 0.00025638);
         Coin coin2 = new Coin("QBC", 1.90025211);
@@ -565,8 +556,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             offerList1.add(offer91);
         }
 
-        getContentProvider().addToOrders("QBC_BTC", offerList1);
-        getContentProvider().addToOrders("LTC_QBC", offerList);
+        getContentProvider().setMarketDepthOrders("QBC_BTC", offerList1);
+        getContentProvider().setMarketDepthOrders("LTC_QBC", offerList);
 
         List<Order> myoffers = new ArrayList<Order>();
         myoffers.add(offer1);
@@ -574,15 +565,15 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().setAccountOrders(myoffers);
         getContentProvider().setUser(new User("0"));
 
-        getContentProvider().setActualCurrencyPair("QBC_BTC");
+        getContentProvider().setCurrentCurrencyPair("QBC_BTC");
         getContentProvider().setCurrentOrderSide(OrderSide.buy);
 
-        getContentProvider().addMarketPrice("QBC_BTC", 0.00000311, OrderSide.buy);
-        getContentProvider().addMarketPrice("QBC_BTC", 0.00000301, OrderSide.sell);
-        getContentProvider().addMarketPrice("BTC_QBC", 0.901311, OrderSide.buy);
-        getContentProvider().addMarketPrice("BTC_QBC", 0.91000311, OrderSide.sell);
-        getContentProvider().addMarketPrice("LTC_BTC", 0.92000311, OrderSide.buy);
-        getContentProvider().addMarketPrice("LTC_BTC", 0.90001311, OrderSide.sell);
+        getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.buy);
+        getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.sell);
+        getContentProvider().setMarketPrice("BTC_QBC", 0.901311, OrderSide.buy);
+        getContentProvider().setMarketPrice("BTC_QBC", 0.91000311, OrderSide.sell);
+        getContentProvider().setMarketPrice("LTC_BTC", 0.92000311, OrderSide.buy);
+        getContentProvider().setMarketPrice("LTC_BTC", 0.90001311, OrderSide.sell);
     }
 
     @Override
@@ -640,8 +631,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
-        if (accountOfferDataReceiver == null) {
-            accountOfferDataReceiver = new BroadcastReceiver() {
+        if (accountOrdersHistory == null) {
+            accountOrdersHistory = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String accountID = intent.getExtras().getString("accountId");
@@ -684,7 +675,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
-                            getContentProvider().setLastUpdate(UpdateType.userOrders, new Date());
                         } else {
                             Toast.makeText(context, "Chyba pri ziskavaní dát.", Toast.LENGTH_SHORT).show();
                         }
@@ -697,7 +687,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
             };
         }
-        registerReceiver(accountOfferDataReceiver, new IntentFilter("account_offer_update"));
+        registerReceiver(accountOrdersHistory, new IntentFilter("account_offer_update"));
 
         if (depthDataReceiver == null) {
             depthDataReceiver = new BroadcastReceiver() {
@@ -777,13 +767,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             }
                         }
                         if (marketValueBuy != null) {
-                            getContentProvider().addMarketPrice(pair, marketValueBuy, OrderSide.buy);
+                            getContentProvider().setMarketPrice(pair, marketValueBuy, OrderSide.buy);
                         }
                         if (marketValueSell != null) {
-                            getContentProvider().addMarketPrice(pair, marketValueSell, OrderSide.sell);
+                            getContentProvider().setMarketPrice(pair, marketValueSell, OrderSide.sell);
                         }
-                        getContentProvider().addToOrders(pair, orders);
-                        getContentProvider().setLastUpdate(UpdateType.marketOrders, new Date());
+                        getContentProvider().setMarketDepthOrders(pair, orders);
                     } else {
                         Toast.makeText(context, "Chyba pri čítaní ponúk.", Toast.LENGTH_SHORT).show();
                     }
@@ -797,8 +786,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
         registerReceiver(depthDataReceiver, new IntentFilter("depth_update"));
 
-        if (accountHistoryOfferReceiver == null) {
-            accountHistoryOfferReceiver = new BroadcastReceiver() {
+        if (accountOrdersHistoryReceiver == null) {
+            accountOrdersHistoryReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     int taskID = intent.getExtras().getInt("taskId");
@@ -835,8 +824,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     order.getQty().doubleValue()
                             ));
                         }
-                        getContentProvider().setAccountTransactionHistory(transactions);
-                        getContentProvider().setLastUpdate(UpdateType.history, new Date());
+                        getContentProvider().setAccountOrderHistory(transactions);
                     } else {
                         Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
                     }
@@ -848,7 +836,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
             };
         }
-        registerReceiver(accountHistoryOfferReceiver, new IntentFilter("account_history_update"));
+        registerReceiver(accountOrdersHistoryReceiver, new IntentFilter("account_history_update"));
 
         if (sendOfferReceiver == null) {
             sendOfferReceiver = new BroadcastReceiver() {
@@ -876,7 +864,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
                         String orderId = intent.getExtras().getString("orderId");
-                        getContentProvider().removeOrderById(orderId);
+                        getContentProvider().removeAccountOrderById(orderId);
                     } else {
                         Toast.makeText(context, "Chyba pri odstraňovaní ponuky.", Toast.LENGTH_SHORT).show();
                     }
@@ -925,7 +913,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             ));
                         }
                         getContentProvider().setCoinsBalance(coins);
-                        getContentProvider().setLastUpdate(UpdateType.balance, new Date());
                     } else {
                         Toast.makeText(context, "Chyba pri čítani zostatkov.", Toast.LENGTH_SHORT).show();
                     }
@@ -961,7 +948,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             }
                         }
                         getContentProvider().setAccountTransactionHistory(pair, transactions);
-                        getContentProvider().setLastUpdate(UpdateType.history, new Date());
                     } else {
                         Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
                     }
@@ -990,7 +976,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             }
                         }
                         getContentProvider().setInstruments(pairs);
-                        getContentProvider().setLastUpdate(UpdateType.instruments, new Date());
                     } else {
                         Toast.makeText(context, "Chyba pri ziskavaní menových dvojíc.", Toast.LENGTH_SHORT).show();
                     }
@@ -1018,15 +1003,15 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     protected void onDestroy() {
-        getContentProvider().releaseLoadedData();
+        getContentProvider().destroy();
         super.onDestroy();
         unregisterReceiver(networkStateReceiver);
         unregisterReceiver(removeOfferReceiver);
         unregisterReceiver(sendOfferReceiver);
         unregisterReceiver(authorizationReceiver);
-        unregisterReceiver(accountHistoryOfferReceiver);
+        unregisterReceiver(accountOrdersHistoryReceiver);
         unregisterReceiver(depthDataReceiver);
-        unregisterReceiver(accountOfferDataReceiver);
+        unregisterReceiver(accountOrdersHistory);
         unregisterReceiver(accountBalanceReceiver);
         unregisterReceiver(executionsReceiver);
         unregisterReceiver(instrumentsReceiver);
@@ -1060,9 +1045,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     return;
                 }
                 if (!force) {
-                    Date lastInstrumentUpdate = getContentProvider().getLastUpdate(UpdateType.instruments);
-                    Date lastMarketUpdate = getContentProvider().getLastUpdate(UpdateType.marketOrders);
-                    Date lastUserUpdate = getContentProvider().getLastUpdate(UpdateType.userOrders);
+                    Date lastInstrumentUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.INSTRUMENTS);
+                    Date lastMarketUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.DEPTH_ORDERS);
+                    Date lastUserUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
                     Date actualDate1 = new Date();
 
                     if (lastInstrumentUpdate != null && lastMarketUpdate != null && lastUserUpdate != null) {
@@ -1077,7 +1062,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
                 showProgressDialog("Načítavám dáta");
                 tradingApiHelper.instrument(asyncTaskId++, getContentProvider().getUser());
-                tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++, getContentProvider().getActualCurrencyPair());
+                tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++, getContentProvider().getCurrentCurrencyPair());
                 tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
                 break;
             case FRAGMENT_WALLET:
@@ -1086,8 +1071,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     return;
                 }
                 if (!force) {
-                    Date lastHistoryUpdate = getContentProvider().getLastUpdate(UpdateType.history);
-                    Date lastBalanceUpdate = getContentProvider().getLastUpdate(UpdateType.balance);
+                    Date lastHistoryUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
+                    Date lastBalanceUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.BALANCE);
                     Date actualDate = new Date();
                     if (lastHistoryUpdate != null && lastBalanceUpdate != null) {
 //                        long i1 = lastHistoryUpdate.getTime() - actualDate.getTime();

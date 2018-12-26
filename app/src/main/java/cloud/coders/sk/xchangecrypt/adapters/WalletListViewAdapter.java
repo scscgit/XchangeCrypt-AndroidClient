@@ -39,9 +39,9 @@ public class WalletListViewAdapter extends ArrayAdapter {
         TextView coinTitle = (TextView) rowView.findViewById(R.id.listview_coin_text);
         TextView amount = (TextView) rowView.findViewById(R.id.listview_coin_amount);
         ImageView logo = (ImageView) rowView.findViewById(R.id.listview_coin_logo);
-        coinTitle.setText(coin.getName());
+        coinTitle.setText(coin.getSymbolName());
         amount.setText(String.format("%.6f", coin.getAmount()));
-        switch (coin.getName()) {
+        switch (coin.getSymbolName()) {
             case "BTC":
                 logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
                 break;
