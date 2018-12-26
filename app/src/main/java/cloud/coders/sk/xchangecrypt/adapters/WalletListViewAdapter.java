@@ -25,7 +25,6 @@ public class WalletListViewAdapter extends ArrayAdapter {
 
     public WalletListViewAdapter(Context context, @NonNull List<Coin> coins) {
         super(context, R.layout.listview_wallet_item, coins);
-        Objects.requireNonNull(coins);
         this.context = context;
         this.coins = coins;
     }

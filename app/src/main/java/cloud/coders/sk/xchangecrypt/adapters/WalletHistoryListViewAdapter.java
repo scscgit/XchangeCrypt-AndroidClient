@@ -26,7 +26,6 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
 
     public WalletHistoryListViewAdapter(Context context, @NonNull List<MyTransaction> transactions) {
         super(context, R.layout.listview_wallet_item, transactions);
-        Objects.requireNonNull(transactions);
         this.context = context;
         this.transactions = transactions;
     }

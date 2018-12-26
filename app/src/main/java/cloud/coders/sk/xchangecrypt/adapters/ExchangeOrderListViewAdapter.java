@@ -24,7 +24,6 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter {
 
     public ExchangeOrderListViewAdapter(Context context, @NonNull List<Order> offers, boolean marketOrders) {
         super(context, R.layout.listview_order_item, offers);
-        Objects.requireNonNull(offers);
         this.context = context;
         this.offers = offers;
         this.marketOrders = marketOrders;

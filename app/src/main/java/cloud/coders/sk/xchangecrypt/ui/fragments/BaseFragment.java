@@ -1,5 +1,6 @@
 package cloud.coders.sk.xchangecrypt.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import cloud.coders.sk.xchangecrypt.ui.MainActivity;
  */
 public abstract class BaseFragment extends Fragment implements FragmentSwitcherInterface {
     protected View rootView;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,19 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     protected abstract void setViewContents();
 
     protected MainActivity getMainActivity() {
-        return (MainActivity) getActivity();
+        return (MainActivity) context;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.context = null;
     }
 
     @Override

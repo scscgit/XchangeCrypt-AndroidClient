@@ -115,7 +115,7 @@ public class TradingApiHelper {
         this.instruments = instruments;
     }
 
-    private HashMap<String, List<Execution>> executionHashMap;
+    private HashMap<String, List<Execution>> executionHashMap = new HashMap<>();
 
     public List<Execution> getExecution(String pair) {
         return executionHashMap.get(pair);
@@ -139,7 +139,7 @@ public class TradingApiHelper {
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
                     e.printStackTrace();
-                    Intent i = new Intent("account_offer_update");
+                    Intent i = new Intent("account_wallet_update");
                     i.putExtra("error", "execution");
                     i.putExtra("taskId", taskId);
                     context.sendBroadcast(i);
@@ -233,7 +233,7 @@ public class TradingApiHelper {
         }.execute();
     }
 
-    public void executions(final int taskId, final User user, final String pair, final int maxCount) {
+    public void accountTransactionHistoryForPair(final int taskId, final User user, final String pair, final int maxCount) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask task = new AsyncTask<Void, Void, InlineResponse20010>() {
             @Override
@@ -278,7 +278,7 @@ public class TradingApiHelper {
     }
 
     //0
-    public void tradingOffersPerAccount(final int taskId, final User user) {
+    public void accountOrderHistory(final int taskId, final User user) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask task = new AsyncTask<Void, Void, InlineResponse2004>() {
             @Override
@@ -321,7 +321,7 @@ public class TradingApiHelper {
     }
 
     //FX_IDC:ZARPLX
-    public void tradingOffersForCurrencyPair(final int taskId, final String pair) {
+    public void marketDepthForPair(final int taskId, final String pair) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse20013>() {
             @Override
@@ -402,8 +402,8 @@ public class TradingApiHelper {
                             mainActivity.getContentProvider().getUser().getAccountId(),
                             offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
                             BigDecimal.valueOf(order.getBaseCurrencyAmount()),
-                            offer.getSide().toString(),
-                            offer.getType().toString(),
+                            offer.getSide().toString().toLowerCase(),
+                            offer.getType().toString().toLowerCase(),
                             limitPrice,
                             stopPrice,
                             null,

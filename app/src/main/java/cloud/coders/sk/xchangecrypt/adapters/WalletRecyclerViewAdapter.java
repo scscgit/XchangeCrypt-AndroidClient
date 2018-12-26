@@ -41,7 +41,6 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
     }
 
     public WalletRecyclerViewAdapter(@NonNull List<MyTransaction> transactions, Context context, MainActivity activity) {
-        Objects.requireNonNull(transactions);
         this.transactions = transactions;
         this.context = context;
         this.activity = activity;

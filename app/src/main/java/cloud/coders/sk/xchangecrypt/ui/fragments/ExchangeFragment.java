@@ -676,7 +676,7 @@ public class ExchangeFragment extends BaseFragment {
             ((MainActivity) getActivity()).getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
             return;
         }
-        //getMainActivity().getTradingApiHelper().tradingOffersForCurrencyPair(MainActivity.asyncTaskId++,pair);
+        //getMainActivity().getTradingApiHelper().marketDepthForPair(MainActivity.asyncTaskId++,pair);
         //getMainActivity().showProgressDialog("Načítavám dáta");
         priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(pair, orderSide)));
         String[] pairParts = pair.split("_");

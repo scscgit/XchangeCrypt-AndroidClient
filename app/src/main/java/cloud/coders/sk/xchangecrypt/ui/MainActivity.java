@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import cloud.coders.sk.xchangecrypt.core.Constants;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
@@ -87,7 +86,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private BroadcastReceiver accountOrdersHistory;
     private BroadcastReceiver depthDataReceiver;
-    private BroadcastReceiver accountOrdersHistoryReceiver;
+    private BroadcastReceiver accountOrderHistoryReceiver;
     private BroadcastReceiver sendOfferReceiver;
     private BroadcastReceiver removeOfferReceiver;
     private BroadcastReceiver authorizationReceiver;
@@ -116,6 +115,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     // Global App State
     //AppSubClass state;
+
+    // Fragment switch target for async tasks
+    private Integer fragmentIdSwitchTarget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -488,6 +490,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private void createDumbData() {
         getContentProvider().setUser(new User("0"));
+        getContentProvider().setCurrentCurrencyPair("QBC_BTC");
+        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
         MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265);
         //MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "BTC", "QBC", (float)0.02000311, (float)0.058265);
         MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "LTC", "BTC", (float) 0.02000235, (float) 0.158265);
@@ -500,7 +504,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             transactionList.add(transaction2);
             transactionList.add(transaction3);
         }
-        getContentProvider().setAccountOrderHistory(transactionList);
+        getContentProvider().setAccountTransactionHistory(getContentProvider().getCurrentCurrencyPair(), transactionList);
         //getContentProvider().setLastUpdateTime(ContentCacheType.history, new Date());
 
         Coin coin1 = new Coin("BTC", 0.00025638);
@@ -565,10 +569,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         myoffers.add(offer1);
         myoffers.add(offer2);
         getContentProvider().setAccountOrders(myoffers);
-        getContentProvider().setUser(new User("0"));
-
-        getContentProvider().setCurrentCurrencyPair("QBC_BTC");
-        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
 
         getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.BUY);
         getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.SELL);
@@ -673,7 +673,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                         quote,
                                         order.getQty().doubleValue() * price,
                                         OrderSide.valueOf(order.getSide().toString().toUpperCase()),
-                                        OrderType.valueOf(order.getType().toString().toUpperCase())
+                                        OrderType.valueOf(order.getType().toString())
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
@@ -682,9 +682,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
+                    if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                        switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                     }
                 }
             };
@@ -735,9 +735,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         getContentProvider().setMarketDepthOrders(pair, orders);
                     } finally {
                         tradingApiHelper.deleteFromPendingTask(taskID);
-                        if (tradingApiHelper.noPendingTask()) {
+                        if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                             hideProgressDialog();
-                            switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                            switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                         }
                     }
                 }
@@ -745,57 +745,41 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
         registerReceiver(depthDataReceiver, new IntentFilter("depth_update"));
 
-        if (accountOrdersHistoryReceiver == null) {
-            accountOrdersHistoryReceiver = new BroadcastReceiver() {
+        if (accountOrderHistoryReceiver == null) {
+            accountOrderHistoryReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     int taskID = intent.getExtras().getInt("taskId");
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
                         InlineResponse2004 response = tradingApiHelper.getHistoryAccountOrders(getContentProvider().getUser().getAccountId());
-                        List<MyTransaction> transactions = new ArrayList<>();
-
-                        for (io.swagger.client.model.Order order : response.getD()) {
-                            Random r = new Random();
-                            double price = r.nextDouble();
-                            switch (order.getType()) {
-                                case limit:
-                                    price = order.getLimitPrice().doubleValue();
-                                    break;
-                                case stop:
-                                    price = order.getStopPrice().doubleValue();
-                                    break;
-                                case stoplimit:
-                                    price = order.getStopPrice().doubleValue();
-                            }
-                            String base = order.getInstrument().split("_")[0];
-                            String quote;
-                            try {
-                                quote = order.getInstrument().split("_")[1];
-                            } catch (Exception e) {
-                                quote = base;
-                            }
-                            transactions.add(new MyTransaction(
-                                    OrderSide.valueOf(order.getSide().toString().toUpperCase()),
-                                    base,
-                                    quote,
-                                    price,
-                                    order.getQty().doubleValue()
+                        List<Order> orderHistory = new ArrayList<>();
+                        for (io.swagger.client.model.Order orderResponse : response.getD()) {
+                            orderHistory.add(new Order(
+                                    orderResponse.getLimitPrice().doubleValue(),
+                                    orderResponse.getStopPrice().doubleValue(),
+                                    orderResponse.getInstrument().split("_")[0],
+                                    orderResponse.getQty().doubleValue(),
+                                    orderResponse.getInstrument().split("_")[1],
+                                    // TODO: quote currency amount?
+                                    orderResponse.getQty().doubleValue(),
+                                    OrderSide.valueOf(orderResponse.getSide().toString().toUpperCase()),
+                                    OrderType.valueOf(orderResponse.getType().toString())
                             ));
                         }
-                        getContentProvider().setAccountOrderHistory(transactions);
+                        getContentProvider().setAccountOrderHistory(orderHistory);
                     } else {
                         Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
+                    if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                        switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                     }
                 }
             };
         }
-        registerReceiver(accountOrdersHistoryReceiver, new IntentFilter("account_history_update"));
+        registerReceiver(accountOrderHistoryReceiver, new IntentFilter("account_history_update"));
 
         if (sendOfferReceiver == null) {
             sendOfferReceiver = new BroadcastReceiver() {
@@ -830,7 +814,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     tradingApiHelper.deleteFromPendingTask(taskID);
                     if (tradingApiHelper.noPendingTask()) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                     }
                 }
             };
@@ -876,9 +859,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         Toast.makeText(context, "Chyba pri čítani zostatkov.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
+                    if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                        switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                     }
                 }
             };
@@ -911,9 +894,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
+                    if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                        switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                     }
                 }
             };
@@ -939,9 +922,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         Toast.makeText(context, "Chyba pri ziskavaní menových dvojíc.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
+                    if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
                         hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                        switchToFragmentAndClear(fragmentIdSwitchTarget, null);
                     }
                 }
             };
@@ -968,7 +951,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         unregisterReceiver(removeOfferReceiver);
         unregisterReceiver(sendOfferReceiver);
         unregisterReceiver(authorizationReceiver);
-        unregisterReceiver(accountOrdersHistoryReceiver);
+        unregisterReceiver(accountOrderHistoryReceiver);
         unregisterReceiver(depthDataReceiver);
         unregisterReceiver(accountOrdersHistory);
         unregisterReceiver(accountBalanceReceiver);
@@ -1019,10 +1002,21 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                     }
                 }
-                showProgressDialog("Načítavám dáta");
+                // Queue asynchronous downloads
                 tradingApiHelper.instrument(asyncTaskId++, getContentProvider().getUser());
-                tradingApiHelper.tradingOffersForCurrencyPair(asyncTaskId++, getContentProvider().getCurrentCurrencyPair());
-                tradingApiHelper.tradingOffersPerAccount(asyncTaskId++, getContentProvider().getUser());
+                tradingApiHelper.marketDepthForPair(asyncTaskId++, getContentProvider().getCurrentCurrencyPair());
+                tradingApiHelper.accountOrderHistory(asyncTaskId++, getContentProvider().getUser());
+                tradingApiHelper.accountTransactionHistoryForPair(asyncTaskId++, getContentProvider().getUser(), getContentProvider().getCurrentCurrencyPair(), 30);
+                // Exchange fragment also displays available balance
+                tradingApiHelper.accountBalance(asyncTaskId++);
+
+                // Switches fragment, synchronously or asynchronously
+                if (getContentProvider().isExchangeLoaded()) {
+                    switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                } else {
+                    showProgressDialog("Načítavám dáta");
+                    fragmentIdSwitchTarget = FRAGMENT_EXCHANGE;
+                }
                 break;
             case FRAGMENT_WALLET:
                 if (!isOnline()) {
@@ -1043,10 +1037,16 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                     }
                 }
+                // Queue asynchronous downloads
                 tradingApiHelper.transactionHistoryForAccount(asyncTaskId++, getContentProvider().getUser(), 30);
                 tradingApiHelper.accountBalance(asyncTaskId++);
-                showProgressDialog("Načítavám dáta");
-                switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                // Switches fragment, synchronously or asynchronously
+                if (getContentProvider().isWalletLoaded()) {
+                    switchToFragmentAndClear(FRAGMENT_WALLET, null);
+                } else {
+                    showProgressDialog("Načítavám dáta");
+                    fragmentIdSwitchTarget = FRAGMENT_WALLET;
+                }
                 break;
         }
     }
