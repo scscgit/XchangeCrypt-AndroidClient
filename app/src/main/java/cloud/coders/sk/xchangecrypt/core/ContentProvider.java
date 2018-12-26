@@ -1,6 +1,9 @@
 package cloud.coders.sk.xchangecrypt.core;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,12 +26,18 @@ public class ContentProvider {
     private static ContentProvider instance;
     private static Context context;
 
+    private final String TAG = ContentProvider.class.getSimpleName();
+
     // Public cache tags
+    private final String CURRENT_CURRENCY_PAIR_TAG = "CurrentCurrencyPair";
+    private final String CURRENT_ORDER_SIDE_TAG = "CurrentOrderSide";
+    private final String INSTRUMENTS_TAG = "Instruments";
     private final String MARKET_DEPTH_TAG = "MarketDepth";
 
     // Account-specific cache tags
     private final String ACCOUNT_ORDERS_TAG = "AccountOrders_";
-    private final String TRANSACTION_HISTORY_TAG = "TransactionHistory_";
+    private final String ACCOUNT_ORDER_HISTORY_TAG = "AccountOrderHistory_";
+    private final String ACCOUNT_TRANSACTION_HISTORY_TAG = "AccountTransactionHistory_";
     private final String COINS_BALANCE_TAG = "CoinsBalance_";
 
     // Current content description
@@ -36,31 +45,25 @@ public class ContentProvider {
     private OrderSide currentOrderSide;
 
     // Current content to be displayed
-    private HashMap<String, Double> marketPriceBuy;
-    private HashMap<String, Double> marketPriceSell;
-    private HashMap<String, List<Order>> marketDepth;
-    private List<Order> accountOrders;
-    private List<MyTransaction> accountOrderHistory;
-    private HashMap<String, List<MyTransaction>> accountTransactionHistoryMap;
-    private List<String> instruments;
-    private List<Coin> coinsBalance;
+    private List<String> instruments = new ArrayList<>();
+    private HashMap<String, List<Order>> marketDepth = new HashMap<>();
+    private List<Order> accountOrders = new ArrayList<>();
+    private List<MyTransaction> accountOrderHistory = new ArrayList<>();
+    private HashMap<String, List<MyTransaction>> accountTransactionHistoryMap = new HashMap<>();
+    private List<Coin> coinsBalance = new ArrayList<>();
+
+    // Generated views
+    private HashMap<String, Double> marketPriceBuy = new HashMap<>();
+    private HashMap<String, Double> marketPriceSell = new HashMap<>();
 
     // The MSAL representation of the authenticated user and his scopes
     private String[] scopes;
     private User user;
 
     // Metadata describing how fresh the content provider's content is
-    private HashMap<ContentCacheType, Date> lastUpdates;
+    private HashMap<ContentCacheType, Date> lastUpdates = new HashMap<>();
 
     private ContentProvider() {
-        accountOrderHistory = new ArrayList<>();
-        coinsBalance = new ArrayList<>();
-        marketDepth = new HashMap<>();
-        marketPriceBuy = new HashMap<>();
-        marketPriceSell = new HashMap<>();
-        lastUpdates = new HashMap<>();
-        accountTransactionHistoryMap = new HashMap<>();
-        instruments = new ArrayList<>();
     }
 
     public static ContentProvider getInstance(Context context) {
@@ -76,30 +79,74 @@ public class ContentProvider {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadContentFromCache() {
-        List<MyTransaction> cachedAccountTransactionHistory = (List<MyTransaction>)
-                InternalStorage.readObject(context, TRANSACTION_HISTORY_TAG + user.getAccountId());
-        if (cachedAccountTransactionHistory != null) {
-            accountOrderHistory = cachedAccountTransactionHistory;
+    public boolean loadContentFromCache() {
+        boolean fullyLoaded = true;
+        String cachedCurrentCurrencyPair = (String)
+                InternalStorage.readObject(context, CURRENT_CURRENCY_PAIR_TAG);
+        if (cachedCurrentCurrencyPair != null) {
+            currentCurrencyPair = cachedCurrentCurrencyPair;
+        } else {
+            fullyLoaded = false;
         }
 
-        List<Coin> cachedCoinsBalance = (List<Coin>)
-                InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getAccountId());
-        if (cachedCoinsBalance != null) {
-            coinsBalance = cachedCoinsBalance;
+        OrderSide cachedCurrentOrderSide = (OrderSide)
+                InternalStorage.readObject(context, CURRENT_ORDER_SIDE_TAG);
+        if (cachedCurrentOrderSide != null) {
+            currentOrderSide = cachedCurrentOrderSide;
+        } else {
+            fullyLoaded = false;
         }
 
-        HashMap<String, List<Order>> cachedMarketOrders = (HashMap<String, List<Order>>)
+        List<String> cachedInstruments = (List<String>)
+                InternalStorage.readObject(context, INSTRUMENTS_TAG);
+        if (cachedInstruments != null) {
+            instruments = cachedInstruments;
+        } else {
+            fullyLoaded = false;
+        }
+
+        HashMap<String, List<Order>> cachedMarketDepth = (HashMap<String, List<Order>>)
                 InternalStorage.readObject(context, MARKET_DEPTH_TAG);
-        if (cachedMarketOrders != null) {
-            marketDepth = cachedMarketOrders;
+        if (cachedMarketDepth != null) {
+            marketDepth = cachedMarketDepth;
+        } else {
+            fullyLoaded = false;
         }
 
         List<Order> cachedAccountOrders = (List<Order>)
                 InternalStorage.readObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId());
         if (cachedAccountOrders != null) {
             accountOrders = cachedAccountOrders;
+        } else {
+            fullyLoaded = false;
         }
+
+        List<MyTransaction> cachedAccountOrderHistory = (List<MyTransaction>)
+                InternalStorage.readObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId());
+        if (cachedAccountOrderHistory != null) {
+            accountOrderHistory = cachedAccountOrderHistory;
+        } else {
+            fullyLoaded = false;
+        }
+
+        HashMap<String, List<MyTransaction>> cachedAccountTransactionHistoryMap = (HashMap<String, List<MyTransaction>>)
+                InternalStorage.readObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId());
+        if (cachedAccountTransactionHistoryMap != null) {
+            accountTransactionHistoryMap = cachedAccountTransactionHistoryMap;
+        } else {
+            fullyLoaded = false;
+        }
+
+        List<Coin> cachedCoinsBalance = (List<Coin>)
+                InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getAccountId());
+        if (cachedCoinsBalance != null) {
+            coinsBalance = cachedCoinsBalance;
+        } else {
+            fullyLoaded = false;
+        }
+
+        Log.d(TAG, "Result of loading content from cache: " + fullyLoaded);
+        return fullyLoaded;
     }
 
     public Date getLastUpdateTime(ContentCacheType updateType) {
@@ -110,12 +157,16 @@ public class ContentProvider {
         this.lastUpdates.put(updateType, date);
     }
 
-    public void saveAccountHistory() {
-        InternalStorage.writeObject(context, TRANSACTION_HISTORY_TAG + user.getAccountId(), accountOrderHistory);
+    public void saveCurrentCurrencyPair() {
+        InternalStorage.writeObject(context, CURRENT_CURRENCY_PAIR_TAG, currentCurrencyPair);
     }
 
-    public void saveCoinsBalance() {
-        InternalStorage.writeObject(context, COINS_BALANCE_TAG + user.getAccountId(), coinsBalance);
+    public void saveCurrentOrderSide() {
+        InternalStorage.writeObject(context, CURRENT_ORDER_SIDE_TAG, currentOrderSide);
+    }
+
+    public void saveInstruments() {
+        InternalStorage.writeObject(context, INSTRUMENTS_TAG, instruments);
     }
 
     public void saveDepthOrders() {
@@ -126,19 +177,32 @@ public class ContentProvider {
         InternalStorage.writeObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId(), accountOrders);
     }
 
+    public void saveAccountOrderHistory() {
+        InternalStorage.writeObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId(), accountOrderHistory);
+    }
+
+    public void saveAccountTransactionHistory() {
+        InternalStorage.writeObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId(), accountTransactionHistoryMap);
+    }
+
+    public void saveCoinsBalance() {
+        InternalStorage.writeObject(context, COINS_BALANCE_TAG + user.getAccountId(), coinsBalance);
+    }
+
     public String getCurrentCurrencyPair() {
         if (currentCurrencyPair == null) {
-            throw new RuntimeException("ContentProvider not initialized. Refactoring gone wrong?");
+            throw new RuntimeException("ContentProvider's current currency pair not initialized. Refactoring gone wrong?");
         }
         return currentCurrencyPair;
     }
 
     public void setCurrentCurrencyPair(String currentCurrencyPair) {
-        // The current pair is always initialized even if it's empty
+        // TODO: remove. The current pair is temporarily always initialized even if it's empty
         if (marketDepth.get(currentCurrencyPair) == null) {
             marketDepth.put(currentCurrencyPair, new ArrayList<>());
         }
         this.currentCurrencyPair = currentCurrencyPair;
+        saveCurrentCurrencyPair();
     }
 
     public OrderSide getCurrentOrderSide() {
@@ -147,24 +211,36 @@ public class ContentProvider {
 
     public void setCurrentOrderSide(OrderSide currentOrderSide) {
         this.currentOrderSide = currentOrderSide;
+        saveCurrentOrderSide();
+    }
+
+    public List<String> getInstruments() {
+        return instruments;
+    }
+
+    public void setInstruments(List<String> instruments) {
+        this.instruments = instruments;
+        saveInstruments();
+        setLastUpdateTime(ContentCacheType.INSTRUMENTS, new Date());
     }
 
     public double getMarketPrice(String currencyPair, OrderSide side) {
-        if (side == OrderSide.buy) {
+        if (side == OrderSide.BUY) {
             return marketPriceBuy.get(currencyPair);
-        } else if (side == OrderSide.sell) {
+        } else if (side == OrderSide.SELL) {
             return marketPriceSell.get(currencyPair);
         }
         throw new RuntimeException("Unexpected side argument");
     }
 
     public void setMarketPrice(String currencyPair, double price, OrderSide side) {
-        if (side == OrderSide.buy) {
+        if (side == OrderSide.BUY) {
             marketPriceBuy.put(currencyPair, price);
-        } else if (side == OrderSide.sell) {
+        } else if (side == OrderSide.SELL) {
             marketPriceSell.put(currencyPair, price);
+        } else {
+            throw new RuntimeException("Unexpected side argument");
         }
-        throw new RuntimeException("Unexpected side argument");
     }
 
     public List<Order> getMarketDepthOrders(String currencyPair) {
@@ -174,7 +250,32 @@ public class ContentProvider {
     public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
         marketDepth.put(currencyPair, orders);
         saveDepthOrders();
-        setLastUpdateTime(ContentCacheType.DEPTH_ORDERS, new Date());
+        setLastUpdateTime(ContentCacheType.MARKET_DEPTH, new Date());
+        Log.d(TAG, String.format("Set %d market depth orders for pair %s.", marketDepth.size(), currencyPair));
+        calculateMarketPrices(currencyPair);
+    }
+
+    private void calculateMarketPrices(String currencyPair) {
+        if (marketDepth.get(currencyPair).size() == 0) {
+            marketPriceBuy.put(currencyPair, 0.0);
+            marketPriceSell.put(currencyPair, 0.0);
+            return;
+        }
+        marketPriceBuy.put(currencyPair,
+                Stream.of(marketDepth.get(currencyPair))
+                        .filter(depthItem -> depthItem.getSide() == OrderSide.SELL)
+                        .map(Order::getLimitPrice)
+                        .min(Double::compareTo)
+                        .get()
+        );
+        marketPriceSell.put(currencyPair,
+                Stream.of(marketDepth.get(currencyPair))
+                        .filter(depthItem -> depthItem.getSide() == OrderSide.BUY)
+                        .map(Order::getLimitPrice)
+                        .max(Double::compareTo)
+                        .get()
+        );
+        Log.d(TAG, String.format("Calculated market prices for pair %s.", currencyPair));
     }
 
     public List<Order> getMarketDepthOrdersForPairAndSide(String base, String quote, OrderSide side) {
@@ -210,9 +311,6 @@ public class ContentProvider {
 
     public List<Order> getAccountOrdersByCurrencyPairAndSide(String base, String quote, OrderSide side) {
         List<Order> filteredOrders = new ArrayList<>();
-        if (accountOrders == null) {
-            return new ArrayList<>();
-        }
         for (Order order : accountOrders) {
             if (order.getBaseCurrency().equals(base) && order.getQuoteCurrency().equals(quote) && order.getSide() == side) {
                 filteredOrders.add(order);
@@ -227,7 +325,7 @@ public class ContentProvider {
 
     public void setAccountOrderHistory(List<MyTransaction> accountOrderHistory) {
         this.accountOrderHistory = accountOrderHistory;
-        saveAccountHistory();
+        saveAccountOrderHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDER_HISTORY, new Date());
     }
 
@@ -237,18 +335,8 @@ public class ContentProvider {
 
     public void setAccountTransactionHistory(String currencyPair, List<MyTransaction> accountTransactionHistory) {
         accountTransactionHistoryMap.put(currencyPair, accountTransactionHistory);
-        // TODO: save to cache
+        saveAccountTransactionHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY, new Date());
-    }
-
-    public List<String> getInstruments() {
-        return instruments;
-    }
-
-    public void setInstruments(List<String> instruments) {
-        this.instruments = instruments;
-        // TODO: save to cache
-        setLastUpdateTime(ContentCacheType.INSTRUMENTS, new Date());
     }
 
     public List<Coin> getCoinsBalance() {
@@ -258,7 +346,7 @@ public class ContentProvider {
     public void setCoinsBalance(List<Coin> coinsBalance) {
         this.coinsBalance = coinsBalance;
         saveCoinsBalance();
-        setLastUpdateTime(ContentCacheType.BALANCE, new Date());
+        setLastUpdateTime(ContentCacheType.COINS_BALANCE, new Date());
     }
 
     public Coin getCoinBalanceByName(String coinSymbol) {

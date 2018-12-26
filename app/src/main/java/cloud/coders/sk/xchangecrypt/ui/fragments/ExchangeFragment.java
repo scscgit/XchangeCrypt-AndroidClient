@@ -116,7 +116,7 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_exchange, container, false);
-        this.orderSide = OrderSide.buy;
+        this.orderSide = OrderSide.BUY;
         setActionBar();
         setViews();
         setViewContents();
@@ -436,7 +436,7 @@ public class ExchangeFragment extends BaseFragment {
                     confirmationDialog(
                             getContext(),
                             "Market ponuka",
-                            "Potvrďte prosím " + (orderSide == OrderSide.buy ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
+                            "Potvrďte prosím " + (orderSide == OrderSide.BUY ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
                             new Runnable() {
                                 @Override
                                 public void run() {
@@ -457,7 +457,7 @@ public class ExchangeFragment extends BaseFragment {
                     confirmationDialog(
                             getContext(),
                             "Limit ponuka",
-                            "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.buy ? "nákup" : "predaj"),
+                            "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
                             new Runnable() {
                                 @Override
                                 public void run() {
@@ -478,7 +478,7 @@ public class ExchangeFragment extends BaseFragment {
                     confirmationDialog(
                             getContext(),
                             "Stop ponuka",
-                            "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.buy ? "nákup" : "predaj"),
+                            "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
                             new Runnable() {
                                 @Override
                                 public void run() {
@@ -591,7 +591,7 @@ public class ExchangeFragment extends BaseFragment {
     private boolean myOrders = false;
 
     public void switchToBuyMode() {
-        getContentProvider().setCurrentOrderSide(OrderSide.buy);
+        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.gray));
         String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");
@@ -606,7 +606,7 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     public void switchToSellMode() {
-        getContentProvider().setCurrentOrderSide(OrderSide.sell);
+        getContentProvider().setCurrentOrderSide(OrderSide.SELL);
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.orange));
         String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");

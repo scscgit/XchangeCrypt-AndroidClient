@@ -58,7 +58,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyTransaction transaction = transactions.get(position);
         StringBuilder builder = new StringBuilder();
-        if (transaction.getSide() == OrderSide.sell) {
+        if (transaction.getSide() == OrderSide.SELL) {
             builder.append("Predaj ");
         } else {
             builder.append("Nákup ");
@@ -71,7 +71,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
 
         //holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
 
-        if (transaction.getSide() == OrderSide.buy) {
+        if (transaction.getSide() == OrderSide.BUY) {
             switch (transaction.getQuoteCurrency()) {
                 case "BTC":
                     holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));

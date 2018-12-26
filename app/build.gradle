@@ -60,6 +60,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.microsoft.identity.client:msal:0.1.3'
+
+    // Lightweight-Stream-API: Stream API from Java 8 rewritten on iterators for Java 7 and below.
+    implementation 'com.annimon:stream:1.2.1'
+
     implementation project(path: ':swagger')
 }
 

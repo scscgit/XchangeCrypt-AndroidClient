@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 
@@ -46,7 +45,7 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
         ImageView logo = rowView.findViewById(R.id.coin_image);
 
         StringBuilder builder = new StringBuilder();
-        if (transaction.getSide() == OrderSide.sell) {
+        if (transaction.getSide() == OrderSide.SELL) {
             builder.append("Predaj ");
         } else {
             builder.append("Nákup ");
@@ -58,7 +57,7 @@ public class WalletHistoryListViewAdapter extends ArrayAdapter {
         amount.setText(String.format("%.6f", transaction.getAmount()));
         //date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY));
 
-        if (transaction.getSide() == OrderSide.buy) {
+        if (transaction.getSide() == OrderSide.BUY) {
             switch (transaction.getQuoteCurrency()) {
                 case "BTC":
                     logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));

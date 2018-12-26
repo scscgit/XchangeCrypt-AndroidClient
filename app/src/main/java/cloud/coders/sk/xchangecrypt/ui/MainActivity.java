@@ -60,6 +60,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
+import cloud.coders.sk.xchangecrypt.exceptions.TradingException;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
 import cloud.coders.sk.xchangecrypt.listeners.FragmentSwitcherInterface;
 import cloud.coders.sk.xchangecrypt.network.TradingApiHelper;
@@ -74,6 +75,7 @@ import cloud.coders.sk.xchangecrypt.util.Logger;
 import cloud.coders.sk.R;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.AccountWalletResponse;
+import io.swagger.client.model.Depth;
 import io.swagger.client.model.DepthItem;
 import io.swagger.client.model.Execution;
 import io.swagger.client.model.InlineResponse2004;
@@ -135,9 +137,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
 
-        getContentProvider().setCurrentOrderSide(OrderSide.buy);
-        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.buy);
-        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.sell);
+        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
+        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.BUY);
+        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.SELL);
 
 //        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestEmail()
@@ -486,11 +488,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private void createDumbData() {
         getContentProvider().setUser(new User("0"));
-        MyTransaction transaction0 = new MyTransaction(OrderSide.buy, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265);
-        //MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "BTC", "QBC", (float)0.02000311, (float)0.058265);
-        MyTransaction transaction1 = new MyTransaction(OrderSide.buy, "LTC", "BTC", (float) 0.02000235, (float) 0.158265);
-        MyTransaction transaction2 = new MyTransaction(OrderSide.sell, "LTC", "BTC", (float) 0.02100235, (float) 0.101515);
-        MyTransaction transaction3 = new MyTransaction(OrderSide.sell, "QBC", "BTC", (float) 0.00000299, (float) 21.00021215);
+        MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265);
+        //MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "BTC", "QBC", (float)0.02000311, (float)0.058265);
+        MyTransaction transaction1 = new MyTransaction(OrderSide.BUY, "LTC", "BTC", (float) 0.02000235, (float) 0.158265);
+        MyTransaction transaction2 = new MyTransaction(OrderSide.SELL, "LTC", "BTC", (float) 0.02100235, (float) 0.101515);
+        MyTransaction transaction3 = new MyTransaction(OrderSide.SELL, "QBC", "BTC", (float) 0.00000299, (float) 21.00021215);
         List<MyTransaction> transactionList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             transactionList.add(transaction0);
@@ -510,25 +512,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         coins.add(coin3);
         getContentProvider().setCoinsBalance(coins);
 
-        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.buy, OrderType.limit, "1");
-        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.limit, "1");
+        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
 
-        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.buy, OrderType.limit, "1");
-        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
-        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.buy, OrderType.limit, "2");
+        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.limit, "1");
+        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
 
         List<Order> offerList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -566,14 +568,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().setUser(new User("0"));
 
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
-        getContentProvider().setCurrentOrderSide(OrderSide.buy);
+        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
 
-        getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.buy);
-        getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.sell);
-        getContentProvider().setMarketPrice("BTC_QBC", 0.901311, OrderSide.buy);
-        getContentProvider().setMarketPrice("BTC_QBC", 0.91000311, OrderSide.sell);
-        getContentProvider().setMarketPrice("LTC_BTC", 0.92000311, OrderSide.buy);
-        getContentProvider().setMarketPrice("LTC_BTC", 0.90001311, OrderSide.sell);
+        getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.BUY);
+        getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.SELL);
+        getContentProvider().setMarketPrice("BTC_QBC", 0.901311, OrderSide.BUY);
+        getContentProvider().setMarketPrice("BTC_QBC", 0.91000311, OrderSide.SELL);
+        getContentProvider().setMarketPrice("LTC_BTC", 0.92000311, OrderSide.BUY);
+        getContentProvider().setMarketPrice("LTC_BTC", 0.90001311, OrderSide.SELL);
     }
 
     @Override
@@ -670,8 +672,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                         order.getQty().doubleValue(),
                                         quote,
                                         order.getQty().doubleValue() * price,
-                                        OrderSide.valueOf(order.getSide().toString()),
-                                        OrderType.valueOf(order.getType().toString())
+                                        OrderSide.valueOf(order.getSide().toString().toUpperCase()),
+                                        OrderType.valueOf(order.getType().toString().toUpperCase())
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
@@ -693,93 +695,50 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             depthDataReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    String pair = intent.getExtras().getString("pair");
                     int taskID = intent.getExtras().getInt("taskId");
-                    String error = intent.getExtras().getString("error");
-                    if (error == null) {
-                        HashMap<Double, Double> priceAndVolumes = new HashMap<>();
+                    try {
+                        String pair = intent.getExtras().getString("pair");
+                        String error = intent.getExtras().getString("error");
+                        if (error != null) {
+                            Toast.makeText(context, "Chyba pri čítaní dostupných ponúk: " + error, Toast.LENGTH_SHORT).show();
+                            throw new TradingException("Market Depth for pair " + pair + " received error: " + error);
+                        }
                         List<Order> orders = new ArrayList<>();
-                        Double marketValueBuy = null;
-                        Double marketValueSell = null;
-                        if (tradingApiHelper.getDepthData(pair).getD() != null) {
-                            List<DepthItem> asks = tradingApiHelper.getDepthData(pair).getD().getAsks();
-                            if (asks != null) {
-                                for (DepthItem offer : asks) {
-                                    if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                        if (marketValueBuy == null) {
-                                            marketValueBuy = offer.get(0).doubleValue();
-                                        } else {
-                                            if (offer.get(0).doubleValue() < marketValueBuy) {
-                                                marketValueBuy = offer.get(0).doubleValue();
-                                            }
-                                        }
-                                        if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
-                                            priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
-                                        } else {
-                                            priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
-                                        }
-                                    }
-                                }
-                                for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
-                                    orders.add(new Order(
-                                            entry.getKey(),
-                                            entry.getKey(),
-                                            pair.split("_")[0],
-                                            entry.getValue(),
-                                            pair.split("_")[1],
-                                            entry.getKey() * entry.getValue(),
-                                            OrderSide.buy,
-                                            OrderType.unknown
-                                    ));
-                                }
-                            }
-                            List<DepthItem> bids = tradingApiHelper.getDepthData(pair).getD().getBids();
-                            if (bids != null) {
-                                priceAndVolumes = new HashMap<>();
-                                for (DepthItem offer : tradingApiHelper.getDepthData(pair).getD().getBids()) {
-                                    if (offer != null && offer.get(0) != null && offer.get(1) != null) {
-                                        if (marketValueSell == null) {
-                                            marketValueSell = offer.get(0).doubleValue();
-                                        } else {
-                                            if (offer.get(0).doubleValue() > marketValueSell) {
-                                                marketValueSell = offer.get(0).doubleValue();
-                                            }
-                                        }
-                                        if (priceAndVolumes.get(offer.get(0).doubleValue()) == null) {
-                                            priceAndVolumes.put(offer.get(0).doubleValue(), offer.get(1).doubleValue());
-                                        } else {
-                                            priceAndVolumes.put(offer.get(0).doubleValue(), priceAndVolumes.get(offer.get(0).doubleValue()) + offer.get(1).doubleValue());
-                                        }
-                                    }
-                                }
-                                for (HashMap.Entry<Double, Double> entry : priceAndVolumes.entrySet()) {
-                                    orders.add(new Order(
-                                            entry.getKey(),
-                                            entry.getKey(),
-                                            pair.split("_")[0],
-                                            entry.getValue(),
-                                            pair.split("_")[1],
-                                            entry.getKey() * entry.getValue(),
-                                            OrderSide.sell,
-                                            OrderType.unknown
-                                    ));
-                                }
-                            }
+                        Depth depthData = tradingApiHelper.getDepthData(pair).getD();
+                        if (depthData == null || depthData.getAsks() == null || depthData.getBids() == null) {
+                            throw new TradingException("Market Depth for pair " + pair + " received null data");
                         }
-                        if (marketValueBuy != null) {
-                            getContentProvider().setMarketPrice(pair, marketValueBuy, OrderSide.buy);
+                        for (DepthItem ask : depthData.getAsks()) {
+                            orders.add(new Order(
+                                    ask.get(0).doubleValue(),
+                                    ask.get(0).doubleValue(),
+                                    pair.split("_")[0],
+                                    ask.get(1).doubleValue(),
+                                    pair.split("_")[1],
+                                    ask.get(0).doubleValue() * ask.get(1).doubleValue(),
+                                    OrderSide.BUY,
+                                    OrderType.limit
+                            ));
                         }
-                        if (marketValueSell != null) {
-                            getContentProvider().setMarketPrice(pair, marketValueSell, OrderSide.sell);
+                        for (DepthItem bid : depthData.getBids()) {
+                            orders.add(new Order(
+                                    bid.get(0).doubleValue(),
+                                    bid.get(0).doubleValue(),
+                                    pair.split("_")[0],
+                                    bid.get(1).doubleValue(),
+                                    pair.split("_")[1],
+                                    bid.get(0).doubleValue() * bid.get(1).doubleValue(),
+                                    OrderSide.SELL,
+                                    OrderType.limit
+                            ));
                         }
                         getContentProvider().setMarketDepthOrders(pair, orders);
-                    } else {
-                        Toast.makeText(context, "Chyba pri čítaní ponúk.", Toast.LENGTH_SHORT).show();
-                    }
-                    tradingApiHelper.deleteFromPendingTask(taskID);
-                    if (tradingApiHelper.noPendingTask()) {
-                        hideProgressDialog();
-                        switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                    } finally {
+                        tradingApiHelper.deleteFromPendingTask(taskID);
+                        if (tradingApiHelper.noPendingTask()) {
+                            hideProgressDialog();
+                            switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
+                        }
                     }
                 }
             };
@@ -817,7 +776,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                 quote = base;
                             }
                             transactions.add(new MyTransaction(
-                                    OrderSide.valueOf(order.getSide().toString()),
+                                    OrderSide.valueOf(order.getSide().toString().toUpperCase()),
                                     base,
                                     quote,
                                     price,
@@ -1046,7 +1005,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
                 if (!force) {
                     Date lastInstrumentUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.INSTRUMENTS);
-                    Date lastMarketUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.DEPTH_ORDERS);
+                    Date lastMarketUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.MARKET_DEPTH);
                     Date lastUserUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
                     Date actualDate1 = new Date();
 
@@ -1072,7 +1031,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
                 if (!force) {
                     Date lastHistoryUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
-                    Date lastBalanceUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.BALANCE);
+                    Date lastBalanceUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.COINS_BALANCE);
                     Date actualDate = new Date();
                     if (lastHistoryUpdate != null && lastBalanceUpdate != null) {
 //                        long i1 = lastHistoryUpdate.getTime() - actualDate.getTime();
