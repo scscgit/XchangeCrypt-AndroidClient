@@ -33,10 +33,9 @@ import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.adapters.ExchangeOrderListViewAdapter;
 import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderType;
 import cloud.coders.sk.xchangecrypt.listeners.DialogOkClickListener;
-import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 
@@ -200,7 +199,6 @@ public class ExchangeFragment extends BaseFragment {
         feeEdit.setText("0,00000001");
         //priceEdit.setText(getContentProvider());
 
-        // TODO: handle null exception
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair()), true));
         //listViewOrders.setClickable(false);
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
@@ -225,10 +223,10 @@ public class ExchangeFragment extends BaseFragment {
                         public void onPositiveButtonClicked(Context context) {
                             // Header causes a need to offset all rows by negative one
                             int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
-                            ((MainActivity) getActivity()).deleteOrder(currentUserOrders.get(position + offset));
+                            getMainActivity().deleteOrder(currentUserOrders.get(position + offset));
                         }
                     };
-                    ((MainActivity) getActivity()).showDialogWithAction(R.string.delete, dialogOkClickListener, true);
+                    getMainActivity().showDialogWithAction(R.string.delete, dialogOkClickListener, true);
                 }
             }
         });
@@ -503,9 +501,9 @@ public class ExchangeFragment extends BaseFragment {
                 pair[1],
                 price * amount,
                 orderSide,
-                OrderType.market
+                OrderType.MARKET
         );
-        ((MainActivity) getActivity()).sendOrder(order);
+        getMainActivity().sendOrder(order);
     }
 
     private void sendLimitOrder() {
@@ -543,10 +541,9 @@ public class ExchangeFragment extends BaseFragment {
                 pair[1],
                 price * amount,
                 orderSide,
-                OrderType.limit
+                OrderType.LIMIT
         );
-
-        ((MainActivity) getActivity()).sendOrder(order);
+        getMainActivity().sendOrder(order);
     }
 
     private void sendStopOrder() {
@@ -583,9 +580,9 @@ public class ExchangeFragment extends BaseFragment {
                 pair[1],
                 price * amount,
                 orderSide,
-                OrderType.stop
+                OrderType.STOP
         );
-        ((MainActivity) getActivity()).sendOrder(order);
+        getMainActivity().sendOrder(order);
     }
 
     private boolean myOrders = false;
@@ -624,8 +621,8 @@ public class ExchangeFragment extends BaseFragment {
 
     private void showMarketOrders() {
         String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
-        List<Order> marketOrderForPairAndSide = getContentProvider().getMarketDepthOrdersForPairAndSide(pair[0], pair[1], getContentProvider().getCurrentOrderSide());
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketOrderForPairAndSide, true));
+        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrdersForPairAndSide(pair[0], pair[1], getContentProvider().getCurrentOrderSide());
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
@@ -673,7 +670,7 @@ public class ExchangeFragment extends BaseFragment {
     private void updateAfterCurrencyPairChange(String pair, boolean hasData) {
         if (!hasData) {
             getContentProvider().setCurrentCurrencyPair(pair);
-            ((MainActivity) getActivity()).getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
+            getMainActivity().getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
             return;
         }
         //getMainActivity().getTradingApiHelper().marketDepthForPair(MainActivity.asyncTaskId++,pair);

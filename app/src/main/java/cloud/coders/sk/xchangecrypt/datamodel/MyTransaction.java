@@ -2,6 +2,8 @@ package cloud.coders.sk.xchangecrypt.datamodel;
 
 import java.util.Date;
 
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
+
 /**
  * Created by Peter on 22.04.2018.
  */

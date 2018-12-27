@@ -6,18 +6,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
-import cloud.coders.sk.xchangecrypt.exceptions.TradingException;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.AccountApi;
@@ -38,19 +34,23 @@ import io.swagger.client.model.Instrument;
  * Created by Peter on 29.04.2018.
  */
 public class TradingApiHelper {
+    // API helper context
     private TradingPanelBridgeBrokerDataOrdersApi tradingApi;
     private AccountApi accountApi;
     private MainActivity mainActivity;
     private Context context;
     private List<Integer> pendingTask;
 
-    public FastAccessTokenApiKey getApiAuthentication() {
-        return (FastAccessTokenApiKey) tradingApi.getAuthentications("oauth");
-    }
+    // Asynchronously loaded responses
+    private InlineResponse200 authorizationResponses;
+    private HashMap<String, InlineResponse2004> accountOrders;
+    private HashMap<String, InlineResponse2004> historyAccountOrders;
+    private HashMap<String, InlineResponse20013> depthData;
+    private List<AccountWalletResponse> accountWalletResponses;
+    private List<Instrument> instruments;
+    private HashMap<String, List<Execution>> executionHashMap = new HashMap<>();
 
     public TradingApiHelper(MainActivity mainActivity, Context context) {
-        //this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
-        initializeTradingApi();
         this.context = context;
         this.mainActivity = mainActivity;
         this.accountOrders = new HashMap<>();
@@ -60,31 +60,27 @@ public class TradingApiHelper {
         this.historyAccountOrders = new HashMap<>();
     }
 
+    public FastAccessTokenApiKey getApiAuthentication() {
+        return (FastAccessTokenApiKey) tradingApi.getAuthentications("oauth");
+    }
+
     public void createTradingApi() {
         if (tradingApi == null) {
             this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
         }
     }
 
-    private InlineResponse200 authorizationResponses;
-
     public InlineResponse200 getAuthorizationResponses() {
         return authorizationResponses;
     }
-
-    private HashMap<String, InlineResponse2004> accountOrders;
 
     public InlineResponse2004 getAccountOrders(String accountId) {
         return accountOrders.get(accountId);
     }
 
-    private HashMap<String, InlineResponse2004> historyAccountOrders;
-
     public InlineResponse2004 getHistoryAccountOrders(String accountId) {
         return historyAccountOrders.get(accountId);
     }
-
-    private HashMap<String, InlineResponse20013> depthData;
 
     public void deleteFromPendingTask(int taskId) {
         pendingTask.remove((Integer) taskId);
@@ -94,34 +90,23 @@ public class TradingApiHelper {
         return pendingTask.isEmpty();
     }
 
-
     public InlineResponse20013 getDepthData(String pair) {
         return depthData.get(pair);
     }
-
-    private List<AccountWalletResponse> accountWalletResponses;
 
     public List<AccountWalletResponse> getAccountWalletResponses() {
         return accountWalletResponses;
     }
 
-    private List<Instrument> instruments;
-
     public List<Instrument> getInstruments() {
         return instruments;
     }
-
-    public void setInstruments(List<Instrument> instruments) {
-        this.instruments = instruments;
-    }
-
-    private HashMap<String, List<Execution>> executionHashMap = new HashMap<>();
 
     public List<Execution> getExecution(String pair) {
         return executionHashMap.get(pair);
     }
 
-    public void addToExecutions(String pair, List<Execution> executions) {
+    public void putExecutions(String pair, List<Execution> executions) {
         executionHashMap.put(pair, executions);
     }
 
@@ -157,36 +142,6 @@ public class TradingApiHelper {
                 }
                 i.putExtra("taskId", taskId);
                 context.sendBroadcast(i);
-            }
-        }.execute();
-    }
-
-    public void initializeTradingApi() {
-        @SuppressLint("StaticFieldLeak")
-        AsyncTask task = new AsyncTask<Void, Void, TradingPanelBridgeBrokerDataOrdersApi>() {
-            @Override
-            protected TradingPanelBridgeBrokerDataOrdersApi doInBackground(Void... voids) {
-//                mainActivity.showProgressDialog("Načítavám dáta");
-                createTradingApi();
-                //pendingTask.add(taskId);
-                InlineResponse2004 inlineResponse2004 = null;
-                TradingPanelBridgeBrokerDataOrdersApi api;
-//                try {
-//                    api = new TradingPanelBridgeBrokerDataOrdersApi();
-//                } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
-//                    throw new TradingException("Cannot initialize trading api" , e);
-//                }
-                return api = new TradingPanelBridgeBrokerDataOrdersApi();
-            }
-
-            @Override
-            protected void onPostExecute(TradingPanelBridgeBrokerDataOrdersApi api) {
-                tradingApi = api;
-                //                accountOrders.put(user.getAccountId(), response2004);
-//                Intent i = new Intent("account_offer_update");
-//                i.putExtra("accountId", user.getAccountId());
-//                i.putExtra("taskId", taskId);
-//                context.sendBroadcast(i);
             }
         }.execute();
     }
@@ -262,7 +217,7 @@ public class TradingApiHelper {
                 Intent i = new Intent("account_executions");
                 if (inlineResponse20010 != null) {
                     if (inlineResponse20010.getS().equals("ok")) {
-                        addToExecutions(pair, inlineResponse20010.getD());
+                        putExecutions(pair, inlineResponse20010.getD());
                     } else {
                         i.putExtra("error", "return " + inlineResponse20010.getErrmsg());
                     }
@@ -277,7 +232,6 @@ public class TradingApiHelper {
         }.execute();
     }
 
-    //0
     public void accountOrderHistory(final int taskId, final User user) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask task = new AsyncTask<Void, Void, InlineResponse2004>() {
@@ -320,7 +274,6 @@ public class TradingApiHelper {
         }.execute();
     }
 
-    //FX_IDC:ZARPLX
     public void marketDepthForPair(final int taskId, final String pair) {
         @SuppressLint("StaticFieldLeak")
         AsyncTask depthTask = new AsyncTask<Void, Void, InlineResponse20013>() {
@@ -336,7 +289,6 @@ public class TradingApiHelper {
                     //throw new TradingException("Cannot get trading data", e);
                     e.printStackTrace();
                 }
-
                 return inlineResponse20013;
             }
 
@@ -367,43 +319,40 @@ public class TradingApiHelper {
                 //               mainActivity.showProgressDialog("Načítavám dáta");
                 createTradingApi();
                 pendingTask.add(taskId);
-                Order order = offer;
-
-                double price = 0;
                 BigDecimal limitPrice = null;
                 BigDecimal stopPrice = null;
-                switch (order.getType()) {
-                    case market:
+                switch (offer.getType()) {
+                    case MARKET:
                         limitPrice = null;
                         stopPrice = null;
                         break;
-                    case limit:
-                        limitPrice = BigDecimal.valueOf(order.getLimitPrice());
+                    case LIMIT:
+                        limitPrice = BigDecimal.valueOf(offer.getLimitPrice());
                         break;
-                    case stop:
-                        stopPrice = BigDecimal.valueOf(order.getStopPrice());
+                    case STOP:
+                        stopPrice = BigDecimal.valueOf(offer.getStopPrice());
                         break;
-                    case stoplimit:
-                        limitPrice = BigDecimal.valueOf(order.getLimitPrice());
-                        stopPrice = BigDecimal.valueOf(order.getStopPrice());
+                    case STOPLIMIT:
+                        limitPrice = BigDecimal.valueOf(offer.getLimitPrice());
+                        stopPrice = BigDecimal.valueOf(offer.getStopPrice());
                 }
                 InlineResponse2005 response = null;
 //String accountId, String instrument, BigDecimal qty, String side, String type, BigDecimal limitPrice, BigDecimal stopPrice, String durationType, BigDecimal durationDateTime, BigDecimal stopLoss, BigDecimal takeProfit, String digitalSignature, String requestId)
                 BigDecimal stopLoss = null;
                 BigDecimal takeProfit = null;
-                if (order.getStopLoss() != null) {
-                    stopLoss = BigDecimal.valueOf(order.getStopLoss());
+                if (offer.getStopLoss() != null) {
+                    stopLoss = BigDecimal.valueOf(offer.getStopLoss());
                 }
-                if (order.getTakeProfit() != null) {
-                    takeProfit = BigDecimal.valueOf(order.getTakeProfit());
+                if (offer.getTakeProfit() != null) {
+                    takeProfit = BigDecimal.valueOf(offer.getTakeProfit());
                 }
                 try {
                     response = tradingApi.accountsAccountIdOrdersPost(
                             mainActivity.getContentProvider().getUser().getAccountId(),
                             offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
-                            BigDecimal.valueOf(order.getBaseCurrencyAmount()),
-                            offer.getSide().toString().toLowerCase(),
-                            offer.getType().toString().toLowerCase(),
+                            BigDecimal.valueOf(offer.getBaseCurrencyAmount()),
+                            offer.getSide().toString(),
+                            offer.getType().toString(),
                             limitPrice,
                             stopPrice,
                             null,
@@ -414,7 +363,7 @@ public class TradingApiHelper {
                             null
                     );
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
-                    //throw new TradingException("Cannot send trading order", e);
+                    //throw new TradingException("Cannot send trading offer", e);
                     e.printStackTrace();
                 }
                 return response;

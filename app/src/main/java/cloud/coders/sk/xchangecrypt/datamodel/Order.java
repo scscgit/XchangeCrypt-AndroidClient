@@ -2,6 +2,9 @@ package cloud.coders.sk.xchangecrypt.datamodel;
 
 import java.util.UUID;
 
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderType;
+
 /**
  * Created by Peter on 23.04.2018.
  */

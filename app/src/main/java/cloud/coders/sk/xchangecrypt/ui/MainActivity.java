@@ -57,8 +57,8 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.ContentCacheType;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderType;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderType;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.exceptions.TradingException;
 import cloud.coders.sk.xchangecrypt.listeners.ConnectionListener;
@@ -70,7 +70,6 @@ import cloud.coders.sk.xchangecrypt.ui.fragments.SettingFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.SplashFragment;
 import cloud.coders.sk.xchangecrypt.ui.fragments.WalletFragment;
 import cloud.coders.sk.xchangecrypt.util.ConnectionHelper;
-import cloud.coders.sk.xchangecrypt.util.Logger;
 import cloud.coders.sk.xchangecrypt.util.UserHelper;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.AccountWalletResponse;
@@ -81,7 +80,7 @@ import io.swagger.client.model.InlineResponse2004;
 import io.swagger.client.model.Instrument;
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants, GoogleApiClient.OnConnectionFailedListener {
-    //private static final String TAG = "[MainActivity]";
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static int asyncTaskId = 0;
 
     private BroadcastReceiver accountOrdersHistory;
@@ -104,17 +103,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     // Azure AD MSAL context variables
     private PublicClientApplication sampleApp;
-    private String[] scopes;
-
-    public String[] getScopes() {
-        return scopes;
-    }
-
-    // UI & Debugging Variables
-    private static final String TAG = MainActivity.class.getSimpleName();
-
-    // Global App State
-    //AppSubClass state;
 
     // Fragment switch target for async tasks
     private Integer fragmentIdSwitchTarget;
@@ -122,7 +110,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.initialize(true);
         setContentView(R.layout.activity_main);
         setToolbarAndDrawer(savedInstanceState);
         setBottomNavigationView();
@@ -183,8 +170,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //            }
 //        });
 
-        scopes = Constants.SCOPES.split("\\s+");
-        getContentProvider().setScopes(scopes);
+        getContentProvider().setScopes(Constants.SCOPES.split("\\s+"));
 
         /* Initializes the app context using MSAL */
 
@@ -269,6 +255,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 /* Successfully got a token, call api now */
                 Log.d(TAG, "Successfully authenticated");
                 String accessToken = authenticationResult.getAccessToken();
+                tradingApiHelper.createTradingApi();
                 tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
 
                 /* Start authenticated activity */
@@ -289,7 +276,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     assert true;
                 } else if (exception instanceof MsalUiRequiredException) {
                     /* Tokens expired or no session, retry with interactive */
-                    sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
+                    sampleApp.acquireToken(getActivity(), getContentProvider().getScopes(), getAuthInteractiveCallback());
                 }
             }
 
@@ -312,6 +299,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
                 String accessToken = authenticationResult.getAccessToken();
+                tradingApiHelper.createTradingApi();
                 tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
 
                 /* Start authenticated activity */
@@ -395,12 +383,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                             Log.d(TAG, "JSONEXception Error: " + e.toString());
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "Error: " + error.toString());
+                    }
+                }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -515,25 +504,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         coins.add(coin3);
         getContentProvider().setCoinsBalance(coins);
 
-        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.limit, "1");
-        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.LIMIT, "1");
+        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
 
-        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.limit, "1");
-        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
-        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.limit, "2");
+        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.LIMIT, "1");
+        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
 
         List<Order> offerList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -671,8 +660,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                         order.getQty().doubleValue(),
                                         quote,
                                         order.getQty().doubleValue() * price,
-                                        OrderSide.valueOf(order.getSide().toString().toUpperCase()),
-                                        OrderType.valueOf(order.getType().toString())
+                                        OrderSide.fromString(order.getSide().toString()),
+                                        OrderType.fromString(order.getType().toString())
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
@@ -716,7 +705,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     pair.split("_")[1],
                                     ask.get(0).doubleValue() * ask.get(1).doubleValue(),
                                     OrderSide.BUY,
-                                    OrderType.limit
+                                    OrderType.LIMIT
                             ));
                         }
                         for (DepthItem bid : depthData.getBids()) {
@@ -728,7 +717,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     pair.split("_")[1],
                                     bid.get(0).doubleValue() * bid.get(1).doubleValue(),
                                     OrderSide.SELL,
-                                    OrderType.limit
+                                    OrderType.LIMIT
                             ));
                         }
                         getContentProvider().setMarketDepthOrders(pair, orders);
@@ -762,8 +751,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     orderResponse.getInstrument().split("_")[1],
                                     // TODO: quote currency amount?
                                     orderResponse.getQty().doubleValue(),
-                                    OrderSide.valueOf(orderResponse.getSide().toString().toUpperCase()),
-                                    OrderType.valueOf(orderResponse.getType().toString())
+                                    OrderSide.fromString(orderResponse.getSide().toString()),
+                                    OrderType.fromString(orderResponse.getType().toString())
                             ));
                         }
                         getContentProvider().setAccountOrderHistory(orderHistory);
@@ -887,7 +876,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         if (executions != null) {
                             for (Execution execution : executions) {
                                 transactions.add(new MyTransaction(
-                                        OrderSide.valueOf(execution.getSide().toString().toUpperCase()),
+                                        OrderSide.fromString(execution.getSide().toString()),
                                         execution.getInstrument().split("_")[0],
                                         execution.getInstrument().split("_")[1],
                                         execution.getPrice().doubleValue(),
@@ -1204,7 +1193,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     ConnectionListener listener = getConnectionListener();
                     if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
                         // offline > online
-                        Logger.d(TAG, "isConnecting");
+                        Log.d(TAG, "isConnecting");
                         setIsOnline(true);
                         Snackbar.make(MainActivity.this.content, "Spojenie obnovené", Snackbar.LENGTH_SHORT).show();
                         if (listener != null) {
@@ -1212,7 +1201,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                     } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                         // online > offline
-                        Logger.d(TAG, "isDisconnecting");
+                        Log.d(TAG, "isDisconnecting");
                         setIsOnline(false);
                         Snackbar.make(MainActivity.this.content, "Žiadne spojenie cez internet", Snackbar.LENGTH_SHORT).show();
                         if (listener != null) {

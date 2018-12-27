@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
  * Created by Peter on 21.04.2018.
@@ -53,7 +52,7 @@ public class LoginFragment extends BaseFragment {
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).onCallApiClicked(((MainActivity) getActivity()).getScopes());
+                getMainActivity().onCallApiClicked(getMainActivity().getContentProvider().getScopes());
                 //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
         });

@@ -2,6 +2,7 @@ package cloud.coders.sk.xchangecrypt.util;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -16,13 +17,15 @@ import cloud.coders.sk.BuildConfig;
  * Created by V3502484 on 16. 9. 2016.
  */
 public class PicassoManager {
+    private static final String TAG = PicassoManager.class.getSimpleName();
     private Context context;
     private static Picasso picassoInstance;
     private static PicassoManager instance;
 
     private PicassoManager(Context context) {
         this.context = context;
-//        long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+        // 10 MiB
+//        long httpCacheSize = 10 * 1024 * 1024;
 //        Downloader downloader = new OkHttpDownloader(((MainActivity) context).getCacheDir(), httpCacheSize);
         Picasso.Builder builder = new Picasso.Builder(context);
         builder.downloader(new OkHttp3Downloader(new okhttp3.OkHttpClient()));
@@ -81,7 +84,7 @@ public class PicassoManager {
 
             @Override
             public void onError() {
-                Logger.e("[PicassoManager] downloadImage: " + url + " failed downloading !");
+                Log.e(TAG, "downloadImage: " + url + " failed downloading!");
                 stopProgressLoad(progressBar);
             }
         };

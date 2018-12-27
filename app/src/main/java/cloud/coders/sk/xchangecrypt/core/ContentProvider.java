@@ -16,7 +16,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 import cloud.coders.sk.xchangecrypt.datamodel.ContentCacheType;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
 import cloud.coders.sk.xchangecrypt.util.InternalStorage;
 
@@ -56,6 +56,8 @@ public class ContentProvider {
     // Generated views
     private HashMap<String, Double> marketPriceBuy = new HashMap<>();
     private HashMap<String, Double> marketPriceSell = new HashMap<>();
+    private HashMap<String, List<Order>> marketDepthBuyMap = new HashMap<>();
+    private HashMap<String, List<Order>> marketDepthSellMap = new HashMap<>();
 
     // The MSAL representation of the authenticated user and his scopes
     private String[] scopes;
@@ -111,6 +113,10 @@ public class ContentProvider {
                     InternalStorage.readObject(context, MARKET_DEPTH_TAG);
             if (cachedMarketDepth != null) {
                 marketDepthMap = cachedMarketDepth;
+                for (String currencyPair : marketDepthMap.keySet()) {
+                    generateSortedMarketDepthOrders(currencyPair);
+                    calculateMarketPrices(currencyPair);
+                }
             } else {
                 fullyLoaded = false;
             }
@@ -209,6 +215,7 @@ public class ContentProvider {
         }
         this.currentCurrencyPair = currentCurrencyPair;
         saveCurrentCurrencyPair();
+        Log.d(TAG, String.format("Configured current currency pair %s", currentCurrencyPair));
     }
 
     public OrderSide getCurrentOrderSide() {
@@ -218,6 +225,7 @@ public class ContentProvider {
     public void setCurrentOrderSide(OrderSide currentOrderSide) {
         this.currentOrderSide = currentOrderSide;
         saveCurrentOrderSide();
+        Log.d(TAG, String.format("Configured %s order side", currentOrderSide.toString()));
     }
 
     public List<String> getInstruments() {
@@ -228,6 +236,7 @@ public class ContentProvider {
         this.instruments = instruments;
         saveInstruments();
         setLastUpdateTime(ContentCacheType.INSTRUMENTS, new Date());
+        Log.d(TAG, String.format("Configured %d instruments", instruments.size()));
     }
 
     public double getMarketPrice(String currencyPair, OrderSide side) {
@@ -239,6 +248,7 @@ public class ContentProvider {
         throw new RuntimeException("Unexpected side argument");
     }
 
+    @Deprecated
     public void setMarketPrice(String currencyPair, double price, OrderSide side) {
         if (side == OrderSide.BUY) {
             marketPriceBuy.put(currencyPair, price);
@@ -249,16 +259,45 @@ public class ContentProvider {
         }
     }
 
+    @Deprecated
     public List<Order> getMarketDepthOrders(String currencyPair) {
         return marketDepthMap.get(currencyPair);
     }
 
+    public List<Order> getMarketDepthOrdersForPairAndSide(String base, String quote, OrderSide side) {
+        switch (side) {
+            case BUY:
+                return this.marketDepthBuyMap.get(base + "_" + quote);
+            case SELL:
+                return this.marketDepthSellMap.get(base + "_" + quote);
+            default:
+                throw new RuntimeException("Unexpected side argument");
+        }
+    }
+
+    private void generateSortedMarketDepthOrders(String currencyPair) {
+        this.marketDepthBuyMap.put(currencyPair, Stream.of(marketDepthMap.get(currencyPair))
+                .filter(order -> order.getSide() == OrderSide.BUY)
+                // Sort buyers descending
+                .sortBy(Order::getLimitPrice)
+                .collect(Collectors.toList())
+        );
+        this.marketDepthSellMap.put(currencyPair, Stream.of(marketDepthMap.get(currencyPair))
+                .filter(order -> order.getSide() == OrderSide.SELL)
+                // Sort sellers descending
+                .sortBy(order -> -order.getLimitPrice())
+                .collect(Collectors.toList())
+        );
+        Log.d(TAG, String.format("Generated sorted market depth orders for pair %s.", currencyPair));
+    }
+
     public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
-        orders = Stream.of(orders).sortBy(Order::getLimitPrice).collect(Collectors.toList());
+        // Sorting happens later on get
         marketDepthMap.put(currencyPair, orders);
         saveDepthOrders();
         setLastUpdateTime(ContentCacheType.MARKET_DEPTH, new Date());
-        Log.d(TAG, String.format("Set %d market depth orders for pair %s.", marketDepthMap.size(), currencyPair));
+        Log.d(TAG, String.format("Configured %d market depth orders for pair %s.", marketDepthMap.size(), currencyPair));
+        generateSortedMarketDepthOrders(currencyPair);
         calculateMarketPrices(currencyPair);
     }
 
@@ -284,16 +323,6 @@ public class ContentProvider {
                         .get()
         );
         Log.d(TAG, String.format("Calculated market prices for pair %s.", currencyPair));
-    }
-
-    public List<Order> getMarketDepthOrdersForPairAndSide(String base, String quote, OrderSide side) {
-        List<Order> filteredList = new ArrayList<>();
-        for (Order order : marketDepthMap.get(base + "_" + quote)) {
-            if (order.getBaseCurrency().equals(base) && order.getQuoteCurrency().equals(quote) && order.getSide() == side) {
-                filteredList.add(order);
-            }
-        }
-        return filteredList;
     }
 
     public List<Order> getAccountOrders() {

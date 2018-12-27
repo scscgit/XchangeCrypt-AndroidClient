@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
  * Created by V3502505 on 20/09/2016.
@@ -46,7 +45,7 @@ public class SplashFragment extends BaseFragment {
 
     @Override
     protected void setActionBar() {
-        ((MainActivity) getActivity()).hideActionBarImmediately();
+        getMainActivity().hideActionBarImmediately();
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.List;
 
 import cloud.coders.sk.R;
 import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
-import cloud.coders.sk.xchangecrypt.datamodel.OrderSide;
+import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
 import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 
@@ -24,7 +24,6 @@ import cloud.coders.sk.xchangecrypt.util.DateFormatter;
 public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecyclerViewAdapter.MyViewHolder> {
     private List<MyTransaction> transactions;
     private Context context;
-    private MainActivity activity;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, price, amount, date;
@@ -40,10 +39,9 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         }
     }
 
-    public WalletRecyclerViewAdapter(@NonNull List<MyTransaction> transactions, Context context, MainActivity activity) {
+    public WalletRecyclerViewAdapter(@NonNull List<MyTransaction> transactions, Context context) {
         this.transactions = transactions;
         this.context = context;
-        this.activity = activity;
     }
 
     @Override

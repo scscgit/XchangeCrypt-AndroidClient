@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import cloud.coders.sk.R;
-import cloud.coders.sk.xchangecrypt.ui.MainActivity;
 
 /**
  * Created by Peter on 21.04.2018.
@@ -76,7 +75,7 @@ public class SettingFragment extends BaseFragment {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).clearCache();
+                getMainActivity().clearCache();
                 switchToFragmentAndClear(FRAGMENT_LOGIN, null);
             }
         });
