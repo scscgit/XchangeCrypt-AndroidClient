@@ -17,7 +17,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderType;
 /**
  * Created by Peter on 23.04.2018.
  */
-public class ExchangeOrderListViewAdapter extends ArrayAdapter {
+public class ExchangeOrderListViewAdapter extends ArrayAdapter<Order> {
     private Context context;
     private List<Order> offers;
     private boolean marketOrders;
@@ -45,11 +45,9 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter {
         TextView price = rowView.findViewById(R.id.listview_orders_item_price);
         TextView coin1 = rowView.findViewById(R.id.listview_orders_item_coin1);
         TextView coin2 = rowView.findViewById(R.id.listview_orders_item_coin2);
-
         price.setText(String.format("%.8f", offer.getType() == OrderType.LIMIT ? offer.getLimitPrice() : offer.getStopPrice()));
         coin1.setText(String.format("%.8f", offer.getBaseCurrencyAmount()));
         coin2.setText(String.format("%.8f", offer.getQuoteCurrencyAmount()));
-
         if (!marketOrders) {
             switch (offer.getType()) {
                 case LIMIT:

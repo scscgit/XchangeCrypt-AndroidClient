@@ -121,13 +121,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // Initial data
         //createDumbData();
         // TODO: use actual user reference
-        getContentProvider().setUser(new User("0"));
+        getContentProvider().setUser(new User("1", "mockLogin", "mock@user", "RealMockName"));
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
 
-        getContentProvider().setCurrentOrderSide(OrderSide.BUY);
-        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.BUY);
-        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.SELL);
+//        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.BUY);
+//        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.SELL);
 
 //        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestEmail()
@@ -333,17 +332,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             if (users == null) {
                 /* We have no users */
                 Log.d(TAG, "Failed to Sign out/clear cache, no user");
-            } else if (users.size() == 1) {
-                /* We have 1 user */
-                /* Remove from token cache */
-                sampleApp.remove(users.get(0));
-                Log.d(TAG, "Signed out/cleared cache");
             } else {
-                /* We have multiple users */
+                int userCount = users.size();
                 for (int i = 0; i < users.size(); i++) {
                     sampleApp.remove(users.get(i));
                 }
-                Log.d(TAG, "Signed out/cleared cache for multiple users");
+                Log.d(TAG, String.format("Signed out/cleared cache for %d users", userCount));
             }
             Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
         } catch (MsalClientException e) {
@@ -377,10 +371,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         /* Successfully called API */
                         Log.d(TAG, "Response: " + response);
                         try {
-                            getContentProvider().getUser().setName(response.getString("name"));
+                            getContentProvider().getUser().setRealName(response.getString("name"));
                             Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
-                            Log.d(TAG, "JSONEXception Error: " + e.toString());
+                            Log.d(TAG, "JSONException Error: " + e.toString());
                         }
                     }
                 },
@@ -472,12 +466,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Chyba pri komunikácii " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "onConnectionFailed: " + connectionResult);
+        Toast.makeText(this, "Chyba pri komunikácii: " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
     private void createDumbData() {
-        getContentProvider().setUser(new User("0"));
+        getContentProvider().setUser(new User("1", "dumbUser", "dumb@email", "dumb name"));
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
         getContentProvider().setCurrentOrderSide(OrderSide.BUY);
         MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265, new Date());
@@ -558,12 +552,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         myoffers.add(offer2);
         getContentProvider().setAccountOrders(myoffers);
 
-        getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.BUY);
-        getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.SELL);
-        getContentProvider().setMarketPrice("BTC_QBC", 0.901311, OrderSide.BUY);
-        getContentProvider().setMarketPrice("BTC_QBC", 0.91000311, OrderSide.SELL);
-        getContentProvider().setMarketPrice("LTC_BTC", 0.92000311, OrderSide.BUY);
-        getContentProvider().setMarketPrice("LTC_BTC", 0.90001311, OrderSide.SELL);
+//        getContentProvider().setMarketPrice("QBC_BTC", 0.00000311, OrderSide.BUY);
+//        getContentProvider().setMarketPrice("QBC_BTC", 0.00000301, OrderSide.SELL);
+//        getContentProvider().setMarketPrice("BTC_QBC", 0.901311, OrderSide.BUY);
+//        getContentProvider().setMarketPrice("BTC_QBC", 0.91000311, OrderSide.SELL);
+//        getContentProvider().setMarketPrice("LTC_BTC", 0.92000311, OrderSide.BUY);
+//        getContentProvider().setMarketPrice("LTC_BTC", 0.90001311, OrderSide.SELL);
     }
 
     @Override
@@ -597,7 +591,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private void setToolbarAndDrawer(Bundle savedInstanceState) {
         toolbar = findViewById(R.id.toolbar);
         content = findViewById(R.id.content);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.activity_main);
         setSupportActionBar(toolbar);
         //setContentMarginOn();
     }
@@ -1007,7 +1001,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 tradingApiHelper.accountBalance(asyncTaskId++);
 
                 // Switches fragment, synchronously or asynchronously
-                if (getContentProvider().isExchangeLoaded()) {
+                if (getContentProvider().isPublicExchangeLoaded()) {
                     switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                 } else {
                     showProgressDialog("Načítavám dáta");
@@ -1171,6 +1165,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "Back pressed with fragment stack: " + getFragmentsManager().getMainBackStackSize());
         if (getFragmentsManager().getMainBackStackSize() == 1) {
             if (getFragmentsManager().getTopFragmentInMainBackstack().customOnBackPressed())
                 finish();

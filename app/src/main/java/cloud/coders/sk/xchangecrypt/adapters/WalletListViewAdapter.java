@@ -18,7 +18,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.Coin;
 /**
  * Created by Peter on 22.04.2018.
  */
-public class WalletListViewAdapter extends ArrayAdapter {
+public class WalletListViewAdapter extends ArrayAdapter<Coin> {
     private Context context;
     private List<Coin> coins;
 
@@ -35,9 +35,9 @@ public class WalletListViewAdapter extends ArrayAdapter {
         View rowView = inflater.inflate(R.layout.listview_wallet_item, parent, false);
 
         Coin coin = coins.get(position);
-        TextView coinTitle = (TextView) rowView.findViewById(R.id.listview_coin_text);
-        TextView amount = (TextView) rowView.findViewById(R.id.listview_coin_amount);
-        ImageView logo = (ImageView) rowView.findViewById(R.id.listview_coin_logo);
+        TextView coinTitle = rowView.findViewById(R.id.listview_coin_text);
+        TextView amount = rowView.findViewById(R.id.listview_coin_amount);
+        ImageView logo = rowView.findViewById(R.id.listview_coin_logo);
         coinTitle.setText(coin.getSymbolName());
         amount.setText(String.format("%.6f", coin.getAmount()));
         switch (coin.getSymbolName()) {

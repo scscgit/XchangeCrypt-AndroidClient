@@ -101,6 +101,17 @@ public class ExchangeFragment extends BaseFragment {
     private AppBarLayout appBarLayout;
     private boolean headerAlreadyCrashed;
 
+    private FrameState frameState;
+
+    private int lastKeyHeight = 0;
+    private int lastScreenHeight = 0;
+
+    private ViewGroup header;
+
+    private enum FrameState {
+        defaultFrames, secondExpanded, thirdExpanded
+    }
+
     public static ExchangeFragment newInstance(Bundle args) {
         ExchangeFragment fragment = new ExchangeFragment();
         fragment.setArguments(args);
@@ -181,28 +192,13 @@ public class ExchangeFragment extends BaseFragment {
 //        listViewOrderHeaderQuoteCurrency = rootView.findViewById(R.id.listview_orders_header_coin2);
     }
 
-    private enum FrameState {
-        defaultFrames, secondExpanded, thirdExpanded
-    }
-
-    private FrameState frameState;
-
-    private int lastKeyHeight = 0;
-    private int lastScreenHeight = 0;
-
-    private ViewGroup lastHeader;
-
     @Override
     protected void setViewContents() {
         feeEdit.setKeyListener(null);
         sumEdit.setKeyListener(null);
         feeEdit.setText("0,00000001");
-        //priceEdit.setText(getContentProvider());
 
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair()), true));
-        //listViewOrders.setClickable(false);
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
-        lastHeader = header;
+        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
         listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
         try {
@@ -221,7 +217,7 @@ public class ExchangeFragment extends BaseFragment {
                     DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
                         @Override
                         public void onPositiveButtonClicked(Context context) {
-                            // Header causes a need to offset all rows by negative one
+                            // Crashed header causes a need to offset all rows by negative one
                             int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
                             getMainActivity().deleteOrder(currentUserOrders.get(position + offset));
                         }
@@ -299,7 +295,7 @@ public class ExchangeFragment extends BaseFragment {
         marketOrders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showMarketOrders();
+                showMarketDepthOrders();
             }
         });
 
@@ -597,7 +593,7 @@ public class ExchangeFragment extends BaseFragment {
         if (myOrders) {
             showUserOrders();
         } else {
-            showMarketOrders();
+            showMarketDepthOrders();
         }
         priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
     }
@@ -612,48 +608,49 @@ public class ExchangeFragment extends BaseFragment {
         if (myOrders) {
             showUserOrders();
         } else {
-            showMarketOrders();
+            showMarketDepthOrders();
         }
         priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
     }
 
     private List<Order> currentUserOrders = null;
 
-    private void showMarketOrders() {
-        String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
-        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrdersForPairAndSide(pair[0], pair[1], getContentProvider().getCurrentOrderSide());
+    private void showMarketDepthOrders() {
+        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide());
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
+
+        listViewOrders.removeHeaderView(header);
+        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
         listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
-        listViewOrders.removeHeaderView(lastHeader);
         try {
             listViewOrders.addHeaderView(header);
         } catch (IllegalStateException e) {
             headerCrashed();
         }
-        lastHeader = header;
         myOrders = false;
     }
 
     public void showUserOrders() {
-        String[] pair = getContentProvider().getCurrentCurrencyPair().split("_");
-        currentUserOrders = getContentProvider().getAccountOrdersByCurrencyPairAndSide(pair[0], pair[1], orderSide);
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(
+                getContext(),
+                getContentProvider().getAccountOrders(getContentProvider().getCurrentCurrencyPair(), orderSide),
+                false
+        ));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
+
+        listViewOrders.removeHeaderView(header);
+        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
         listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
         listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
-        listViewOrders.removeHeaderView(lastHeader);
         try {
             listViewOrders.addHeaderView(header);
         } catch (IllegalStateException e) {
             headerCrashed();
         }
-        lastHeader = header;
         myOrders = true;
     }
 
@@ -688,6 +685,7 @@ public class ExchangeFragment extends BaseFragment {
         feeCoin.setText(pairParts[1]);
         sumCoin.setText(pairParts[1]);
 
+        // TODO: this is obviously wrong, need to analyze flow
         listViewOrderHeaderBaseCurrency.setText(pairParts[0]);
         listViewOrderHeaderBaseCurrency.setText(pairParts[1]);
         myOrders = false;

@@ -18,6 +18,7 @@ import cloud.coders.sk.xchangecrypt.datamodel.MyTransaction;
 import cloud.coders.sk.xchangecrypt.datamodel.Order;
 import cloud.coders.sk.xchangecrypt.datamodel.enums.OrderSide;
 import cloud.coders.sk.xchangecrypt.datamodel.User;
+import cloud.coders.sk.xchangecrypt.exceptions.TradingException;
 import cloud.coders.sk.xchangecrypt.util.InternalStorage;
 
 /**
@@ -25,7 +26,6 @@ import cloud.coders.sk.xchangecrypt.util.InternalStorage;
  */
 public class ContentProvider {
     private static ContentProvider instance;
-    private static Context context;
 
     private final String TAG = ContentProvider.class.getSimpleName();
 
@@ -35,11 +35,14 @@ public class ContentProvider {
     private final String INSTRUMENTS_TAG = "Instruments";
     private final String MARKET_DEPTH_TAG = "MarketDepth";
 
-    // Account-specific cache tags
+    // Account-specific cache tag prefixes
     private final String ACCOUNT_ORDERS_TAG = "AccountOrders_";
     private final String ACCOUNT_ORDER_HISTORY_TAG = "AccountOrderHistory_";
     private final String ACCOUNT_TRANSACTION_HISTORY_TAG = "AccountTransactionHistory_";
     private final String COINS_BALANCE_TAG = "CoinsBalance_";
+
+    // Android-specific references
+    private Context context;
 
     // Current content description
     private String currentCurrencyPair;
@@ -70,11 +73,15 @@ public class ContentProvider {
     }
 
     public static ContentProvider getInstance(Context context) {
-        ContentProvider.context = context;
         if (instance == null) {
             instance = new ContentProvider();
         }
-        return instance;
+        return instance.withContext(context);
+    }
+
+    private ContentProvider withContext(Context context) {
+        this.context = context;
+        return this;
     }
 
     public void destroy() {
@@ -114,8 +121,7 @@ public class ContentProvider {
             if (cachedMarketDepth != null) {
                 marketDepthMap = cachedMarketDepth;
                 for (String currencyPair : marketDepthMap.keySet()) {
-                    generateSortedMarketDepthOrders(currencyPair);
-                    calculateMarketPrices(currencyPair);
+                    generateSortedMarketDepthOrdersAndMarketPrices(currencyPair);
                 }
             } else {
                 fullyLoaded = false;
@@ -248,85 +254,43 @@ public class ContentProvider {
         throw new RuntimeException("Unexpected side argument");
     }
 
-    @Deprecated
-    public void setMarketPrice(String currencyPair, double price, OrderSide side) {
-        if (side == OrderSide.BUY) {
-            marketPriceBuy.put(currencyPair, price);
-        } else if (side == OrderSide.SELL) {
-            marketPriceSell.put(currencyPair, price);
-        } else {
-            throw new RuntimeException("Unexpected side argument");
-        }
-    }
-
-    @Deprecated
-    public List<Order> getMarketDepthOrders(String currencyPair) {
-        return marketDepthMap.get(currencyPair);
-    }
-
-    public List<Order> getMarketDepthOrdersForPairAndSide(String base, String quote, OrderSide side) {
+    public List<Order> getMarketDepthOrders(String currencyPair, OrderSide side) {
         switch (side) {
             case BUY:
-                return this.marketDepthBuyMap.get(base + "_" + quote);
+                return this.marketDepthBuyMap.get(currencyPair);
             case SELL:
-                return this.marketDepthSellMap.get(base + "_" + quote);
+                return this.marketDepthSellMap.get(currencyPair);
             default:
                 throw new RuntimeException("Unexpected side argument");
         }
     }
 
-    private void generateSortedMarketDepthOrders(String currencyPair) {
-        this.marketDepthBuyMap.put(currencyPair, Stream.of(marketDepthMap.get(currencyPair))
+    private void generateSortedMarketDepthOrdersAndMarketPrices(String currencyPair) {
+        List<Order> buyMap = Stream.of(this.marketDepthMap.get(currencyPair))
                 .filter(order -> order.getSide() == OrderSide.BUY)
                 // Sort buyers descending
                 .sortBy(Order::getLimitPrice)
-                .collect(Collectors.toList())
-        );
-        this.marketDepthSellMap.put(currencyPair, Stream.of(marketDepthMap.get(currencyPair))
+                .collect(Collectors.toList());
+        List<Order> sellMap = Stream.of(this.marketDepthMap.get(currencyPair))
                 .filter(order -> order.getSide() == OrderSide.SELL)
                 // Sort sellers descending
                 .sortBy(order -> -order.getLimitPrice())
-                .collect(Collectors.toList())
-        );
-        Log.d(TAG, String.format("Generated sorted market depth orders for pair %s.", currencyPair));
+                .collect(Collectors.toList());
+        this.marketDepthBuyMap.put(currencyPair, buyMap);
+        this.marketDepthSellMap.put(currencyPair, sellMap);
+        // Assign market prices based on the sorted maps
+        this.marketPriceBuy.put(currencyPair, sellMap.size() == 0 ? 0 : sellMap.get(0).getLimitPrice());
+        this.marketPriceSell.put(currencyPair, buyMap.size() == 0 ? 0 : buyMap.get(0).getLimitPrice());
+        Log.d(TAG, String.format("Generated sorted market depth orders and market prices for pair %s.", currencyPair));
     }
 
     public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
         // Sorting happens later on get
-        marketDepthMap.put(currencyPair, orders);
+        this.marketDepthMap.put(currencyPair, orders);
         saveDepthOrders();
         setLastUpdateTime(ContentCacheType.MARKET_DEPTH, new Date());
-        Log.d(TAG, String.format("Configured %d market depth orders for pair %s.", marketDepthMap.size(), currencyPair));
-        generateSortedMarketDepthOrders(currencyPair);
-        calculateMarketPrices(currencyPair);
-    }
-
-    private void calculateMarketPrices(String currencyPair) {
-        if (marketDepthMap.get(currencyPair).size() == 0) {
-            marketPriceBuy.put(currencyPair, 0.0);
-            marketPriceSell.put(currencyPair, 0.0);
-            return;
-        }
-        // TODO: if sorted, then just take a first entry
-        marketPriceBuy.put(currencyPair,
-                Stream.of(marketDepthMap.get(currencyPair))
-                        .filter(depthItem -> depthItem.getSide() == OrderSide.SELL)
-                        .map(Order::getLimitPrice)
-                        .min(Double::compareTo)
-                        .get()
-        );
-        marketPriceSell.put(currencyPair,
-                Stream.of(marketDepthMap.get(currencyPair))
-                        .filter(depthItem -> depthItem.getSide() == OrderSide.BUY)
-                        .map(Order::getLimitPrice)
-                        .max(Double::compareTo)
-                        .get()
-        );
-        Log.d(TAG, String.format("Calculated market prices for pair %s.", currencyPair));
-    }
-
-    public List<Order> getAccountOrders() {
-        return accountOrders;
+        Log.d(TAG, String.format("Configured %d market depth orders for pair %s.", this.marketDepthMap.size(), currencyPair));
+        generateSortedMarketDepthOrdersAndMarketPrices(currencyPair);
     }
 
     public void setAccountOrders(List<Order> accountOrders) {
@@ -345,20 +309,20 @@ public class ContentProvider {
             Order order = iterator.next();
             if (order.getOrderId().equals(orderId)) {
                 iterator.remove();
+                saveAccountOrders();
                 return;
             }
         }
-        saveAccountOrders();
+        throw new TradingException("Attempted to remove a reference to a non-existing order");
     }
 
-    public List<Order> getAccountOrdersByCurrencyPairAndSide(String base, String quote, OrderSide side) {
-        List<Order> filteredOrders = new ArrayList<>();
-        for (Order order : accountOrders) {
-            if (order.getBaseCurrency().equals(base) && order.getQuoteCurrency().equals(quote) && order.getSide() == side) {
-                filteredOrders.add(order);
-            }
-        }
-        return filteredOrders;
+    public List<Order> getAccountOrders(String currencyPair, OrderSide side) {
+        String[] currencies = currencyPair.split("_");
+        return Stream.of(this.accountOrders)
+                .filter(order -> order.getBaseCurrency().equals(currencies[0])
+                        && order.getQuoteCurrency().equals(currencies[1])
+                        && order.getSide() == side)
+                .collect(Collectors.toList());
     }
 
     public List<Order> getAccountOrderHistory() {
@@ -423,15 +387,19 @@ public class ContentProvider {
         loadContentFromCache();
     }
 
-    public boolean isExchangeLoaded() {
+    public boolean isPublicExchangeLoaded() {
         return currentCurrencyPair != null
                 && currentOrderSide != null
                 && instruments != null
-                && marketDepthMap.get(currentCurrencyPair) != null
+                && marketDepthMap.get(currentCurrencyPair) != null;
+    }
+
+    public boolean isPrivateExchangeLoaded() {
+        return isPublicExchangeLoaded()
+                && isWalletLoaded()
                 && accountOrders != null
                 && accountOrderHistory != null
-                && accountTransactionHistoryMap.get(currentCurrencyPair) != null
-                && coinsBalance != null;
+                && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
     }
 
     public boolean isWalletLoaded() {

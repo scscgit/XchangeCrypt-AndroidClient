@@ -5,26 +5,23 @@
     android:background="@color/gray"
     android:orientation="vertical">
 
-    <!--<include layout="@layout/recyclerview_wallet_header"/>-->
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="História transakcií"
-        android:textSize="@dimen/title_text_size_big"
-        android:gravity="center"
         android:background="@color/white"
-        />
+        android:gravity="center"
+        android:paddingBottom="4dp"
+        android:text="História transakcií"
+        android:textSize="@dimen/title_text_size_big" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_wallet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView_wallet"
-        android:layout_marginEnd="@dimen/margin_home_gridview"
         android:layout_marginStart="@dimen/margin_home_gridview"
         android:layout_marginTop="@dimen/margin_home_gridview"
+        android:layout_marginEnd="@dimen/margin_home_gridview"
         android:horizontalSpacing="@dimen/margin_home_gridview"
-        android:verticalSpacing="@dimen/margin_home_gridview">
-    </android.support.v7.widget.RecyclerView>
+        android:verticalSpacing="@dimen/margin_home_gridview" />
 
 </LinearLayout>

@@ -64,11 +64,10 @@ public class SettingFragment extends BaseFragment {
                 //TODO zapinanie notifikacii
             }
         });
-        //TODO change accourding to databese user
-        String name[] = getContentProvider().getUser().getName().split(" ");
+        String name[] = getContentProvider().getUser().getRealName().split(" ", 1);
         nameTextView.setText(name[0]);
-        surnameTextView.setText(name[1]);
-        emailTextView.setText("ceresnik.peter@gmail.com");
+        surnameTextView.setText(name.length > 1 ? name[1] : "");
+        emailTextView.setText(getContentProvider().getUser().getEmailAddress());
         notificationTogleButton.setChecked(false);
         passwordChangeButton.setEnabled(false);
 

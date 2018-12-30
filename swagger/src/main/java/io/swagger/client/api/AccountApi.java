@@ -22,6 +22,7 @@ import io.swagger.client.model.AccountWalletResponse;
  */
 public class AccountApi {
     public static String API_DOMAIN = "http://192.168.0.20/api/v1/";
+    //public static String API_DOMAIN = "http://192.168.8.101/api/v1/";
     //public static String API_DOMAIN = "https://rest-demo.tradingview.com/tradingview/v1/";
     //public static String API_DOMAIN = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/";
     private String basePath = AccountApi.API_DOMAIN + "accountapi";
@@ -35,7 +36,7 @@ public class AccountApi {
         return apiInvoker;
     }
 
-    public void setInvoker (ApiInvoker invoker) {
+    public void setInvoker(ApiInvoker invoker) {
         apiInvoker = invoker;
     }
 
@@ -47,7 +48,7 @@ public class AccountApi {
         return basePath;
     }
 
-    public List<AccountWalletResponse> walletGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+    public List<AccountWalletResponse> walletGet() throws TimeoutException, ExecutionException, InterruptedException, ApiException {
         Object postBody = null;
 
         // create path and map variables
@@ -73,10 +74,10 @@ public class AccountApi {
             // normal form params
         }
 
-        String[] authNames = new String[] { "oauth" };
+        String[] authNames = new String[]{"oauth"};
 
         try {
-            String localVarResponse = apiInvoker.invokeAPI (basePath, path, "GET", queryParams, postBody, headerParams, formParams, contentType, authNames);
+            String localVarResponse = apiInvoker.invokeAPI(basePath, path, "GET", queryParams, postBody, headerParams, formParams, contentType, authNames);
             if (localVarResponse != null) {
 
                 List<AccountWalletResponse> accountWalletResponses = new ArrayList<>();
@@ -87,12 +88,12 @@ public class AccountApi {
                     String walletPublicKey = jsonobject.getString("walletPublicKey");
                     Double balance = jsonobject.getDouble("balance");
 
-                AccountWalletResponse r = new AccountWalletResponse(coinSymbol,walletPublicKey,balance);
-                accountWalletResponses.add(r);
+                    AccountWalletResponse r = new AccountWalletResponse(coinSymbol, walletPublicKey, balance);
+                    accountWalletResponses.add(r);
                 }
                 return accountWalletResponses;
 
-              //  return (List<AccountWalletResponse>) ApiInvoker.deserialize(localVarResponse, "list", AccountWalletResponse.class);
+                //  return (List<AccountWalletResponse>) ApiInvoker.deserialize(localVarResponse, "list", AccountWalletResponse.class);
             } else {
                 return null;
             }
