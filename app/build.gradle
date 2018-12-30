@@ -5,8 +5,7 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        //applicationId "cloud.coders.sk.xchangecrypt"
-        applicationId "cloud.coders.sk"
+        applicationId "bit.xchangecrypt.client"
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
@@ -40,7 +39,6 @@ android {
 }
 
 dependencies {
-//   implementation 'com.google.code.gson:gson:2.8.2'
 //   implementation 'com.google.android.gms:play-services-location:11.6.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 //    implementation 'com.google.android.gms:play-services-maps:11.6.0'
@@ -54,7 +52,7 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-messaging:11.6.0'
 //    implementation 'com.google.firebase:firebase-database:11.6.0'
 //    implementation 'com.google.firebase:firebase-auth:11.6.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+//    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 //    implementation 'com.google.api-client:google-api-client:1.25.0'
     implementation 'com.google.guava:guava:24.1-jre'
     implementation 'com.google.firebase:firebase-core:16.0.5'
@@ -67,4 +65,4 @@ dependencies {
     implementation project(path: ':swagger')
 }
 
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

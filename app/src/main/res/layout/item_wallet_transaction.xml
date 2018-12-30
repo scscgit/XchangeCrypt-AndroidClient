@@ -1,165 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/linearLayout_item_home"
-        android:layout_width="fill_parent"
-        android:layout_height="110dp"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:layout_marginBottom="@dimen/margin_wallet_item"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout_item_home"
+    android:layout_width="fill_parent"
+    android:layout_height="110dp"
+    android:layout_marginBottom="@dimen/margin_wallet_item"
+    android:background="@color/white"
+    android:orientation="horizontal">
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <!-- First column -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:weightSum="5"
-            android:layout_marginBottom="5dp"
-            >
-
-            <!-- First column -->
-            <LinearLayout
-                android:layout_width="0dp"
+            android:orientation="horizontal">
+            <!-- Category image -->
+            <ImageView
+                android:id="@+id/coin_image"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_marginStart="@dimen/margin_image"
+                android:layout_marginLeft="@dimen/margin_image"
+                android:layout_marginTop="@dimen/margin_image"
+                android:layout_marginEnd="@dimen/margin_image"
+                android:layout_marginRight="@dimen/margin_image"
+                android:layout_marginBottom="@dimen/margin_image"
+                android:src="@drawable/btc_icon" />
+        </LinearLayout>
+
+        <!-- Second column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:orientation="vertical"
+            android:weightSum="16">
+
+            <!-- First row - Title text -->
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="6"
+                android:gravity="center_vertical"
+                android:text="Title"
+                android:textSize="@dimen/title_text_size" />
+
+
+            <!-- Second row (place) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_wallet_item"
+                android:layout_marginBottom="@dimen/margin_wallet_item"
+                android:layout_weight="3"
+                android:gravity="center_vertical|left"
                 android:orientation="horizontal"
-                >
-                <!-- Category image -->
-                <ImageView
-                    android:id="@+id/coin_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/btc_icon"
-                    android:layout_marginTop="@dimen/margin_image"
-                    android:layout_marginBottom="@dimen/margin_image"
-                    android:layout_marginRight="@dimen/margin_image"
-                    android:layout_marginEnd="@dimen/margin_image"
-                    android:layout_marginLeft="@dimen/margin_image"
-                    android:layout_marginStart="@dimen/margin_image"
-                    />
+                android:weightSum="7">
+
+                <!-- Price title-->
+                <TextView
+                    android:id="@+id/place_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Cena"
+                    android:textSize="@dimen/item_text_size" />
+
+                <!-- Place text -->
+                <TextView
+                    android:id="@+id/price_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="PRICE"
+                    android:textSize="@dimen/item_text_size" />
+
             </LinearLayout>
 
-            <!-- Second column -->
+            <!-- Third row (date) -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:orientation="vertical"
-                android:weightSum="16"
-                >
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_wallet_item"
+                android:layout_marginBottom="@dimen/margin_wallet_item"
+                android:layout_weight="3"
+                android:gravity="center_vertical|left"
+                android:orientation="horizontal"
+                android:weightSum="7">
 
-                <!-- First row - Title text -->
+                <!-- Amount icon -->
+
                 <TextView
-                    android:id="@+id/title_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="6"
-                    android:textSize="@dimen/title_text_size"
-                    android:gravity="center_vertical"
-                    android:text="Title"/>
+                    android:id="@+id/amount_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Množstvo"
+                    android:textSize="@dimen/item_text_size" />
+
+                <!-- Amount text -->
+                <TextView
+                    android:id="@+id/amount_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="AMOUNT"
+                    android:textSize="@dimen/item_text_size" />
 
 
-                <!-- Second row (place) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
-                    android:orientation="horizontal"
-                    android:weightSum="7"
-                    android:gravity="center_vertical|left"
-                    android:layout_marginTop="@dimen/margin_wallet_item"
-                    android:layout_marginBottom="@dimen/margin_wallet_item"
-                    >
+            </LinearLayout>
 
-                    <!-- Price title-->
-                    <TextView
-                        android:id="@+id/place_title"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="Cena"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_wallet_item"
+                android:layout_marginBottom="@dimen/margin_wallet_item"
+                android:layout_weight="3"
+                android:gravity="center_vertical|start"
+                android:orientation="horizontal"
+                android:weightSum="7">
 
-                    <!-- Place text -->
-                    <TextView
-                        android:id="@+id/price_text"
-                        android:layout_width="0dp"
-                        android:layout_weight="5"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="PRICE"/>
+                <!-- Date icon -->
+                <TextView
+                    android:id="@+id/date_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Čas"
+                    android:textSize="@dimen/item_text_size" />
 
-                </LinearLayout>
-
-                <!-- Third row (date) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
-                    android:orientation="horizontal"
-                    android:weightSum="7"
-                    android:gravity="center_vertical|left"
-                    android:layout_marginTop="@dimen/margin_wallet_item"
-                    android:layout_marginBottom="@dimen/margin_wallet_item"
-                    >
-
-                    <!-- Amount icon -->
-
-                    <TextView
-                        android:id="@+id/amount_title"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="Množstvo"/>
-
-                    <!-- Amount text -->
-                    <TextView
-                        android:id="@+id/amount_text"
-                        android:layout_width="0dp"
-                        android:layout_weight="5"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="AMOUNT"/>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
-                    android:orientation="horizontal"
-                    android:weightSum="7"
-                    android:gravity="center_vertical|start"
-                    android:layout_marginTop="@dimen/margin_wallet_item"
-                    android:layout_marginBottom="@dimen/margin_wallet_item"
-                    >
-
-                    <!-- Date icon -->
-                    <TextView
-                        android:id="@+id/date_title"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="Čas"
-                      />
-
-                    <!-- Date text -->
-                    <TextView
-                        android:id="@+id/date_text"
-                        android:layout_width="0dp"
-                        android:layout_weight="5"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/item_text_size"
-                        android:text="TIMESTAMP"
-                    />
-
-                </LinearLayout>
+                <!-- Date text -->
+                <TextView
+                    android:id="@+id/date_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="TIMESTAMP"
+                    android:textSize="@dimen/item_text_size" />
 
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
+
+</LinearLayout>

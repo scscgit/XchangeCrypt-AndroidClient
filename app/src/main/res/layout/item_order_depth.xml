@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="30dp"
-    android:weightSum="6"
-    >
+    android:orientation="horizontal"
+    android:weightSum="6">
 
     <TextView
         android:id="@+id/listview_orders_item_price"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="ORDER PRICE"
         android:gravity="center"
-        />
+        android:text="ORDER PRICE" />
 
     <TextView
         android:id="@+id/listview_orders_item_coin1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="COIN1 AMOUNT"
         android:gravity="center"
-        />
+        android:text="COIN1 AMOUNT" />
 
     <TextView
         android:id="@+id/listview_orders_item_coin2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="COIN2 AMOUNT"
         android:gravity="center"
-        />
-    </LinearLayout>
+        android:text="COIN2 AMOUNT" />
+</LinearLayout>
 

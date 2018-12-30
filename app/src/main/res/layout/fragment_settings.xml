@@ -5,311 +5,286 @@
     android:orientation="vertical"
     android:weightSum="5">
 
-        <View android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/profile_pic" />
+
+    </LinearLayout>
+
+    <!-- Settings Part-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:weightSum="7">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <!-- First row (NAME)-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            >
-
-            <ImageView
-                android:id="@+id/user_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/profile_pic"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                />
-
-        </LinearLayout>
-
-        <!-- Settings Part-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:weightSum="7"
-            >
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-            <!-- First row (NAME)-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="3"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Meno:"
-                    android:gravity="center"
-                    android:textSize="@dimen/item_text_size_big"
-                    />
-                <TextView
-                    android:id="@+id/name_text"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:text="MENO"
-                    android:gravity="start|center_vertical"
-                    android:textSize="@dimen/item_text_size_big"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted" />
-
-            <!-- Second row (SURNAME)-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="3"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Priezvisko:"
-                    android:textSize="@dimen/item_text_size_big" />
-                <TextView
-                    android:id="@+id/surname_text"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:gravity="start|center_vertical"
-                    android:text="PRIEZVISKO"
-                    android:textSize="@dimen/item_text_size_big" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted" />
-
-            <!-- Third row (E-mail)-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="3"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="E-mail:"
-                    android:gravity="center"
-                    android:textSize="@dimen/item_text_size_big"
-                    />
-                <TextView
-                    android:id="@+id/email_text"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:text="E-MAIL"
-                    android:gravity="start|center_vertical"
-                    android:textSize="@dimen/item_text_size_big"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-            <!-- Fourth row (Settings)-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="3"
-                >
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Nastavenia aplikácie"
-                    android:clickable="false"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-            <!-- Fifth row (Notification)-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:weightSum="3"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:text="Dostávať notifikácie:"
-                    android:gravity="center"
-                    android:textSize="@dimen/item_text_size_big"
-                    />
-                <ToggleButton
-                    android:id="@+id/notification_toogle"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="start|center_vertical"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                >
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Odhlásiť sa"
-                    android:clickable="false"
-                    android:background="@drawable/item_background_orange"
-                    android:id="@+id/button_sign_out"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                >
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Zmena hesla"
-                    android:clickable="false"
-                    android:id="@+id/button_password_change"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/item_background_orange"
-                    />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:src="@drawable/dotted"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <TextView
-                android:id="@+id/user_wallet_title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Osobná peňaženka"
                 android:gravity="center"
-                android:textSize="@dimen/item_text_size_big"
-                />
+                android:text="Meno:"
+                android:textSize="@dimen/item_text_size_big" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                >
-
-                <Button
-                    style="?android:attr/button"
-                    android:id="@+id/button_deposit"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/item_background_orange"
-                    android:text="Vklad"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp"
-                    />
-                <Button
-                    style="?android:attr/button"
-                    android:id="@+id/button_withdraw"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/item_background_orange"
-                    android:text="Výber"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp"
-                    />
-
-            </LinearLayout>
+                android:gravity="start|center_vertical"
+                android:text="MENO"
+                android:textSize="@dimen/item_text_size_big" />
 
         </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <!-- Second row (SURNAME)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Priezvisko:"
+                android:textSize="@dimen/item_text_size_big" />
+
+            <TextView
+                android:id="@+id/surname_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="start|center_vertical"
+                android:text="PRIEZVISKO"
+                android:textSize="@dimen/item_text_size_big" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <!-- Third row (E-mail)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="E-mail:"
+                android:textSize="@dimen/item_text_size_big" />
+
+            <TextView
+                android:id="@+id/email_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="start|center_vertical"
+                android:text="E-MAIL"
+                android:textSize="@dimen/item_text_size_big" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <!-- Fourth row (Settings)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="3">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:text="Nastavenia aplikácie" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <!-- Fifth row (Notification)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="Dostávať notifikácie:"
+                android:textSize="@dimen/item_text_size_big" />
+
+            <ToggleButton
+                android:id="@+id/notification_toogle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center_vertical" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/item_background_orange"
+                android:clickable="false"
+                android:text="Odhlásiť sa" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_password_change"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/item_background_orange"
+                android:clickable="false"
+                android:text="Zmena hesla" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dotted" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/user_wallet_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Osobná peňaženka"
+            android:textSize="@dimen/item_text_size_big" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/button_deposit"
+                style="?android:attr/button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_background_orange"
+                android:text="Vklad" />
+
+            <Button
+                android:id="@+id/button_withdraw"
+                style="?android:attr/button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_background_orange"
+                android:text="Výber" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
