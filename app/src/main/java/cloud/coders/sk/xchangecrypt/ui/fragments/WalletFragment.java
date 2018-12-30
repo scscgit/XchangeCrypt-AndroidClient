@@ -60,11 +60,11 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setViews() {
-        appBarLayout = rootView.findViewById(R.id.coins_balance);
-        floatingActionButton = rootView.findViewById(R.id.coins_balance_close_fab);
+        appBarLayout = rootView.findViewById(R.id.wallet_coins_balance);
+        floatingActionButton = rootView.findViewById(R.id.wallet_coins_balance_close_fab);
         recyclerView = rootView.findViewById(R.id.recyclerView_wallet);
-        balanceListView = rootView.findViewById(R.id.listwiew_wallet);
-        datetextView = rootView.findViewById(R.id.date_text_wallet);
+        balanceListView = rootView.findViewById(R.id.wallet_coins_balance_coin_list);
+        datetextView = rootView.findViewById(R.id.wallet_last_updated);
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 

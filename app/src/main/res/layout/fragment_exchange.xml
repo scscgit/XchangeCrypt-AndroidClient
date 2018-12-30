@@ -8,6 +8,7 @@
         android:layout_height="1dp"
         android:background="@color/black"
         />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,7 +16,7 @@
         android:orientation="vertical"
         >
 
-        <!--first frame-->
+        <!-- First frame -->
         <LinearLayout
             android:id="@+id/linerlayout_order_coin_pair"
             android:layout_width="match_parent"
@@ -23,7 +24,8 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="4"
-            >
+            android:baselineAligned="false">
+
             <LinearLayout
                 android:id="@+id/linerlayout_order_coin_pair_sub"
                 android:layout_width="0dp"
@@ -32,7 +34,8 @@
                 android:orientation="vertical"
                 android:weightSum="4"
                 >
-            <!--currency pair-->
+
+                <!-- Currency pair -->
                 <LinearLayout
                     android:id="@+id/linearLayout_coin_pair_select"
                     android:layout_width="match_parent"
@@ -41,15 +44,16 @@
                     android:orientation="horizontal"
                     android:weightSum="4"
                     >
+
                     <TextView
                         android:id="@+id/first_coin_logo_text"
-                        android:text="QBC"
+                        android:text="COIN1"
+                        android:textSize="17sp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:gravity="right|center"
+                        android:gravity="end|center"
                         />
-
                     <ImageView
                         android:id="@+id/first_coin_logo_image"
                         android:layout_width="0dp"
@@ -57,13 +61,11 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:src="@drawable/qbc_icon"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         />
-
                     <ImageView
                         android:id="@+id/second_coin_logo_image"
                         android:layout_width="0dp"
@@ -71,73 +73,65 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:src="@drawable/btc_icon"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         />
                     <TextView
                         android:id="@+id/second_coin_logo_text"
-                        android:text="BTC"
+                        android:text="COIN2"
+                        android:textSize="17sp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:gravity="left|center"
+                        android:gravity="start|center"
                         />
 
                 </LinearLayout>
 
-                <!--ballance-->
+                <!-- Coin balance -->
                 <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                >
-                <TextView
-                android:id="@+id/exchange_balance_title"
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:text="Zostatok:"
-                android:layout_marginStart="10dp"
-                    android:layout_marginBottom="1dp"
-                />
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                <TextView
-                android:id="@+id/exchange_balance_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                android:text="Zostatok"
-                />
+                    <TextView
+                        android:id="@+id/exchange_coin_balance_title"
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="1dp"
+                        android:text="Zostatok:" />
+                    <TextView
+                        android:id="@+id/exchange_coin_balance_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:text="VALUE CURRENCY" />
 
                 </LinearLayout>
-
-
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linearLayout_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:weightSum="2"
-                >
+                android:weightSum="2">
 
                     <Button
-                        android:id="@+id/exchange_button_exchange_buy"
+                        android:id="@+id/exchange_button_switch_buy"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="Nákup"
                         android:background="@color/orange"
                         />
-
                     <Button
-                        android:id="@+id/exchange_button_exchange_sell"
+                        android:id="@+id/exchange_button_switch_sell"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -146,34 +140,8 @@
                         />
 
             </LinearLayout>
+
         </LinearLayout>
-
-            <!--&lt;!&ndash;ballance&ndash;&gt;-->
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:weightSum="3"-->
-                <!--&gt;-->
-                <!--<TextView-->
-                    <!--android:id="@+id/exchange_balance_title"-->
-                    <!--android:layout_width="70dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:text="Zostatok:"-->
-                    <!--android:layout_marginStart="10dp"-->
-                    <!--/>-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/exchange_balance_text"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:text="Zostatok"-->
-                    <!--/>-->
-
-            <!--</LinearLayout>-->
-
-        <!--</LinearLayout>-->
 
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -182,13 +150,14 @@
 
         <!--second frame-->
         <LinearLayout
-            android:id="@+id/linerlayout_order_place"
+            android:id="@+id/exchange_order_placement"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
             android:orientation="vertical"
             android:weightSum="6"
             >
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -196,24 +165,29 @@
                 android:weightSum="4"
                 android:orientation="horizontal"
                 >
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent">
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/coin_order_icon"
-                    />
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/coin_order_icon"
+                        />
+
                 </LinearLayout>
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:layout_height="match_parent"
                     android:text="Stanoviť ponuku"
                     android:gravity="center"
+                    android:textSize="15sp"
                     />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -223,37 +197,36 @@
                     >
 
                     <ImageView
-                        android:id="@+id/image_up"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/up_arrow"
-                    />
-
+                        android:id="@+id/exchange_state_arrow_up"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/up_arrow" />
                     <ImageView
-                        android:id="@+id/image_down"
+                        android:id="@+id/exchange_state_arrow_down"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:src="@drawable/down_arrow"
                         />
 
-
                 </LinearLayout>
 
-
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:weightSum="7"
                 >
+
                 <TextView
                     android:id="@+id/exchange_amount_text"
                     android:layout_width="0dp"
@@ -261,8 +234,8 @@
                     android:layout_height="match_parent"
                     android:text="Množstvo"
                     android:gravity="center"
+                    android:labelFor="@id/exchange_amount_edit"
                     />
-
                 <EditText
                     android:id="@+id/exchange_amount_edit"
                     android:layout_width="0dp"
@@ -282,21 +255,25 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="QBC"
+                    android:text="COIN1"
                     android:gravity="left|center"
                     />
+
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:weightSum="7"
                 >
+
                 <TextView
                     android:id="@+id/exchange_price_text"
                     android:layout_width="0dp"
@@ -304,8 +281,8 @@
                     android:layout_height="match_parent"
                     android:text="Cena"
                     android:gravity="center"
+                    android:labelFor="@id/exchange_price_edit"
                     />
-
                 <EditText
                     android:id="@+id/exchange_price_edit"
                     android:layout_width="0dp"
@@ -326,21 +303,25 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="BTC"
+                    android:text="COIN2"
                     android:gravity="left|center"
                     />
+
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:weightSum="7"
                 >
+
                 <TextView
                     android:id="@+id/exchange_fee_text"
                     android:layout_width="0dp"
@@ -348,8 +329,8 @@
                     android:layout_height="match_parent"
                     android:text="Poplatok"
                     android:gravity="center"
+                    android:labelFor="@id/exchange_fee_edit"
                     />
-
                 <EditText
                     android:id="@+id/exchange_fee_edit"
                     android:layout_width="0dp"
@@ -369,21 +350,25 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="BTC"
-                    android:gravity="left|center"
+                    android:text="COIN2"
+                    android:gravity="start|center"
                     />
+
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:weightSum="7"
                 >
+
                 <TextView
                     android:id="@+id/exchange_sum_text"
                     android:layout_width="0dp"
@@ -391,8 +376,8 @@
                     android:layout_height="match_parent"
                     android:text="Spolu"
                     android:gravity="center"
+                    android:labelFor="@id/exchange_sum_edit"
                     />
-
                 <EditText
                     android:id="@+id/exchange_sum_edit"
                     android:layout_width="0dp"
@@ -412,9 +397,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="BTC"
-                    android:gravity="left|center"
+                    android:text="COIN2"
+                    android:gravity="start|center"
                     />
+
             </LinearLayout>
 
         <LinearLayout
@@ -425,42 +411,35 @@
             >
 
             <Button
-                android:id="@+id/button_exchange_market"
+                android:id="@+id/exchange_button_market"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_orange"
                 android:gravity="center"
                 android:text="Market" />
-
             <Button
-                android:id="@+id/button_exchange_limit"
+                android:id="@+id/exchange_button_limit"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_gray"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="Limit" />
-
             <Button
-                android:id="@+id/button_exchange_stop"
+                android:id="@+id/exchange_button_stop"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:background="@drawable/item_background_gray"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="Stop" />
 
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout_order_advanced"
+            android:id="@+id/exchange_order_advanced"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0"
@@ -469,7 +448,6 @@
             android:weightSum="2">
 
             <RelativeLayout
-                android:id="@+id/relative_layout_stop"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -477,26 +455,25 @@
 
                 <CheckBox
                     android:enabled="false"
-                    android:id="@+id/checkbox_stop"
+                    android:id="@+id/exchange_stoploss_checkbox"
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
-
                 <TextView
-                    android:id="@+id/textview_stop"
+                    android:id="@+id/exchange_stoploss_text"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/checkbox_stop"
-                    android:gravity="left|center"
-                    android:text="STOP LOSS" />
-
+                    android:layout_toEndOf="@id/exchange_stoploss_checkbox"
+                    android:gravity="start|center"
+                    android:text="STOP LOSS"
+                    android:labelFor="@id/exchange_stoploss_edit"/>
                 <EditText
-                    android:id="@+id/edittext_stop"
+                    android:id="@+id/exchange_stoploss_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="-8dp"
                     android:layout_marginTop="-8dp"
-                    android:layout_toEndOf="@id/textview_stop"
-                    android:layout_toRightOf="@id/checkbox_stop"
+                    android:layout_toEndOf="@id/exchange_stoploss_text"
+                    android:layout_toRightOf="@id/exchange_stoploss_checkbox"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
                     android:enabled="false"
@@ -509,7 +486,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/relative_layout_profit"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -517,26 +493,25 @@
 
                 <CheckBox
                     android:enabled="false"
-                    android:id="@+id/checkbox_take"
+                    android:id="@+id/exchange_takeprofit_checkbox"
                     android:layout_width="50dp"
                     android:layout_height="match_parent" />
-
                 <TextView
-                    android:id="@+id/textview_profit"
+                    android:id="@+id/exchange_takeprofit_text"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/checkbox_take"
-                    android:gravity="left|center"
-                    android:text="TAKE PROFIT" />
-
+                    android:layout_toEndOf="@id/exchange_takeprofit_checkbox"
+                    android:gravity="start|center"
+                    android:text="TAKE PROFIT"
+                    android:labelFor="@id/exchange_takeprofit_edit"/>
                 <EditText
-                    android:id="@+id/edittext_profit"
+                    android:id="@+id/exchange_takeprofit_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="-8dp"
                     android:layout_marginTop="-8dp"
-                    android:layout_toEndOf="@id/textview_profit"
-                    android:layout_toRightOf="@id/checkbox_take"
+                    android:layout_toEndOf="@id/exchange_takeprofit_text"
+                    android:layout_toRightOf="@id/exchange_takeprofit_checkbox"
                     android:digits="0123456789.,"
                     android:ellipsize="start"
                     android:enabled="false"
@@ -550,14 +525,14 @@
 
         </LinearLayout>
 
-
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/black"
             />
-        <!--third frame-->
+
+        <!-- Third frame -->
         <LinearLayout
-            android:id="@+id/linerlayout_order_list"
+            android:id="@+id/exchange_order_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
@@ -566,18 +541,12 @@
             android:layout_marginTop="5dp"
             >
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
                 android:weightSum="16"
-                >
-                <!--<ImageView-->
-                    <!--android:layout_width="50dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:src="@drawable/order_icon"-->
-                    <!--/>-->
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -585,14 +554,16 @@
                     android:orientation="horizontal"
                     android:layout_weight="2"
                     >
+
                 <Button
-                    android:id="@+id/button_exchange_order_all"
+                    android:id="@+id/exchange_orders_button_market"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="TRH"
+                    android:text="Trh"
                     android:gravity="center"
                     android:background="@color/orange"
                     />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -602,15 +573,16 @@
                     android:layout_weight="2"
                     android:gravity="center"
                     >
+
                     <Button
-                        android:id="@+id/button_exchange_order_my"
+                        android:id="@+id/exchange_orders_button_my"
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:text="Moje"
                         android:textSize="@dimen/item_text_size"
-                        android:gravity="center"
                         android:background="@color/gray"
                         />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -618,13 +590,23 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight="8"
+                    android:gravity="center_horizontal"
                     >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Prehľad ponúk"
-                    android:gravity="center"
-                    />
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:src="@drawable/order_icon" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Prehľad ponúk na trhu"
+                        android:textSize="15sp"/>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -635,15 +617,15 @@
                     android:gravity="end"
                     >
 
-                <ImageView
-                    android:id="@+id/image_down_down"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/down_arrow"
-                    android:visibility="gone"
-                    />
-                </LinearLayout>
+                    <ImageView
+                        android:id="@+id/exchange_state_arrow_down_hidden"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/down_arrow"
+                        android:visibility="gone"
+                        />
 
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -652,16 +634,17 @@
                     android:layout_weight="2"
                     android:gravity="end"
                     >
+
                     <Button
-                        android:id="@+id/button_exchange_graph"
+                        android:id="@+id/exchange_orders_button_graph"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
                         android:text="Graf"
                         android:textSize="@dimen/item_text_size"
                         android:background="@color/gray"
                         />
-                </LinearLayout>
 
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -669,16 +652,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
-            <ListView
-                android:id="@+id/listview_orders"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
 
-                />
-        </RelativeLayout>
+                <ListView
+                    android:id="@+id/exchange_orders_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </RelativeLayout>
 
         </LinearLayout>
-
 
     </LinearLayout>
 

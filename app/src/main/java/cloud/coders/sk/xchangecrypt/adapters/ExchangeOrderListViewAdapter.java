@@ -23,7 +23,7 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter<Order> {
     private boolean marketOrders;
 
     public ExchangeOrderListViewAdapter(Context context, @NonNull List<Order> offers, boolean marketOrders) {
-        super(context, R.layout.listview_order_item, offers);
+        super(context, R.layout.item_order_user, offers);
         this.context = context;
         this.offers = offers;
         this.marketOrders = marketOrders;
@@ -35,19 +35,19 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter<Order> {
         LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
         if (marketOrders) {
-            rowView = inflater.inflate(R.layout.listview_order_item_notype, parent, false);
+            rowView = inflater.inflate(R.layout.item_order_depth, parent, false);
         } else {
-            rowView = inflater.inflate(R.layout.listview_order_item, parent, false);
+            rowView = inflater.inflate(R.layout.item_order_user, parent, false);
         }
-
         Order offer = offers.get(position);
         TextView type = rowView.findViewById(R.id.listview_orders_item_type);
         TextView price = rowView.findViewById(R.id.listview_orders_item_price);
         TextView coin1 = rowView.findViewById(R.id.listview_orders_item_coin1);
         TextView coin2 = rowView.findViewById(R.id.listview_orders_item_coin2);
-        price.setText(String.format("%.8f", offer.getType() == OrderType.LIMIT ? offer.getLimitPrice() : offer.getStopPrice()));
+        double offerPrice = offer.getType() == OrderType.LIMIT ? offer.getLimitPrice() : offer.getStopPrice();
+        price.setText(String.format("%.8f", offerPrice));
         coin1.setText(String.format("%.8f", offer.getBaseCurrencyAmount()));
-        coin2.setText(String.format("%.8f", offer.getQuoteCurrencyAmount()));
+        coin2.setText(String.format("%.8f", offerPrice * offer.getBaseCurrencyAmount()));
         if (!marketOrders) {
             switch (offer.getType()) {
                 case LIMIT:

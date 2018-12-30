@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:weightSum="2"
     android:layout_height="50dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="2"
-        android:orientation="horizontal"
-        >
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -31,11 +27,10 @@
                 android:id="@+id/listview_coin_text"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="coin"
+                android:text="COIN"
                 android:layout_weight="1"
                 android:gravity="center"
                 />
-
 
         </LinearLayout>
 
@@ -43,12 +38,9 @@
             android:id="@+id/listview_coin_amount"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="amount"
+            android:text="AMOUNT"
             android:layout_weight="1"
             android:gravity="center"
             />
-
-
-    </LinearLayout>
 
 </LinearLayout>

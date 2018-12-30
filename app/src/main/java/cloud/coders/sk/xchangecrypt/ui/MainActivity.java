@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -498,25 +499,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         coins.add(coin3);
         getContentProvider().setCoinsBalance(coins);
 
-        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.LIMIT, "1");
-        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT, "1");
+        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
 
-        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", 0.034565856, OrderSide.BUY, OrderType.LIMIT, "1");
-        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", 0.008100000, OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT, "1");
+        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
 
         List<Order> offerList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -566,9 +567,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void setBottomNavigationView() {
-        bottomNavigationView = findViewById(R.id.navigation);
-        bottomNavigationLayout = findViewById(R.id.bottom_navigation_layout);
-        toolbarTitle = findViewById(R.id.toolbar_title);
+        bottomNavigationView = findViewById(R.id.main_bottom_navigation);
+        bottomNavigationLayout = findViewById(R.id.main_bottom_navigation_layout);
+        toolbarTitle = findViewById(R.id.main_toolbar_title);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -589,8 +590,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void setToolbarAndDrawer(Bundle savedInstanceState) {
-        toolbar = findViewById(R.id.toolbar);
-        content = findViewById(R.id.content);
+        toolbar = findViewById(R.id.main_toolbar);
+        content = findViewById(R.id.main_content);
         mDrawerLayout = findViewById(R.id.activity_main);
         setSupportActionBar(toolbar);
         //setContentMarginOn();
@@ -653,7 +654,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                         base,
                                         order.getQty().doubleValue(),
                                         quote,
-                                        order.getQty().doubleValue() * price,
                                         OrderSide.fromString(order.getSide().toString()),
                                         OrderType.fromString(order.getType().toString())
                                 ));
@@ -697,7 +697,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     pair.split("_")[0],
                                     ask.get(1).doubleValue(),
                                     pair.split("_")[1],
-                                    ask.get(0).doubleValue() * ask.get(1).doubleValue(),
                                     OrderSide.BUY,
                                     OrderType.LIMIT
                             ));
@@ -709,7 +708,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     pair.split("_")[0],
                                     bid.get(1).doubleValue(),
                                     pair.split("_")[1],
-                                    bid.get(0).doubleValue() * bid.get(1).doubleValue(),
                                     OrderSide.SELL,
                                     OrderType.LIMIT
                             ));
@@ -743,8 +741,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     orderResponse.getInstrument().split("_")[0],
                                     orderResponse.getQty().doubleValue(),
                                     orderResponse.getInstrument().split("_")[1],
-                                    // TODO: quote currency amount?
-                                    orderResponse.getQty().doubleValue(),
                                     OrderSide.fromString(orderResponse.getSide().toString()),
                                     OrderType.fromString(orderResponse.getType().toString())
                             ));
@@ -1001,7 +997,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 tradingApiHelper.accountBalance(asyncTaskId++);
 
                 // Switches fragment, synchronously or asynchronously
-                if (getContentProvider().isPublicExchangeLoaded()) {
+                if (getContentProvider().isPrivateExchangeLoaded()) {
                     switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                 } else {
                     showProgressDialog("Načítavám dáta");
@@ -1206,5 +1202,18 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
             }
         };
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        Toast.makeText(this,
+                "in multi window: " + isInMultiWindowMode
+                        + " height " + newConfig.screenHeightDp
+                        + " width " + newConfig.screenWidthDp
+                        + " (smallest " + newConfig.smallestScreenWidthDp
+                        + ")",
+                Toast.LENGTH_LONG
+        ).show();
     }
 }

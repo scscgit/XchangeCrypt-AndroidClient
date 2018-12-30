@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="type"
+        android:text="TYPE"
         android:gravity="center"
         />
 
@@ -20,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="price"
+        android:text="PRICE"
         android:gravity="center"
         />
 
@@ -29,19 +29,17 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="coin1"
+        android:text="COIN1 VALUE"
         android:gravity="center"
         />
-
 
     <TextView
         android:id="@+id/listview_orders_item_coin2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="coin2"
+        android:text="COIN2 VALUE"
         android:gravity="center"
         />
-
 
 </LinearLayout>

@@ -6,13 +6,12 @@
     android:weightSum="6"
     >
 
-
     <TextView
         android:id="@+id/listview_orders_item_price"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="price"
+        android:text="ORDER PRICE"
         android:gravity="center"
         />
 
@@ -21,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="coin1"
+        android:text="COIN1 AMOUNT"
         android:gravity="center"
         />
 
@@ -30,7 +29,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="coin2"
+        android:text="COIN2 AMOUNT"
         android:gravity="center"
         />
     </LinearLayout>

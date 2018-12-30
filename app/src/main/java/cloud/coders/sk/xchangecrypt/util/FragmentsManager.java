@@ -56,13 +56,13 @@ public class FragmentsManager {
 
     public void switchFragmentInMainBackStack(BaseFragment fragment, boolean clearBackStack, boolean hideParent) {
         if (!((MainActivity) context).isFinishing()) {
-            switchFragment(fragment, clearBackStack, mainBackStack, R.id.content, hideParent, ANIMATION_OPEN);
+            switchFragment(fragment, clearBackStack, mainBackStack, R.id.main_content, hideParent, ANIMATION_OPEN);
         }
     }
 
     public void switchFragmentInMainBackStack(BaseFragment fragment, boolean clearBackStack, boolean hideParent, int animation) {
         if (!((MainActivity) context).isFinishing()) {
-            switchFragment(fragment, clearBackStack, mainBackStack, R.id.content, hideParent, animation);
+            switchFragment(fragment, clearBackStack, mainBackStack, R.id.main_content, hideParent, animation);
         }
     }
 

@@ -16,30 +16,27 @@ public class Order extends BaseObject {
     private String baseCurrency;
     private double baseCurrencyAmount;
     private String quoteCurrency;
-    private double quoteCurrencyAmount;
     private OrderSide side;
     private OrderType type;
     private String orderId;
 
-    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
+    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type) {
         this.limitPrice = limitPrice;
         this.stopPrice = stopPrice;
         this.baseCurrency = baseCurrency;
         this.baseCurrencyAmount = baseCurrencyAmount;
         this.quoteCurrency = quoteCurrency;
-        this.quoteCurrencyAmount = quoteCurrencyAmount;
         this.side = side;
         this.type = type;
         this.orderId = UUID.randomUUID().toString();
     }
 
-    public Order(Double limitPrice, Double stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type) {
+    public Order(Double limitPrice, Double stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type) {
         this.limitPrice = limitPrice;
         this.stopPrice = stopPrice;
         this.baseCurrency = baseCurrency;
         this.baseCurrencyAmount = baseCurrencyAmount;
         this.quoteCurrency = quoteCurrency;
-        this.quoteCurrencyAmount = quoteCurrencyAmount;
         this.side = side;
         this.type = type;
         this.stopLoss = stopLoss;
@@ -47,13 +44,12 @@ public class Order extends BaseObject {
         this.orderId = UUID.randomUUID().toString();
     }
 
-    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, double quoteCurrencyAmount, OrderSide side, OrderType type, String orderId) {
+    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type, String orderId) {
         this.limitPrice = limitPrice;
         this.stopPrice = stopPrice;
         this.baseCurrency = baseCurrency;
         this.baseCurrencyAmount = baseCurrencyAmount;
         this.quoteCurrency = quoteCurrency;
-        this.quoteCurrencyAmount = quoteCurrencyAmount;
         this.side = side;
         this.type = type;
         this.orderId = orderId;
@@ -129,14 +125,6 @@ public class Order extends BaseObject {
 
     public void setQuoteCurrency(String quoteCurrency) {
         this.quoteCurrency = quoteCurrency;
-    }
-
-    public double getQuoteCurrencyAmount() {
-        return quoteCurrencyAmount;
-    }
-
-    public void setQuoteCurrencyAmount(double quoteCurrencyAmount) {
-        this.quoteCurrencyAmount = quoteCurrencyAmount;
     }
 
     public String getOrderId() {

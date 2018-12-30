@@ -23,7 +23,7 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
     private List<Coin> coins;
 
     public WalletListViewAdapter(Context context, @NonNull List<Coin> coins) {
-        super(context, R.layout.listview_wallet_item, coins);
+        super(context, R.layout.item_wallet_coin_balance, coins);
         this.context = context;
         this.coins = coins;
     }
@@ -32,7 +32,7 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.listview_wallet_item, parent, false);
+        View rowView = inflater.inflate(R.layout.item_wallet_coin_balance, parent, false);
 
         Coin coin = coins.get(position);
         TextView coinTitle = rowView.findViewById(R.id.listview_coin_text);

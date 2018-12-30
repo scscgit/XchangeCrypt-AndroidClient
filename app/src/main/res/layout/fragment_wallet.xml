@@ -1,104 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/coins_balance"
+        android:id="@+id/wallet_coins_balance"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:fitsSystemWindows="true"
         android:background="@drawable/background_gradient"
-        >
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/coins_balance_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/orange"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="5"
-                    >
-
-                    <View android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/black"
-                        />
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:orientation="horizontal"
-                >
-                <TextView
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="5">
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="10dp"
-                    android:text="Finančný zostatok"
-                    android:textSize="18sp"
-                    android:gravity="center_horizontal"
-                    />
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:id="@+id/date_text_wallet"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
                         android:layout_weight="3"
-                        android:text="Naposledy aktualizované\n00.00.0000 00:00:00"
-                        android:textSize="11sp"
-                        android:gravity="end"
+                        android:gravity="center_horizontal"
+                        android:text="Finančný zostatok"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/wallet_last_updated"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="10dp"
-                        />
-            </LinearLayout>
+                        android:layout_weight="3"
+                        android:gravity="end"
+                        android:text="Naposledy aktualizované\n00.00.0000 00:00:00"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
                 <ListView
+                    android:id="@+id/wallet_coins_balance_coin_list"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="5"
-                    android:id="@+id/listwiew_wallet"
-                    android:divider="@null"
-                    android:dividerHeight="0dp"
                     android:layout_marginTop="0dp"
-                    >
-
-
-                </ListView>
-
+                    android:layout_weight="5"
+                    android:divider="@null"
+                    android:dividerHeight="0dp" />
             </LinearLayout>
-
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/coins_balance_close_fab"
+        android:id="@+id/wallet_coins_balance_close_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:fabSize="mini"
-        app:layout_anchor="@id/coins_balance"
+        app:layout_anchor="@id/wallet_coins_balance"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/transaction_history"
+        android:id="@+id/wallet_transaction_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/recyclerview_wallet"/>
+        <include layout="@layout/view_wallet_transactions" />
 
     </android.support.v4.widget.NestedScrollView>
 

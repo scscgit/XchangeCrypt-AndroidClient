@@ -1,33 +1,13 @@
 <resources>
     <string name="app_name">XchangeCrypt</string>
 
-    <!--dialog-->
+    <!-- Dialog -->
     <string name="ok_btn">OK</string>
     <string name="positive_btn">Áno</string>
     <string name="negative_btn">Nie</string>
 
-    <!--drawer-->
+    <!-- Drawer -->
     <string name="drawer_open">Otvoriť menu</string>
     <string name="drawer_close">Zatvoriť menu</string>
-    <string name="title_activity_maps">Map</string>
-
-    <string name="google_sign_client_id">851065012923-voskus7rqrtbbj6tiahfa1e6fuao2i92.apps.googleusercontent.com</string>
-    <string name="server_client_id">851065012923-etmf2ie0nv8b3eo0tbra5a2i5a7e6nlt.apps.googleusercontent.com</string>
-
-    <string name="delete">Naozaj chcete odstrániť položku?</string>
-    <string name="welcome">Welcome to Wingtip Toys</string>
-    <string name="aadPlug">Identity by Azure AD B2C</string>
-    <string name="callAPIText">Call API</string>
-    <string name="learnText">Learn more</string>
-    <string name="title_activity_authenticated">AuthenticatedActivity</string>
-    <string name="title_activity_learn_more">LearnMoreActivity</string>
-    <string name="tokenPresent">In Cache</string>
-    <string name="noToken">Null</string>
-    <string name="IT">ID Token:</string>
-    <string name="AT">Access Token:</string>
-    <string name="RT">Refresh Token:</string>
-    <string name="api">Calling API...</string>
-    <string name="failedRefresh">Failed to Refresh Token.</string>
-    <string name="editSuccess">Successfully Updated Profile</string>
-    <string name="editFailure">Failed to Updated Profile</string>
+    <string name="order_delete">Naozaj chcete odstrániť vašu ponuku?</string>
 </resources>

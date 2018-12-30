@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="5"
-        >
-
-
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="5">
 
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -24,6 +16,7 @@
             android:layout_weight="1"
             android:orientation="vertical"
             >
+
             <ImageView
                 android:id="@+id/user_image"
                 android:layout_width="match_parent"
@@ -34,6 +27,7 @@
                 />
 
         </LinearLayout>
+
         <!-- Settings Part-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,6 +37,7 @@
             android:orientation="vertical"
             android:weightSum="7"
             >
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
@@ -56,6 +51,7 @@
                 android:layout_weight="1"
                 android:weightSum="3"
                 >
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -69,17 +65,17 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:text="Meno"
-                    android:gravity="left|center_vertical"
+                    android:text="MENO"
+                    android:gravity="start|center_vertical"
                     android:textSize="@dimen/item_text_size_big"
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:src="@drawable/dotted"
-            />
+                android:layout_height="5dp"
+                android:src="@drawable/dotted" />
 
             <!-- Second row (SURNAME)-->
             <LinearLayout
@@ -88,30 +84,30 @@
                 android:layout_weight="1"
                 android:weightSum="3"
                 >
-            <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Priezvisko:"
-            android:gravity="center"
-            android:textSize="@dimen/item_text_size_big"
-            />
-            <TextView
-            android:id="@+id/surname_text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="Priezvisko"
-            android:gravity="left|center_vertical"
-            android:textSize="@dimen/item_text_size_big"
-            />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Priezvisko:"
+                    android:textSize="@dimen/item_text_size_big" />
+                <TextView
+                    android:id="@+id/surname_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="start|center_vertical"
+                    android:text="PRIEZVISKO"
+                    android:textSize="@dimen/item_text_size_big" />
 
             </LinearLayout>
+
             <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:src="@drawable/dotted"
-            />
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:src="@drawable/dotted" />
+
             <!-- Third row (E-mail)-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,6 +115,7 @@
                 android:layout_weight="1"
                 android:weightSum="3"
                 >
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -132,17 +129,19 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:text="e-mail"
-                    android:gravity="left|center_vertical"
+                    android:text="E-MAIL"
+                    android:gravity="start|center_vertical"
                     android:textSize="@dimen/item_text_size_big"
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <!-- Fourth row (Settings)-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -150,6 +149,7 @@
                 android:layout_weight="1"
                 android:weightSum="3"
                 >
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -158,11 +158,13 @@
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
+
             <!-- Fifth row (Notification)-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -170,6 +172,7 @@
                 android:layout_weight="1"
                 android:weightSum="3"
                 >
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -183,17 +186,16 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="e-mail"
-                    android:gravity="left|center_vertical"
+                    android:gravity="start|center_vertical"
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -205,7 +207,7 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Odhlásiť"
+                    android:text="Odhlásiť sa"
                     android:clickable="false"
                     android:background="@drawable/item_background_orange"
                     android:id="@+id/button_sign_out"
@@ -216,6 +218,7 @@
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
@@ -243,12 +246,12 @@
                     />
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:src="@drawable/dotted"
                 />
-
 
         </LinearLayout>
 
@@ -270,19 +273,6 @@
                 android:textSize="@dimen/item_text_size_big"
                 />
 
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="vertical"-->
-                <!--android:weightSum="3"-->
-                <!--&gt;-->
-          <!---->
-            <!--</LinearLayout>-->
-
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -290,27 +280,28 @@
                 android:orientation="horizontal"
                 android:weightSum="2"
                 >
+
                 <Button
+                    style="?android:attr/button"
                     android:id="@+id/button_deposit"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:background="@drawable/item_background_orange"
                     android:text="Vklad"
-                    android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
                     />
                 <Button
+                    style="?android:attr/button"
                     android:id="@+id/button_withdraw"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:background="@drawable/item_background_orange"
                     android:text="Výber"
-                    android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="10dp"
@@ -318,12 +309,7 @@
                     />
 
             </LinearLayout>
+
         </LinearLayout>
-
-
-
-    </LinearLayout>
-
-
 
 </LinearLayout>

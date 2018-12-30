@@ -3,19 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/orange"
-    >
+    android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        >
     <ImageView
         android:layout_width="358dp"
         android:layout_height="295dp"
-        android:src="@drawable/logo"
         android:layout_gravity="center"
-        />
+        android:contentDescription="Loading application"
+        android:src="@drawable/logo" />
 
-</LinearLayout>
 </LinearLayout>

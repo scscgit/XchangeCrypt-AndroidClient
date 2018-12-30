@@ -394,15 +394,15 @@ public class ContentProvider {
                 && marketDepthMap.get(currentCurrencyPair) != null;
     }
 
+    public boolean isWalletLoaded() {
+        return coinsBalance != null;
+    }
+
     public boolean isPrivateExchangeLoaded() {
         return isPublicExchangeLoaded()
                 && isWalletLoaded()
                 && accountOrders != null
                 && accountOrderHistory != null
                 && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
-    }
-
-    public boolean isWalletLoaded() {
-        return coinsBalance != null;
     }
 }

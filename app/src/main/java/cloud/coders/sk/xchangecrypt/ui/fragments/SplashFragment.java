@@ -1,5 +1,6 @@
 package cloud.coders.sk.xchangecrypt.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,12 @@ public class SplashFragment extends BaseFragment {
         setActionBar();
         setViews();
         setViewContents();
+        return rootView;
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -40,7 +46,6 @@ public class SplashFragment extends BaseFragment {
                 }
             }
         }, 1000);
-        return rootView;
     }
 
     @Override

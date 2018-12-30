@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -87,29 +85,24 @@ public class ExchangeFragment extends BaseFragment {
 
     private LinearLayout coinPairLinearLayout;
 
-    private TextView listViewOrderHeaderBaseCurrency;
-    private TextView listViewOrderHeaderQuoteCurrency;
-
     private ImageView imageUp;
     private ImageView imageDown;
     private ImageView imageDownDown;
 
     private OrderSide orderSide;
 
-    private RecyclerView recyclerView;
-
-    private AppBarLayout appBarLayout;
     private boolean headerAlreadyCrashed;
 
-    private FrameState frameState;
+    private ExchangeFragmentState fragmentState;
 
     private int lastKeyHeight = 0;
     private int lastScreenHeight = 0;
 
     private ViewGroup header;
+    private boolean myOrders = false;
 
-    private enum FrameState {
-        defaultFrames, secondExpanded, thirdExpanded
+    private enum ExchangeFragmentState {
+        DEFAULT, ADVANCED_ORDER_PLACEMENT, EXPANDED_ORDERS_LIST
     }
 
     public static ExchangeFragment newInstance(Bundle args) {
@@ -126,10 +119,8 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_exchange, container, false);
-        this.orderSide = OrderSide.BUY;
         setActionBar();
         setViews();
-        setViewContents();
         return rootView;
     }
 
@@ -146,8 +137,8 @@ public class ExchangeFragment extends BaseFragment {
         firstCurrencyLogo = rootView.findViewById(R.id.first_coin_logo_image);
         secondCurrencyText = rootView.findViewById(R.id.second_coin_logo_text);
         secondCurrencyLogo = rootView.findViewById(R.id.second_coin_logo_image);
-        ballanceText = rootView.findViewById(R.id.exchange_balance_text);
-        listViewOrders = rootView.findViewById(R.id.listview_orders);
+        ballanceText = rootView.findViewById(R.id.exchange_coin_balance_value);
+        listViewOrders = rootView.findViewById(R.id.exchange_orders_list);
         amountEdit = rootView.findViewById(R.id.exchange_amount_edit);
         amountCoin = rootView.findViewById(R.id.exchange_amount_coin_text);
 
@@ -162,57 +153,62 @@ public class ExchangeFragment extends BaseFragment {
 
         //buttonOrder = rootView.findViewById(R.id.button_order);
 
-        secondFrameLinearLayout = rootView.findViewById(R.id.linerlayout_order_place);
-        thirdFrameLinearLayout = rootView.findViewById(R.id.linerlayout_order_list);
+        secondFrameLinearLayout = rootView.findViewById(R.id.exchange_order_placement);
+        thirdFrameLinearLayout = rootView.findViewById(R.id.exchange_order_list);
         firstFrameLinearLayout = rootView.findViewById(R.id.linerlayout_order_coin_pair);
-        secondFrameAdvancedLinearLayout = rootView.findViewById(R.id.linearLayout_order_advanced);
+        secondFrameAdvancedLinearLayout = rootView.findViewById(R.id.exchange_order_advanced);
         coinPairLinearLayout = rootView.findViewById(R.id.linearLayout_coin_pair_select);
 
-        buttonBuy = rootView.findViewById(R.id.exchange_button_exchange_buy);
-        buttonSell = rootView.findViewById(R.id.exchange_button_exchange_sell);
+        buttonBuy = rootView.findViewById(R.id.exchange_button_switch_buy);
+        buttonSell = rootView.findViewById(R.id.exchange_button_switch_sell);
 
-        marketOrders = rootView.findViewById(R.id.button_exchange_order_all);
-        userOrders = rootView.findViewById(R.id.button_exchange_order_my);
+        marketOrders = rootView.findViewById(R.id.exchange_orders_button_market);
+        userOrders = rootView.findViewById(R.id.exchange_orders_button_my);
 
-        imageUp = rootView.findViewById(R.id.image_up);
-        imageDown = rootView.findViewById(R.id.image_down);
-        imageDownDown = rootView.findViewById(R.id.image_down_down);
+        imageUp = rootView.findViewById(R.id.exchange_state_arrow_up);
+        imageDown = rootView.findViewById(R.id.exchange_state_arrow_down);
+        imageDownDown = rootView.findViewById(R.id.exchange_state_arrow_down_hidden);
 
-        buttonMarketOrder = rootView.findViewById(R.id.button_exchange_market);
-        buttonLimitOrder = rootView.findViewById(R.id.button_exchange_limit);
-        buttonStopOrder = rootView.findViewById(R.id.button_exchange_stop);
+        buttonMarketOrder = rootView.findViewById(R.id.exchange_button_market);
+        buttonLimitOrder = rootView.findViewById(R.id.exchange_button_limit);
+        buttonStopOrder = rootView.findViewById(R.id.exchange_button_stop);
 
-        stopCheckbox = rootView.findViewById(R.id.checkbox_stop);
-        profitCheckbox = rootView.findViewById(R.id.checkbox_take);
+        stopCheckbox = rootView.findViewById(R.id.exchange_stoploss_checkbox);
+        profitCheckbox = rootView.findViewById(R.id.exchange_takeprofit_checkbox);
 
-        stopEditText = rootView.findViewById(R.id.edittext_stop);
-        profitEditText = rootView.findViewById(R.id.edittext_profit);
+        stopEditText = rootView.findViewById(R.id.exchange_stoploss_edit);
+        profitEditText = rootView.findViewById(R.id.exchange_takeprofit_edit);
+    }
 
-//        listViewOrderHeaderBaseCurrency = rootView.findViewById(R.id.listview_orders_header_coin1);
-//        listViewOrderHeaderQuoteCurrency = rootView.findViewById(R.id.listview_orders_header_coin2);
+    @Override
+    public void onStart() {
+        super.onStart();
+        this.orderSide = getContentProvider().getCurrentOrderSide();
+        // By default initializes order side to buy
+        if (this.orderSide == null) {
+            getContentProvider().setCurrentOrderSide(OrderSide.BUY);
+            this.orderSide = OrderSide.BUY;
+        }
+        setViewContents();
     }
 
     @Override
     protected void setViewContents() {
+        // Disable editing of generated text
         feeEdit.setKeyListener(null);
         sumEdit.setKeyListener(null);
         feeEdit.setText("0,00000001");
 
-        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
-        listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
-        listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
-        try {
-            listViewOrders.addHeaderView(header);
-        } catch (Exception e) {
-            headerCrashed();
-        }
-        updateAfterCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
-        //setListViewHeightBasedOnChildren(listViewOrders);
-        //ballanceText.setText(String.format("%.8f", getContentProvider().getCoinsBalance().get(0).getAmount()) + " " + getContentProvider().getCoinsBalance().get(0).getName());
+        // Initialize generated values and displayed orders
+        updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
 
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                if (position == 0) {
+                    // Clicked on a header, ignored
+                    return;
+                }
                 if (myOrders) {
                     DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
                         @Override
@@ -222,7 +218,7 @@ public class ExchangeFragment extends BaseFragment {
                             getMainActivity().deleteOrder(currentUserOrders.get(position + offset));
                         }
                     };
-                    getMainActivity().showDialogWithAction(R.string.delete, dialogOkClickListener, true);
+                    getMainActivity().showDialogWithAction(R.string.order_delete, dialogOkClickListener, true);
                 }
             }
         });
@@ -244,7 +240,7 @@ public class ExchangeFragment extends BaseFragment {
                         imageUp.setVisibility(View.GONE);
                         imageDown.setVisibility(View.GONE);
                     } else {
-                        if (frameState == FrameState.secondExpanded) {
+                        if (fragmentState == ExchangeFragmentState.ADVANCED_ORDER_PLACEMENT) {
                             setSecondFrameExpanded(true);
                         } else {
                             setFrameSizeWhenKeybordShown(false);
@@ -270,7 +266,7 @@ public class ExchangeFragment extends BaseFragment {
                 builder.setTitle("Vyberte menový pár")
                         .setItems(cs, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                updateAfterCurrencyPairChange(list2.get(which).replace("/", "_"), false);
+                                updateOnCurrencyPairChange(list2.get(which).replace("/", "_"), false);
                             }
                         });
                 Dialog dialog = builder.create();
@@ -305,18 +301,18 @@ public class ExchangeFragment extends BaseFragment {
                 showUserOrders();
             }
         });
-        //updateAfterCurrencyPairChange(getContentProvider().getCurrentCurrencyPair().toString());
+        //updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair().toString());
 
         imageUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (frameState == FrameState.secondExpanded) {
+                if (fragmentState == ExchangeFragmentState.ADVANCED_ORDER_PLACEMENT) {
                     setDefaultFrames();
-                    frameState = FrameState.defaultFrames;
+                    fragmentState = ExchangeFragmentState.DEFAULT;
                     imageDown.setVisibility(View.VISIBLE);
                 } else {
                     setSecondFrameExpanded(false);
-                    frameState = FrameState.thirdExpanded;
+                    fragmentState = ExchangeFragmentState.EXPANDED_ORDERS_LIST;
                     imageDownDown.setVisibility(View.VISIBLE);
                     imageDown.setVisibility(View.VISIBLE);
                 }
@@ -328,7 +324,7 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 setSecondFrameExpanded(true);
-                frameState = FrameState.secondExpanded;
+                fragmentState = ExchangeFragmentState.ADVANCED_ORDER_PLACEMENT;
                 imageDown.setVisibility(View.GONE);
             }
         });
@@ -337,7 +333,7 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 setDefaultFrames();
-                frameState = FrameState.defaultFrames;
+                fragmentState = ExchangeFragmentState.DEFAULT;
                 imageDownDown.setVisibility(View.GONE);
             }
         });
@@ -486,6 +482,30 @@ public class ExchangeFragment extends BaseFragment {
         });
     }
 
+    private void createOrdersHeader(boolean userOrders) {
+        listViewOrders.removeHeaderView(header);
+        header = (ViewGroup) getLayoutInflater().inflate(
+                userOrders
+                        ? R.layout.item_order_user_header
+                        : R.layout.item_order_depth_header,
+                listViewOrders,
+                false
+        );
+        String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
+        TextView ordersHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
+        ordersHeaderBaseCurrency.setText(currencies[0]);
+        TextView ordersHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
+        ordersHeaderQuoteCurrency.setText(currencies[1]);
+        try {
+            listViewOrders.addHeaderView(header);
+        } catch (Exception e) {
+            if (!this.headerAlreadyCrashed) {
+                this.headerAlreadyCrashed = true;
+                Toast.makeText(getContext(), "Cannot add header, low Android API level", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void sendMarketOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
@@ -495,7 +515,6 @@ public class ExchangeFragment extends BaseFragment {
                 pair[0],
                 amount,
                 pair[1],
-                price * amount,
                 orderSide,
                 OrderType.MARKET
         );
@@ -507,7 +526,6 @@ public class ExchangeFragment extends BaseFragment {
         String[] pair = pairs.split("_");
         double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
-
         Double stopLoss = null;
         if (stopCheckbox.isChecked()) {
             if (stopEditText.getText().toString().trim().length() > 0) {
@@ -526,7 +544,6 @@ public class ExchangeFragment extends BaseFragment {
                 return;
             }
         }
-
         Order order = new Order(
                 price,
                 null,
@@ -535,7 +552,6 @@ public class ExchangeFragment extends BaseFragment {
                 pair[0],
                 Double.parseDouble(amountEdit.getText().toString().replace(",", ".")),
                 pair[1],
-                price * amount,
                 orderSide,
                 OrderType.LIMIT
         );
@@ -574,83 +590,63 @@ public class ExchangeFragment extends BaseFragment {
                 pair[0],
                 amount,
                 pair[1],
-                price * amount,
                 orderSide,
                 OrderType.STOP
         );
         getMainActivity().sendOrder(order);
     }
 
-    private boolean myOrders = false;
-
     public void switchToBuyMode() {
         getContentProvider().setCurrentOrderSide(OrderSide.BUY);
+        orderSide = OrderSide.BUY;
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.gray));
-        String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");
-        Coin quoteCoin = getContentProvider().getCoinBalanceByName(pairParts[1]);
-        ballanceText.setText(String.format("%.8f", quoteCoin.getAmount()) + " " + quoteCoin.getSymbolName());
+        showCoinBalance();
         if (myOrders) {
             showUserOrders();
         } else {
             showMarketDepthOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
     }
 
     public void switchToSellMode() {
         getContentProvider().setCurrentOrderSide(OrderSide.SELL);
+        orderSide = OrderSide.SELL;
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.orange));
-        String[] pairParts = getContentProvider().getCurrentCurrencyPair().split("_");
-        Coin baseCoin = getContentProvider().getCoinBalanceByName(pairParts[0]);
-        ballanceText.setText(String.format("%.8f", baseCoin.getAmount()) + " " + baseCoin.getSymbolName());
+        showCoinBalance();
         if (myOrders) {
             showUserOrders();
         } else {
             showMarketDepthOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide())));
+        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+    }
+
+    private void showCoinBalance() {
+        String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
+        Coin coin = getContentProvider().getCoinBalanceByName(currencies[orderSide == OrderSide.SELL ? 0 : 1]);
+        ballanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
     }
 
     private List<Order> currentUserOrders = null;
 
     private void showMarketDepthOrders() {
-        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), getContentProvider().getCurrentOrderSide());
+        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
         listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
         userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
-
-        listViewOrders.removeHeaderView(header);
-        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header_notype, listViewOrders, false);
-        listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
-        listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
-        try {
-            listViewOrders.addHeaderView(header);
-        } catch (IllegalStateException e) {
-            headerCrashed();
-        }
+        createOrdersHeader(false);
         myOrders = false;
     }
 
     public void showUserOrders() {
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(
-                getContext(),
-                getContentProvider().getAccountOrders(getContentProvider().getCurrentCurrencyPair(), orderSide),
-                false
-        ));
+        this.currentUserOrders = getContentProvider().getAccountOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
+        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
         marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
         userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
-
-        listViewOrders.removeHeaderView(header);
-        header = (ViewGroup) getLayoutInflater().inflate(R.layout.listview_order_header, listViewOrders, false);
-        listViewOrderHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
-        listViewOrderHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
-        try {
-            listViewOrders.addHeaderView(header);
-        } catch (IllegalStateException e) {
-            headerCrashed();
-        }
+        createOrdersHeader(true);
         myOrders = true;
     }
 
@@ -664,32 +660,34 @@ public class ExchangeFragment extends BaseFragment {
         }
     }
 
-    private void updateAfterCurrencyPairChange(String pair, boolean hasData) {
+    private void updateOnCurrencyPairChange(String pair, boolean hasData) {
+        getContentProvider().setCurrentCurrencyPair(pair);
         if (!hasData) {
-            getContentProvider().setCurrentCurrencyPair(pair);
             getMainActivity().getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
             return;
         }
         //getMainActivity().getTradingApiHelper().marketDepthForPair(MainActivity.asyncTaskId++,pair);
         //getMainActivity().showProgressDialog("Načítavám dáta");
         priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(pair, orderSide)));
-        String[] pairParts = pair.split("_");
-        firstCurrencyText.setText(pairParts[0]);
-        secondCurrencyText.setText(pairParts[1]);
-        setLogo(pairParts[0], firstCurrencyLogo);
-        setLogo(pairParts[1], secondCurrencyLogo);
-        getContentProvider().setCurrentCurrencyPair(pair);
-
-        amountCoin.setText(pairParts[0]);
-        priceCoin.setText(pairParts[1]);
-        feeCoin.setText(pairParts[1]);
-        sumCoin.setText(pairParts[1]);
-
-        // TODO: this is obviously wrong, need to analyze flow
-        listViewOrderHeaderBaseCurrency.setText(pairParts[0]);
-        listViewOrderHeaderBaseCurrency.setText(pairParts[1]);
-        myOrders = false;
-        switchToBuyMode();
+        String[] currencies = pair.split("_");
+        firstCurrencyText.setText(currencies[0]);
+        secondCurrencyText.setText(currencies[1]);
+        setLogo(currencies[0], firstCurrencyLogo);
+        setLogo(currencies[1], secondCurrencyLogo);
+        amountCoin.setText(currencies[0]);
+        priceCoin.setText(currencies[1]);
+        feeCoin.setText(currencies[1]);
+        sumCoin.setText(currencies[1]);
+        switch (orderSide) {
+            case SELL:
+                switchToSellMode();
+                break;
+            case BUY:
+                switchToBuyMode();
+                break;
+            default:
+                throw new RuntimeException("Unexpected order side");
+        }
     }
 
     public void setSecondFrameExpanded(boolean isExpanded) {
@@ -825,13 +823,6 @@ public class ExchangeFragment extends BaseFragment {
         secondFrameLinearLayout.setLayoutParams(param2);
         firstFrameLinearLayout.setLayoutParams(param3);
         secondFrameAdvancedLinearLayout.setLayoutParams(param4);
-    }
-
-    private void headerCrashed() {
-        if (!this.headerAlreadyCrashed) {
-            this.headerAlreadyCrashed = true;
-            Toast.makeText(getContext(), "Cannot add header, low Android API level", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void confirmationDialog(final Context context, String title, String message, final Runnable action) {
