@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.listeners.ConnectionListener;
@@ -45,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showErrorDialog(int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
-                .setCancelable(false);
+            .setCancelable(false);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -77,12 +76,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(showNegativeButton ? R.string.positive_btn : R.string.ok_btn, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        listener.onPositiveButtonClicked(BaseActivity.this);
-                    }
-                });
+            .setCancelable(false)
+            .setPositiveButton(showNegativeButton ? R.string.positive_btn : R.string.ok_btn, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    listener.onPositiveButtonClicked(BaseActivity.this);
+                }
+            });
         if (showNegativeButton)
             builder.setNegativeButton(R.string.negative_btn, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -139,7 +138,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             hideProgressDialog();
         }
         progress = ProgressDialog.show(
-                this, null, getResources().getString(message), true);
+            this, null, getResources().getString(message), true);
     }
 
     public void showProgressDialog(String message) {
@@ -158,8 +157,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void disableGestures() {
         getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     public void enableGestures() {
@@ -246,8 +245,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
                     v.getLayoutParams().height = interpolatedTime == 1
-                            ? LinearLayout.LayoutParams.WRAP_CONTENT
-                            : (int) (targetHeight * interpolatedTime);
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
                     v.requestLayout();
                 }
 

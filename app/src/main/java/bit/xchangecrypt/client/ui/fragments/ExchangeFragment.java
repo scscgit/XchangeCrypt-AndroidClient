@@ -13,20 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import android.widget.*;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.adapters.ExchangeOrderListViewAdapter;
 import bit.xchangecrypt.client.datamodel.Coin;
@@ -34,6 +21,9 @@ import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 
@@ -264,11 +254,11 @@ public class ExchangeFragment extends BaseFragment {
                 CharSequence[] cs = list2.toArray(new CharSequence[list2.size()]);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Vyberte menový pár")
-                        .setItems(cs, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                updateOnCurrencyPairChange(list2.get(which).replace("/", "_"), false);
-                            }
-                        });
+                    .setItems(cs, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            updateOnCurrencyPairChange(list2.get(which).replace("/", "_"), false);
+                        }
+                    });
                 Dialog dialog = builder.create();
                 dialog.show();
             }
@@ -423,15 +413,15 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
                     confirmationDialog(
-                            getContext(),
-                            "Market ponuka",
-                            "Potvrďte prosím " + (orderSide == OrderSide.BUY ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendMarketOrder();
-                                }
+                        getContext(),
+                        "Market ponuka",
+                        "Potvrďte prosím " + (orderSide == OrderSide.BUY ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                sendMarketOrder();
                             }
+                        }
                     );
                 } else {
                     Toast.makeText(getContext(), "Musíte zadať množstvo", Toast.LENGTH_SHORT).show();
@@ -444,15 +434,15 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
                     confirmationDialog(
-                            getContext(),
-                            "Limit ponuka",
-                            "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendLimitOrder();
-                                }
+                        getContext(),
+                        "Limit ponuka",
+                        "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                sendLimitOrder();
                             }
+                        }
                     );
                 } else {
                     Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
@@ -465,15 +455,15 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 if (amountEdit.getText().toString().trim().length() > 0) {
                     confirmationDialog(
-                            getContext(),
-                            "Stop ponuka",
-                            "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendStopOrder();
-                                }
+                        getContext(),
+                        "Stop ponuka",
+                        "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                sendStopOrder();
                             }
+                        }
                     );
                 } else {
                     Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
@@ -485,11 +475,11 @@ public class ExchangeFragment extends BaseFragment {
     private void createOrdersHeader(boolean userOrders) {
         listViewOrders.removeHeaderView(header);
         header = (ViewGroup) getLayoutInflater().inflate(
-                userOrders
-                        ? R.layout.item_order_user_header
-                        : R.layout.item_order_depth_header,
-                listViewOrders,
-                false
+            userOrders
+                ? R.layout.item_order_user_header
+                : R.layout.item_order_depth_header,
+            listViewOrders,
+            false
         );
         String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
         TextView ordersHeaderBaseCurrency = header.findViewById(R.id.listview_orders_header_coin1);
@@ -512,11 +502,11 @@ public class ExchangeFragment extends BaseFragment {
         double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
         Order order = new Order(null, null,
-                pair[0],
-                amount,
-                pair[1],
-                orderSide,
-                OrderType.MARKET
+            pair[0],
+            amount,
+            pair[1],
+            orderSide,
+            OrderType.MARKET
         );
         getMainActivity().sendOrder(order);
     }
@@ -545,15 +535,15 @@ public class ExchangeFragment extends BaseFragment {
             }
         }
         Order order = new Order(
-                price,
-                null,
-                stopLoss,
-                takeProfit,
-                pair[0],
-                Double.parseDouble(amountEdit.getText().toString().replace(",", ".")),
-                pair[1],
-                orderSide,
-                OrderType.LIMIT
+            price,
+            null,
+            stopLoss,
+            takeProfit,
+            pair[0],
+            Double.parseDouble(amountEdit.getText().toString().replace(",", ".")),
+            pair[1],
+            orderSide,
+            OrderType.LIMIT
         );
         getMainActivity().sendOrder(order);
     }
@@ -583,15 +573,15 @@ public class ExchangeFragment extends BaseFragment {
             }
         }
         Order order = new Order(
-                null,
-                price,
-                stopLoss,
-                takeProfit,
-                pair[0],
-                amount,
-                pair[1],
-                orderSide,
-                OrderType.STOP
+            null,
+            price,
+            stopLoss,
+            takeProfit,
+            pair[0],
+            amount,
+            pair[1],
+            orderSide,
+            OrderType.STOP
         );
         getMainActivity().sendOrder(order);
     }
@@ -697,45 +687,45 @@ public class ExchangeFragment extends BaseFragment {
         LinearLayout.LayoutParams param4;
         if (isExpanded) {
             param1 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    1.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1.0f
             );
             param2 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    4.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                4.0f
             );
             param3 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    0.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                0.0f
             );
             param4 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    2f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                2f
             );
         } else {
             param1 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    1.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1.0f
             );
             param2 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                0f
             );
             param3 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    6f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                6f
             );
             param4 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                0f
             );
         }
         firstFrameLinearLayout.setLayoutParams(param1);
@@ -750,24 +740,24 @@ public class ExchangeFragment extends BaseFragment {
         LinearLayout.LayoutParams param3;
         LinearLayout.LayoutParams param4;
         param1 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                3.0f
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0,
+            3.0f
         );
         param2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                3.0f
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0,
+            3.0f
         );
         param3 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                1.0f
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0,
+            1.0f
         );
         param4 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                0f
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0,
+            0f
         );
         firstFrameLinearLayout.setLayoutParams(param3);
         secondFrameLinearLayout.setLayoutParams(param2);
@@ -782,41 +772,41 @@ public class ExchangeFragment extends BaseFragment {
         LinearLayout.LayoutParams param4;
         if (isExpanded) {
             param1 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                0f
             );
             param2 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    5.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                5.0f
             );
             param3 = param1;
             param4 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    2f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                2f
             );
         } else {
             param1 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    3.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                3.0f
             );
             param2 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    3.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                3.0f
             );
             param3 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    1.0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1.0f
             );
             param4 = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    0f
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                0f
             );
         }
         thirdFrameLinearLayout.setLayoutParams(param1);
@@ -827,17 +817,17 @@ public class ExchangeFragment extends BaseFragment {
 
     private void confirmationDialog(final Context context, String title, String message, final Runnable action) {
         new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (whichButton == BUTTON_POSITIVE) {
-                            action.run();
-                        }
+            .setTitle(title)
+            .setMessage(message)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    if (whichButton == BUTTON_POSITIVE) {
+                        action.run();
                     }
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
+                }
+            })
+            .setNegativeButton(android.R.string.no, null)
+            .show();
     }
 }

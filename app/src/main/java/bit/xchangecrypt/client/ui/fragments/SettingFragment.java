@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
 import bit.xchangecrypt.client.R;
 
 /**

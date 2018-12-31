@@ -1,9 +1,6 @@
 package io.swagger.client.model;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.math.BigDecimal;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,48 +11,49 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "")
 public class AccountWalletResponse {
 
-    @SerializedName("coinSymbol")
-    private String coinSymbol = null;
-    @SerializedName("walletPublicKey")
-    private String walletPublicKey = null;
-    @SerializedName("balance")
-    private Double balance = null;
+  @SerializedName("coinSymbol")
+  private String coinSymbol = null;
+  @SerializedName("walletPublicKey")
+  private String walletPublicKey = null;
+  @SerializedName("balance")
+  private Double balance = null;
 
-    @ApiModelProperty(value = "")
-    public String getCoinSymbol() {
-        return coinSymbol;
-    }
+  @ApiModelProperty(value = "")
+  public String getCoinSymbol() {
+    return coinSymbol;
+  }
 
-    public void setCoinSymbol(String coinSymbol) {
-        this.coinSymbol = coinSymbol;
-    }
+  public void setCoinSymbol(String coinSymbol) {
+    this.coinSymbol = coinSymbol;
+  }
 
-    @ApiModelProperty(value = "")
-    public String getWalletPublicKey() {
-        return walletPublicKey;
-    }
+  @ApiModelProperty(value = "")
+  public String getWalletPublicKey() {
+    return walletPublicKey;
+  }
 
-    public void setWalletPublicKey(String walletPublicKey) {
-        this.walletPublicKey = walletPublicKey;
-    }
+  public void setWalletPublicKey(String walletPublicKey) {
+    this.walletPublicKey = walletPublicKey;
+  }
 
-    @ApiModelProperty(value = "")
-    public Double getBalance() {
-        return balance;
-    }
+  @ApiModelProperty(value = "")
+  public Double getBalance() {
+    return balance;
+  }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
+  public void setBalance(Double balance) {
+    this.balance = balance;
+  }
 
-    public AccountWalletResponse(){}
-    public AccountWalletResponse(String coinSymbol, String walletPublicKey, Double balance){
-        this.coinSymbol = coinSymbol;
-        this.balance = balance;
-        this.walletPublicKey = walletPublicKey;
+  public AccountWalletResponse() {
+  }
 
-    }
+  public AccountWalletResponse(String coinSymbol, String walletPublicKey, Double balance) {
+    this.coinSymbol = coinSymbol;
+    this.balance = balance;
+    this.walletPublicKey = walletPublicKey;
 
+  }
 
 
 }

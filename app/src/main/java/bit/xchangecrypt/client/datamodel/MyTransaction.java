@@ -1,8 +1,8 @@
 package bit.xchangecrypt.client.datamodel;
 
-import java.util.Date;
-
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
+
+import java.util.Date;
 
 /**
  * Created by Peter on 22.04.2018.

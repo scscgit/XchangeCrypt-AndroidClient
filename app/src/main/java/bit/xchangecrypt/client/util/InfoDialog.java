@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.Constants;
 

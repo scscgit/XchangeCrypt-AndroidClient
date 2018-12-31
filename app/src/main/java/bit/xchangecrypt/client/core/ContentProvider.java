@@ -2,24 +2,14 @@ package bit.xchangecrypt.client.core;
 
 import android.content.Context;
 import android.util.Log;
-
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import bit.xchangecrypt.client.datamodel.Coin;
-import bit.xchangecrypt.client.datamodel.ContentCacheType;
-import bit.xchangecrypt.client.datamodel.MyTransaction;
-import bit.xchangecrypt.client.datamodel.Order;
-import bit.xchangecrypt.client.datamodel.User;
+import bit.xchangecrypt.client.datamodel.*;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.util.InternalStorage;
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
+
+import java.util.*;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
@@ -93,7 +83,7 @@ public class ContentProvider {
         boolean fullyLoaded = true;
         try {
             String cachedCurrentCurrencyPair = (String)
-                    InternalStorage.readObject(context, CURRENT_CURRENCY_PAIR_TAG);
+                InternalStorage.readObject(context, CURRENT_CURRENCY_PAIR_TAG);
             if (cachedCurrentCurrencyPair != null) {
                 currentCurrencyPair = cachedCurrentCurrencyPair;
             } else {
@@ -101,7 +91,7 @@ public class ContentProvider {
             }
 
             OrderSide cachedCurrentOrderSide = (OrderSide)
-                    InternalStorage.readObject(context, CURRENT_ORDER_SIDE_TAG);
+                InternalStorage.readObject(context, CURRENT_ORDER_SIDE_TAG);
             if (cachedCurrentOrderSide != null) {
                 currentOrderSide = cachedCurrentOrderSide;
             } else {
@@ -109,7 +99,7 @@ public class ContentProvider {
             }
 
             List<String> cachedInstruments = (List<String>)
-                    InternalStorage.readObject(context, INSTRUMENTS_TAG);
+                InternalStorage.readObject(context, INSTRUMENTS_TAG);
             if (cachedInstruments != null) {
                 instruments = cachedInstruments;
             } else {
@@ -117,7 +107,7 @@ public class ContentProvider {
             }
 
             HashMap<String, List<Order>> cachedMarketDepth = (HashMap<String, List<Order>>)
-                    InternalStorage.readObject(context, MARKET_DEPTH_TAG);
+                InternalStorage.readObject(context, MARKET_DEPTH_TAG);
             if (cachedMarketDepth != null) {
                 marketDepthMap = cachedMarketDepth;
                 for (String currencyPair : marketDepthMap.keySet()) {
@@ -128,7 +118,7 @@ public class ContentProvider {
             }
 
             List<Order> cachedAccountOrders = (List<Order>)
-                    InternalStorage.readObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId());
             if (cachedAccountOrders != null) {
                 accountOrders = cachedAccountOrders;
             } else {
@@ -136,7 +126,7 @@ public class ContentProvider {
             }
 
             List<Order> cachedAccountOrderHistory = (List<Order>)
-                    InternalStorage.readObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId());
             if (cachedAccountOrderHistory != null) {
                 accountOrderHistory = cachedAccountOrderHistory;
             } else {
@@ -144,7 +134,7 @@ public class ContentProvider {
             }
 
             HashMap<String, List<MyTransaction>> cachedAccountTransactionHistoryMap = (HashMap<String, List<MyTransaction>>)
-                    InternalStorage.readObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId());
             if (cachedAccountTransactionHistoryMap != null) {
                 accountTransactionHistoryMap = cachedAccountTransactionHistoryMap;
             } else {
@@ -152,7 +142,7 @@ public class ContentProvider {
             }
 
             List<Coin> cachedCoinsBalance = (List<Coin>)
-                    InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getAccountId());
+                InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getAccountId());
             if (cachedCoinsBalance != null) {
                 coinsBalance = cachedCoinsBalance;
             } else {
@@ -267,15 +257,15 @@ public class ContentProvider {
 
     private void generateSortedMarketDepthOrdersAndMarketPrices(String currencyPair) {
         List<Order> buyMap = Stream.of(this.marketDepthMap.get(currencyPair))
-                .filter(order -> order.getSide() == OrderSide.BUY)
-                // Sort buyers descending
-                .sortBy(Order::getLimitPrice)
-                .collect(Collectors.toList());
+            .filter(order -> order.getSide() == OrderSide.BUY)
+            // Sort buyers descending
+            .sortBy(Order::getLimitPrice)
+            .collect(Collectors.toList());
         List<Order> sellMap = Stream.of(this.marketDepthMap.get(currencyPair))
-                .filter(order -> order.getSide() == OrderSide.SELL)
-                // Sort sellers descending
-                .sortBy(order -> -order.getLimitPrice())
-                .collect(Collectors.toList());
+            .filter(order -> order.getSide() == OrderSide.SELL)
+            // Sort sellers descending
+            .sortBy(order -> -order.getLimitPrice())
+            .collect(Collectors.toList());
         this.marketDepthBuyMap.put(currencyPair, buyMap);
         this.marketDepthSellMap.put(currencyPair, sellMap);
         // Assign market prices based on the sorted maps
@@ -295,10 +285,10 @@ public class ContentProvider {
 
     public void setAccountOrders(List<Order> accountOrders) {
         accountOrders = Stream.of(accountOrders)
-                .sortBy(accountOrder -> null != accountOrder.getStopPrice()
-                        ? accountOrder.getStopPrice()
-                        : accountOrder.getLimitPrice())
-                .collect(Collectors.toList());
+            .sortBy(accountOrder -> null != accountOrder.getStopPrice()
+                ? accountOrder.getStopPrice()
+                : accountOrder.getLimitPrice())
+            .collect(Collectors.toList());
         this.accountOrders = accountOrders;
         saveAccountOrders();
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS, new Date());
@@ -319,10 +309,10 @@ public class ContentProvider {
     public List<Order> getAccountOrders(String currencyPair, OrderSide side) {
         String[] currencies = currencyPair.split("_");
         return Stream.of(this.accountOrders)
-                .filter(order -> order.getBaseCurrency().equals(currencies[0])
-                        && order.getQuoteCurrency().equals(currencies[1])
-                        && order.getSide() == side)
-                .collect(Collectors.toList());
+            .filter(order -> order.getBaseCurrency().equals(currencies[0])
+                && order.getQuoteCurrency().equals(currencies[1])
+                && order.getSide() == side)
+            .collect(Collectors.toList());
     }
 
     public List<Order> getAccountOrderHistory() {
@@ -331,8 +321,8 @@ public class ContentProvider {
 
     public void setAccountOrderHistory(List<Order> accountOrderHistory) {
         accountOrderHistory = Stream.of(accountOrderHistory)
-                .sortBy(Order::getOrderId)
-                .collect(Collectors.toList());
+            .sortBy(Order::getOrderId)
+            .collect(Collectors.toList());
         this.accountOrderHistory = accountOrderHistory;
         saveAccountOrderHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDER_HISTORY, new Date());
@@ -344,8 +334,8 @@ public class ContentProvider {
 
     public void setAccountTransactionHistory(String currencyPair, List<MyTransaction> accountTransactionHistory) {
         accountTransactionHistory = Stream.of(accountTransactionHistory)
-                .sortBy(MyTransaction::getDate)
-                .collect(Collectors.toList());
+            .sortBy(MyTransaction::getDate)
+            .collect(Collectors.toList());
         accountTransactionHistoryMap.put(currencyPair, accountTransactionHistory);
         saveAccountTransactionHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY, new Date());
@@ -389,9 +379,9 @@ public class ContentProvider {
 
     public boolean isPublicExchangeLoaded() {
         return currentCurrencyPair != null
-                && currentOrderSide != null
-                && instruments != null
-                && marketDepthMap.get(currentCurrencyPair) != null;
+            && currentOrderSide != null
+            && instruments != null
+            && marketDepthMap.get(currentCurrencyPair) != null;
     }
 
     public boolean isWalletLoaded() {
@@ -400,9 +390,9 @@ public class ContentProvider {
 
     public boolean isPrivateExchangeLoaded() {
         return isPublicExchangeLoaded()
-                && isWalletLoaded()
-                && accountOrders != null
-                && accountOrderHistory != null
-                && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
+            && isWalletLoaded()
+            && accountOrders != null
+            && accountOrderHistory != null
+            && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
     }
 }

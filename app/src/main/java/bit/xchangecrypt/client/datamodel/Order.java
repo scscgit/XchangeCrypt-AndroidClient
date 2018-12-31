@@ -1,9 +1,9 @@
 package bit.xchangecrypt.client.datamodel;
 
-import java.util.UUID;
-
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
+
+import java.util.UUID;
 
 /**
  * Created by Peter on 23.04.2018.

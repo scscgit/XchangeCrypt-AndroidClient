@@ -4,14 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.ui.MainActivity;
@@ -19,16 +11,14 @@ import io.swagger.client.ApiException;
 import io.swagger.client.api.AccountApi;
 import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
 import io.swagger.client.auth.FastAccessTokenApiKey;
-import io.swagger.client.model.AccountWalletResponse;
-import io.swagger.client.model.Execution;
-import io.swagger.client.model.InlineResponse200;
-import io.swagger.client.model.InlineResponse20010;
-import io.swagger.client.model.InlineResponse20011;
-import io.swagger.client.model.InlineResponse20013;
-import io.swagger.client.model.InlineResponse2004;
-import io.swagger.client.model.InlineResponse2005;
-import io.swagger.client.model.InlineResponse2007;
-import io.swagger.client.model.Instrument;
+import io.swagger.client.model.*;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Peter on 29.04.2018.
@@ -348,19 +338,19 @@ public class TradingApiHelper {
                 }
                 try {
                     response = tradingApi.accountsAccountIdOrdersPost(
-                            mainActivity.getContentProvider().getUser().getAccountId(),
-                            offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
-                            BigDecimal.valueOf(offer.getBaseCurrencyAmount()),
-                            offer.getSide().toString(),
-                            offer.getType().toString(),
-                            limitPrice,
-                            stopPrice,
-                            null,
-                            null,
-                            stopLoss,
-                            takeProfit,
-                            null,
-                            null
+                        mainActivity.getContentProvider().getUser().getAccountId(),
+                        offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
+                        BigDecimal.valueOf(offer.getBaseCurrencyAmount()),
+                        offer.getSide().toString(),
+                        offer.getType().toString(),
+                        limitPrice,
+                        stopPrice,
+                        null,
+                        null,
+                        stopLoss,
+                        takeProfit,
+                        null,
+                        null
                     );
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot send trading offer", e);

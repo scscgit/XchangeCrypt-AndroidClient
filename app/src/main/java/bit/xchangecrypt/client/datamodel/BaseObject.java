@@ -1,8 +1,8 @@
 package bit.xchangecrypt.client.datamodel;
 
-import java.io.Serializable;
-
 import bit.xchangecrypt.client.core.Constants;
+
+import java.io.Serializable;
 
 /**
  * Created by V3502484 on 21. 9. 2016.

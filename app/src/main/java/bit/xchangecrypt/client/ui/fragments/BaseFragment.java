@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;

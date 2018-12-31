@@ -9,13 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.List;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.MyTransaction;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.util.DateFormatter;
+
+import java.util.List;
 
 /**
  * Created by Peter on 22.04.2018.
@@ -46,7 +45,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_wallet_transaction, parent, false);
+            .inflate(R.layout.item_wallet_transaction, parent, false);
         return new MyViewHolder(itemView);
     }
 

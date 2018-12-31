@@ -25,38 +25,9 @@ import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.microsoft.identity.client.AuthenticationCallback;
-import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.ILoggerCallback;
-import com.microsoft.identity.client.MsalClientException;
-import com.microsoft.identity.client.MsalException;
-import com.microsoft.identity.client.MsalServiceException;
-import com.microsoft.identity.client.MsalUiRequiredException;
-import com.microsoft.identity.client.PublicClientApplication;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.Constants;
-import bit.xchangecrypt.client.datamodel.Coin;
-import bit.xchangecrypt.client.datamodel.ContentCacheType;
-import bit.xchangecrypt.client.datamodel.MyTransaction;
+import bit.xchangecrypt.client.datamodel.*;
 import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
@@ -65,22 +36,24 @@ import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.listeners.ConnectionListener;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.network.TradingApiHelper;
-import bit.xchangecrypt.client.ui.fragments.ExchangeFragment;
-import bit.xchangecrypt.client.ui.fragments.LoginFragment;
-import bit.xchangecrypt.client.ui.fragments.SettingFragment;
-import bit.xchangecrypt.client.ui.fragments.SplashFragment;
-import bit.xchangecrypt.client.ui.fragments.WalletFragment;
+import bit.xchangecrypt.client.ui.fragments.*;
 import bit.xchangecrypt.client.util.ConnectionHelper;
 import bit.xchangecrypt.client.util.UserHelper;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.microsoft.identity.client.*;
 import io.swagger.client.ApiInvoker;
-import io.swagger.client.model.AccountWalletResponse;
-import io.swagger.client.model.Depth;
-import io.swagger.client.model.DepthItem;
-import io.swagger.client.model.Execution;
-import io.swagger.client.model.InlineResponse2004;
-import io.swagger.client.model.Instrument;
+import io.swagger.client.model.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants, GoogleApiClient.OnConnectionFailedListener {
+import java.util.*;
+
+public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static int asyncTaskId = 0;
 
@@ -178,9 +151,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         String authority = String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY);
         if (sampleApp == null) {
             sampleApp = new PublicClientApplication(
-                    this,
-                    Constants.CLIENT_ID,
-                    authority);
+                this,
+                Constants.CLIENT_ID,
+                authority);
             try {
                 com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                     @Override
@@ -211,15 +184,15 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         Log.d(TAG, "Call API Clicked");
         try {
             com.microsoft.identity.client.User currentUser =
-                    UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
+                UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
             if (currentUser != null) {
                 /* We have 1 user */
                 sampleApp.acquireTokenSilentAsync(
-                        scopes,
-                        currentUser,
-                        String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
-                        false,
-                        getAuthSilentCallback());
+                    scopes,
+                    currentUser,
+                    String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
+                    false,
+                    getAuthSilentCallback());
             } else {
                 /* We have no user */
                 sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
@@ -363,28 +336,28 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.GET,
-                Constants.API_URL,
-                parameters,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        /* Successfully called API */
-                        Log.d(TAG, "Response: " + response);
-                        try {
-                            getContentProvider().getUser().setRealName(response.getString("name"));
-                            Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            Log.d(TAG, "JSONException Error: " + e.toString());
-                        }
+            Request.Method.GET,
+            Constants.API_URL,
+            parameters,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    /* Successfully called API */
+                    Log.d(TAG, "Response: " + response);
+                    try {
+                        getContentProvider().getUser().setRealName(response.getString("name"));
+                        Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.d(TAG, "JSONException Error: " + e.toString());
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, "Error: " + error.toString());
-                    }
-                }) {
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d(TAG, "Error: " + error.toString());
+                }
+            }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -464,12 +437,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //            }
 //        };
 //    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "onConnectionFailed: " + connectionResult);
-        Toast.makeText(this, "Chyba pri komunikácii: " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
-    }
+//
+//    @Override
+//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//        Log.i(TAG, "onConnectionFailed: " + connectionResult);
+//        Toast.makeText(this, "Chyba pri komunikácii: " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+//    }
 
     private void createDumbData() {
         getContentProvider().setUser(new User("1", "dumbUser", "dumb@email", "dumb name"));
@@ -649,13 +622,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     quote = base;
                                 }
                                 offers.add(new Order(
-                                        price,
-                                        price,
-                                        base,
-                                        order.getQty().doubleValue(),
-                                        quote,
-                                        OrderSide.fromString(order.getSide().toString()),
-                                        OrderType.fromString(order.getType().toString())
+                                    price,
+                                    price,
+                                    base,
+                                    order.getQty().doubleValue(),
+                                    quote,
+                                    OrderSide.fromString(order.getSide().toString()),
+                                    OrderType.fromString(order.getType().toString())
                                 ));
                             }
                             getContentProvider().setAccountOrders(offers);
@@ -692,24 +665,24 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                         for (DepthItem ask : depthData.getAsks()) {
                             orders.add(new Order(
-                                    ask.get(0).doubleValue(),
-                                    ask.get(0).doubleValue(),
-                                    pair.split("_")[0],
-                                    ask.get(1).doubleValue(),
-                                    pair.split("_")[1],
-                                    OrderSide.BUY,
-                                    OrderType.LIMIT
+                                ask.get(0).doubleValue(),
+                                ask.get(0).doubleValue(),
+                                pair.split("_")[0],
+                                ask.get(1).doubleValue(),
+                                pair.split("_")[1],
+                                OrderSide.BUY,
+                                OrderType.LIMIT
                             ));
                         }
                         for (DepthItem bid : depthData.getBids()) {
                             orders.add(new Order(
-                                    bid.get(0).doubleValue(),
-                                    bid.get(0).doubleValue(),
-                                    pair.split("_")[0],
-                                    bid.get(1).doubleValue(),
-                                    pair.split("_")[1],
-                                    OrderSide.SELL,
-                                    OrderType.LIMIT
+                                bid.get(0).doubleValue(),
+                                bid.get(0).doubleValue(),
+                                pair.split("_")[0],
+                                bid.get(1).doubleValue(),
+                                pair.split("_")[1],
+                                OrderSide.SELL,
+                                OrderType.LIMIT
                             ));
                         }
                         getContentProvider().setMarketDepthOrders(pair, orders);
@@ -736,13 +709,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         List<Order> orderHistory = new ArrayList<>();
                         for (io.swagger.client.model.Order orderResponse : response.getD()) {
                             orderHistory.add(new Order(
-                                    orderResponse.getLimitPrice().doubleValue(),
-                                    orderResponse.getStopPrice().doubleValue(),
-                                    orderResponse.getInstrument().split("_")[0],
-                                    orderResponse.getQty().doubleValue(),
-                                    orderResponse.getInstrument().split("_")[1],
-                                    OrderSide.fromString(orderResponse.getSide().toString()),
-                                    OrderType.fromString(orderResponse.getType().toString())
+                                orderResponse.getLimitPrice().doubleValue(),
+                                orderResponse.getStopPrice().doubleValue(),
+                                orderResponse.getInstrument().split("_")[0],
+                                orderResponse.getQty().doubleValue(),
+                                orderResponse.getInstrument().split("_")[1],
+                                OrderSide.fromString(orderResponse.getSide().toString()),
+                                OrderType.fromString(orderResponse.getType().toString())
                             ));
                         }
                         getContentProvider().setAccountOrderHistory(orderHistory);
@@ -788,7 +761,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         getContentProvider().removeAccountOrderById(orderId);
                         // Refresh the fragment's user orders
                         for (android.support.v4.app.Fragment fragment :
-                                getSupportFragmentManager().getFragments()) {
+                            getSupportFragmentManager().getFragments()) {
                             if (fragment instanceof ExchangeFragment) {
                                 ((ExchangeFragment) fragment).showUserOrders();
                             }
@@ -835,8 +808,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         List<Coin> coins = new ArrayList<>();
                         for (AccountWalletResponse accountWalletResponse : accountWalletResponses) {
                             coins.add(new Coin(
-                                    accountWalletResponse.getCoinSymbol(),
-                                    accountWalletResponse.getBalance().doubleValue()
+                                accountWalletResponse.getCoinSymbol(),
+                                accountWalletResponse.getBalance().doubleValue()
                             ));
                         }
                         getContentProvider().setCoinsBalance(coins);
@@ -866,12 +839,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         if (executions != null) {
                             for (Execution execution : executions) {
                                 transactions.add(new MyTransaction(
-                                        OrderSide.fromString(execution.getSide().toString()),
-                                        execution.getInstrument().split("_")[0],
-                                        execution.getInstrument().split("_")[1],
-                                        execution.getPrice().doubleValue(),
-                                        execution.getQty().doubleValue(),
-                                        new Date(execution.getTime().longValue())
+                                    OrderSide.fromString(execution.getSide().toString()),
+                                    execution.getInstrument().split("_")[0],
+                                    execution.getInstrument().split("_")[1],
+                                    execution.getPrice().doubleValue(),
+                                    execution.getQty().doubleValue(),
+                                    new Date(execution.getTime().longValue())
                                 ));
                             }
                         }
@@ -980,9 +953,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
                     if (lastInstrumentUpdate != null && lastMarketUpdate != null && lastUserUpdate != null) {
                         if (actualDate1.getTime() - lastInstrumentUpdate.getTime() < 30000 &&
-                                actualDate1.getTime() - lastMarketUpdate.getTime() < 30000 &&
-                                actualDate1.getTime() - lastUserUpdate.getTime() < 30000
-                                ) {
+                            actualDate1.getTime() - lastMarketUpdate.getTime() < 30000 &&
+                            actualDate1.getTime() - lastUserUpdate.getTime() < 30000
+                            ) {
                             switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                             return;
                         }
@@ -1017,7 +990,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //                        long i1 = lastHistoryUpdate.getTime() - actualDate.getTime();
 //                        long i2 = lastBalanceUpdate.getTime() - actualDate.getTime();
                         if (actualDate.getTime() - lastHistoryUpdate.getTime() < 30000 &&
-                                actualDate.getTime() - lastBalanceUpdate.getTime() < 30000) {
+                            actualDate.getTime() - lastBalanceUpdate.getTime() < 30000) {
                             switchToFragmentAndClear(FRAGMENT_WALLET, null);
                             return;
                         }
@@ -1077,7 +1050,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     protected void setHamburgerFunction() {
         mDrawerToggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+            this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -1179,7 +1152,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public void onReceive(final Context context, Intent intent) {
                 if (intent.getExtras() != null) {
                     final ConnectivityManager connectivityManager = (ConnectivityManager)
-                            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        context.getSystemService(Context.CONNECTIVITY_SERVICE);
                     final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     ConnectionListener listener = getConnectionListener();
                     if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
@@ -1208,12 +1181,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
         Toast.makeText(this,
-                "in multi window: " + isInMultiWindowMode
-                        + " height " + newConfig.screenHeightDp
-                        + " width " + newConfig.screenWidthDp
-                        + " (smallest " + newConfig.smallestScreenWidthDp
-                        + ")",
-                Toast.LENGTH_LONG
+            "in multi window: " + isInMultiWindowMode
+                + " height " + newConfig.screenHeightDp
+                + " width " + newConfig.screenWidthDp
+                + " (smallest " + newConfig.smallestScreenWidthDp
+                + ")",
+            Toast.LENGTH_LONG
         ).show();
     }
 }

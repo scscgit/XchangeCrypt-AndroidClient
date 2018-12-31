@@ -9,11 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.List;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.Coin;
+
+import java.util.List;
 
 /**
  * Created by Peter on 22.04.2018.

@@ -12,16 +12,15 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Date;
-import java.util.List;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.adapters.WalletListViewAdapter;
 import bit.xchangecrypt.client.adapters.WalletRecyclerViewAdapter;
 import bit.xchangecrypt.client.datamodel.Coin;
 import bit.xchangecrypt.client.datamodel.ContentCacheType;
 import bit.xchangecrypt.client.util.DateFormatter;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Peter on 21.04.2018.

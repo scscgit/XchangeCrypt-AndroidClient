@@ -1,7 +1,6 @@
 package bit.xchangecrypt.client.util;
 
 import android.util.Base64;
-
 import com.microsoft.identity.client.User;
 
 import java.io.UnsupportedEncodingException;

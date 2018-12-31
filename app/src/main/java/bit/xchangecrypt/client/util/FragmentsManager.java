@@ -3,13 +3,12 @@ package bit.xchangecrypt.client.util;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
-
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.ui.MainActivity;
 import bit.xchangecrypt.client.ui.fragments.BaseFragment;
+
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
@@ -101,7 +100,7 @@ public class FragmentsManager {
         }
 
         transaction.add(layoutId, fragment)
-                .commit();
+            .commit();
         if (top != null)
             getSupportFragmentManager().beginTransaction().hide(top).commit();
 
@@ -129,11 +128,11 @@ public class FragmentsManager {
             BaseFragment toShow = fragmentBackStack.getLast();
 
             getSupportFragmentManager()
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .remove(top)
-                    .show(toShow)
-                    .commit();
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .remove(top)
+                .show(toShow)
+                .commit();
 
         } catch (NoSuchElementException e) {
             // no element in stack

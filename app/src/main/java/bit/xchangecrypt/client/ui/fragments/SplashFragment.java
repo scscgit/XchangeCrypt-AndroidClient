@@ -6,11 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import bit.xchangecrypt.client.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import bit.xchangecrypt.client.R;
 
 /**
  * Created by V3502505 on 20/09/2016.

@@ -23,11 +23,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '28.0.3'
     defaultConfig {
-        minSdkVersion 18
-        targetSdkVersion 26
+        minSdkVersion 14
+        targetSdkVersion 27
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -39,8 +39,8 @@ android {
         variant.outputs.all { output ->
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.aar')) {
-                def fileName = "${archivesBaseName}-${android.defaultConfig.versionName}.aar"
-                outputFileName = fileName
+                //outputFileName = "${archivesBaseName}-${android.defaultConfig.versionName}.aar"
+                outputFileName = "${project.name}-${variant.baseName}-${version}.aar"
             }
         }
     }
@@ -56,7 +56,7 @@ dependencies {
     implementation "org.apache.httpcomponents:httpcore:4.4.9"
     implementation "org.apache.httpcomponents:httpmime:4.5.2"
 //    implementation "org.apache.httpcomponents:httpclient-android:4.3.3"
-    implementation 'com.android.volley:volley:1.1.1'
+    implementation "com.android.volley:volley:1.1.1"
     testImplementation "junit:junit:4.12"
     testImplementation "org.robolectric:robolectric:3.0"
     testImplementation "net.jodah:concurrentunit:0.4.2"
