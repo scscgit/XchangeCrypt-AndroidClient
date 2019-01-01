@@ -1,23 +1,23 @@
 package bit.xchangecrypt.client.ui.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.adapters.WalletListViewAdapter;
 import bit.xchangecrypt.client.adapters.WalletRecyclerViewAdapter;
 import bit.xchangecrypt.client.datamodel.Coin;
 import bit.xchangecrypt.client.datamodel.ContentCacheType;
 import bit.xchangecrypt.client.util.DateFormatter;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 import java.util.List;

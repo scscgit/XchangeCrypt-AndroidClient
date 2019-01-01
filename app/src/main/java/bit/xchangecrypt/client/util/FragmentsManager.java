@@ -1,8 +1,9 @@
 package bit.xchangecrypt.client.util;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.ui.MainActivity;
 import bit.xchangecrypt.client.ui.fragments.BaseFragment;
@@ -143,7 +144,7 @@ public class FragmentsManager {
         return mainBackStack.getLast();
     }
 
-    public android.support.v4.app.FragmentManager getSupportFragmentManager() {
+    public FragmentManager getSupportFragmentManager() {
         return ((MainActivity) context).getSupportFragmentManager();
     }
 }

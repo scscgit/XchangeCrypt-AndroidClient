@@ -13,11 +13,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +20,10 @@ import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.Constants;
 import bit.xchangecrypt.client.datamodel.*;
@@ -45,6 +44,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.identity.client.*;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.*;
@@ -760,7 +761,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         String orderId = intent.getExtras().getString("orderId");
                         getContentProvider().removeAccountOrderById(orderId);
                         // Refresh the fragment's user orders
-                        for (android.support.v4.app.Fragment fragment :
+                        for (Fragment fragment :
                             getSupportFragmentManager().getFragments()) {
                             if (fragment instanceof ExchangeFragment) {
                                 ((ExchangeFragment) fragment).showUserOrders();

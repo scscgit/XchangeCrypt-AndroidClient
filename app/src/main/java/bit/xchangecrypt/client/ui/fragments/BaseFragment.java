@@ -2,11 +2,11 @@ package bit.xchangecrypt.client.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.ProgressBar;
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
