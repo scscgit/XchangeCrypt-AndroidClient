@@ -66,23 +66,19 @@ public class TradingTerminalIntegrationApi {
     Object postBody = null;
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling marksGet"));
+      throw new ApiException(400, "Missing the required parameter 'symbol' when calling marksGet");
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling marksGet"));
+      throw new ApiException(400, "Missing the required parameter 'resolution' when calling marksGet");
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling marksGet"));
+      throw new ApiException(400, "Missing the required parameter 'from' when calling marksGet");
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling marksGet"));
+      throw new ApiException(400, "Missing the required parameter 'to' when calling marksGet");
     }
 
     // create path and map variables
@@ -128,7 +124,7 @@ public class TradingTerminalIntegrationApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -147,23 +143,27 @@ public class TradingTerminalIntegrationApi {
 
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling marksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'symbol' when calling marksGet",
+        new ApiException(400, "Missing the required parameter 'symbol' when calling marksGet")));
+      return;
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling marksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'resolution' when calling marksGet",
+        new ApiException(400, "Missing the required parameter 'resolution' when calling marksGet")));
+      return;
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling marksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'from' when calling marksGet",
+        new ApiException(400, "Missing the required parameter 'from' when calling marksGet")));
+      return;
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling marksGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling marksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'to' when calling marksGet",
+        new ApiException(400, "Missing the required parameter 'to' when calling marksGet")));
+      return;
     }
 
     // create path and map variables
@@ -235,23 +235,19 @@ public class TradingTerminalIntegrationApi {
     Object postBody = null;
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling timescaleMarksGet"));
+      throw new ApiException(400, "Missing the required parameter 'symbol' when calling timescaleMarksGet");
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling timescaleMarksGet"));
+      throw new ApiException(400, "Missing the required parameter 'resolution' when calling timescaleMarksGet");
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling timescaleMarksGet"));
+      throw new ApiException(400, "Missing the required parameter 'from' when calling timescaleMarksGet");
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling timescaleMarksGet"));
+      throw new ApiException(400, "Missing the required parameter 'to' when calling timescaleMarksGet");
     }
 
     // create path and map variables
@@ -297,7 +293,7 @@ public class TradingTerminalIntegrationApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -316,23 +312,27 @@ public class TradingTerminalIntegrationApi {
 
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling timescaleMarksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'symbol' when calling timescaleMarksGet",
+        new ApiException(400, "Missing the required parameter 'symbol' when calling timescaleMarksGet")));
+      return;
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling timescaleMarksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'resolution' when calling timescaleMarksGet",
+        new ApiException(400, "Missing the required parameter 'resolution' when calling timescaleMarksGet")));
+      return;
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling timescaleMarksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'from' when calling timescaleMarksGet",
+        new ApiException(400, "Missing the required parameter 'from' when calling timescaleMarksGet")));
+      return;
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling timescaleMarksGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling timescaleMarksGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'to' when calling timescaleMarksGet",
+        new ApiException(400, "Missing the required parameter 'to' when calling timescaleMarksGet")));
+      return;
     }
 
     // create path and map variables

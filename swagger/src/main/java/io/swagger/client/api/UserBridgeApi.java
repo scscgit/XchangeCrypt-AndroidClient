@@ -100,7 +100,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -177,8 +177,7 @@ public class UserBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling wallet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling wallet");
     }
 
     // create path and map variables
@@ -220,7 +219,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -239,8 +238,9 @@ public class UserBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling wallet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling wallet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet")));
+      return;
     }
 
     // create path and map variables
@@ -306,18 +306,15 @@ public class UserBridgeApi {
     Object postBody = withdrawalAmount;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1");
     }
     // verify the required parameter 'recipientPublicKey' is set
     if (recipientPublicKey == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'recipientPublicKey' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1"));
+      throw new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1");
     }
     // verify the required parameter 'withdrawalAmount' is set
     if (withdrawalAmount == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'withdrawalAmount' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1"));
+      throw new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1");
     }
 
     // create path and map variables
@@ -367,7 +364,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -386,18 +383,21 @@ public class UserBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling wallet_1",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1")));
+      return;
     }
     // verify the required parameter 'recipientPublicKey' is set
     if (recipientPublicKey == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'recipientPublicKey' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'recipientPublicKey' when calling wallet_1",
+        new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1")));
+      return;
     }
     // verify the required parameter 'withdrawalAmount' is set
     if (withdrawalAmount == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'withdrawalAmount' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'withdrawalAmount' when calling wallet_1",
+        new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1")));
+      return;
     }
 
     // create path and map variables
@@ -498,7 +498,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;

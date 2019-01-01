@@ -64,13 +64,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet");
     }
     // verify the required parameter 'instrument' is set
     if (instrument == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet",
-        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet"));
+      throw new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet");
     }
 
     // create path and map variables
@@ -114,7 +112,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -133,13 +131,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdExecutionsGet")));
+      return;
     }
     // verify the required parameter 'instrument' is set
     if (instrument == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet",
-        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet",
+        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdExecutionsGet")));
+      return;
     }
 
     // create path and map variables
@@ -206,8 +206,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet");
     }
 
     // create path and map variables
@@ -249,7 +248,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -268,8 +267,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdInstrumentsGet")));
+      return;
     }
 
     // create path and map variables
@@ -333,8 +333,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet");
     }
 
     // create path and map variables
@@ -376,7 +375,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -395,8 +394,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersGet")));
+      return;
     }
 
     // create path and map variables
@@ -461,8 +461,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet");
     }
 
     // create path and map variables
@@ -505,7 +504,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -524,8 +523,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersHistoryGet")));
+      return;
     }
 
     // create path and map variables
@@ -592,13 +592,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete");
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete"));
+      throw new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete");
     }
 
     // create path and map variables
@@ -640,7 +638,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -659,13 +657,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdDelete")));
+      return;
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete",
+        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdDelete")));
+      return;
     }
 
     // create path and map variables
@@ -730,13 +730,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet");
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet"));
+      throw new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet");
     }
 
     // create path and map variables
@@ -778,7 +776,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -797,13 +795,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdGet")));
+      return;
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet",
+        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdGet")));
+      return;
     }
 
     // create path and map variables
@@ -874,18 +874,15 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut");
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut"));
+      throw new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut");
     }
     // verify the required parameter 'qty' is set
     if (qty == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut"));
+      throw new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut");
     }
 
     // create path and map variables
@@ -952,7 +949,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -971,18 +968,21 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersOrderIdPut")));
+      return;
     }
     // verify the required parameter 'orderId' is set
     if (orderId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut",
+        new ApiException(400, "Missing the required parameter 'orderId' when calling accountsAccountIdOrdersOrderIdPut")));
+      return;
     }
     // verify the required parameter 'qty' is set
     if (qty == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut",
-        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut",
+        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersOrderIdPut")));
+      return;
     }
 
     // create path and map variables
@@ -1088,28 +1088,23 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost");
     }
     // verify the required parameter 'instrument' is set
     if (instrument == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost"));
+      throw new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost");
     }
     // verify the required parameter 'qty' is set
     if (qty == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost"));
+      throw new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost");
     }
     // verify the required parameter 'side' is set
     if (side == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'side' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'side' when calling accountsAccountIdOrdersPost"));
+      throw new ApiException(400, "Missing the required parameter 'side' when calling accountsAccountIdOrdersPost");
     }
     // verify the required parameter 'type' is set
     if (type == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'type' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'type' when calling accountsAccountIdOrdersPost"));
+      throw new ApiException(400, "Missing the required parameter 'type' when calling accountsAccountIdOrdersPost");
     }
 
     // create path and map variables
@@ -1197,7 +1192,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1216,28 +1211,33 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdOrdersPost")));
+      return;
     }
     // verify the required parameter 'instrument' is set
     if (instrument == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost",
+        new ApiException(400, "Missing the required parameter 'instrument' when calling accountsAccountIdOrdersPost")));
+      return;
     }
     // verify the required parameter 'qty' is set
     if (qty == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost",
+        new ApiException(400, "Missing the required parameter 'qty' when calling accountsAccountIdOrdersPost")));
+      return;
     }
     // verify the required parameter 'side' is set
     if (side == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'side' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'side' when calling accountsAccountIdOrdersPost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'side' when calling accountsAccountIdOrdersPost",
+        new ApiException(400, "Missing the required parameter 'side' when calling accountsAccountIdOrdersPost")));
+      return;
     }
     // verify the required parameter 'type' is set
     if (type == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'type' when calling accountsAccountIdOrdersPost",
-        new ApiException(400, "Missing the required parameter 'type' when calling accountsAccountIdOrdersPost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'type' when calling accountsAccountIdOrdersPost",
+        new ApiException(400, "Missing the required parameter 'type' when calling accountsAccountIdOrdersPost")));
+      return;
     }
 
     // create path and map variables
@@ -1358,8 +1358,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet");
     }
 
     // create path and map variables
@@ -1401,7 +1400,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1420,8 +1419,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsGet")));
+      return;
     }
 
     // create path and map variables
@@ -1486,13 +1486,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete");
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete"));
+      throw new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete");
     }
 
     // create path and map variables
@@ -1534,7 +1532,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1553,13 +1551,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdDelete")));
+      return;
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete",
+        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdDelete")));
+      return;
     }
 
     // create path and map variables
@@ -1624,13 +1624,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet");
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet"));
+      throw new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet");
     }
 
     // create path and map variables
@@ -1672,7 +1670,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1691,13 +1689,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdGet")));
+      return;
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet",
+        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdGet")));
+      return;
     }
 
     // create path and map variables
@@ -1764,13 +1764,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut");
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut"));
+      throw new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut");
     }
 
     // create path and map variables
@@ -1821,7 +1819,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1840,13 +1838,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdPositionsPositionIdPut")));
+      return;
     }
     // verify the required parameter 'positionId' is set
     if (positionId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut",
-        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut",
+        new ApiException(400, "Missing the required parameter 'positionId' when calling accountsAccountIdPositionsPositionIdPut")));
+      return;
     }
 
     // create path and map variables
@@ -1921,13 +1921,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdStateGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdStateGet"));
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdStateGet");
     }
     // verify the required parameter 'locale' is set
     if (locale == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'locale' when calling accountsAccountIdStateGet",
-        new ApiException(400, "Missing the required parameter 'locale' when calling accountsAccountIdStateGet"));
+      throw new ApiException(400, "Missing the required parameter 'locale' when calling accountsAccountIdStateGet");
     }
 
     // create path and map variables
@@ -1970,7 +1968,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -1989,13 +1987,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdStateGet",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdStateGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling accountsAccountIdStateGet",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling accountsAccountIdStateGet")));
+      return;
     }
     // verify the required parameter 'locale' is set
     if (locale == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'locale' when calling accountsAccountIdStateGet",
-        new ApiException(400, "Missing the required parameter 'locale' when calling accountsAccountIdStateGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'locale' when calling accountsAccountIdStateGet",
+        new ApiException(400, "Missing the required parameter 'locale' when calling accountsAccountIdStateGet")));
+      return;
     }
 
     // create path and map variables
@@ -2098,7 +2098,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2176,13 +2176,11 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'login' is set
     if (login == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'login' when calling authorizePost",
-        new ApiException(400, "Missing the required parameter 'login' when calling authorizePost"));
+      throw new ApiException(400, "Missing the required parameter 'login' when calling authorizePost");
     }
     // verify the required parameter 'password' is set
     if (password == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'password' when calling authorizePost",
-        new ApiException(400, "Missing the required parameter 'password' when calling authorizePost"));
+      throw new ApiException(400, "Missing the required parameter 'password' when calling authorizePost");
     }
 
     // create path and map variables
@@ -2233,7 +2231,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2252,13 +2250,15 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'login' is set
     if (login == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'login' when calling authorizePost",
-        new ApiException(400, "Missing the required parameter 'login' when calling authorizePost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'login' when calling authorizePost",
+        new ApiException(400, "Missing the required parameter 'login' when calling authorizePost")));
+      return;
     }
     // verify the required parameter 'password' is set
     if (password == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'password' when calling authorizePost",
-        new ApiException(400, "Missing the required parameter 'password' when calling authorizePost"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'password' when calling authorizePost",
+        new ApiException(400, "Missing the required parameter 'password' when calling authorizePost")));
+      return;
     }
 
     // create path and map variables
@@ -2332,8 +2332,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'locale' is set
     if (locale == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'locale' when calling configGet",
-        new ApiException(400, "Missing the required parameter 'locale' when calling configGet"));
+      throw new ApiException(400, "Missing the required parameter 'locale' when calling configGet");
     }
 
     // create path and map variables
@@ -2376,7 +2375,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2395,8 +2394,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'locale' is set
     if (locale == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'locale' when calling configGet",
-        new ApiException(400, "Missing the required parameter 'locale' when calling configGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'locale' when calling configGet",
+        new ApiException(400, "Missing the required parameter 'locale' when calling configGet")));
+      return;
     }
 
     // create path and map variables
@@ -2462,8 +2462,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling depthGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling depthGet"));
+      throw new ApiException(400, "Missing the required parameter 'symbol' when calling depthGet");
     }
 
     // create path and map variables
@@ -2506,7 +2505,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2525,8 +2524,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling depthGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling depthGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'symbol' when calling depthGet",
+        new ApiException(400, "Missing the required parameter 'symbol' when calling depthGet")));
+      return;
     }
 
     // create path and map variables
@@ -2629,7 +2629,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2706,8 +2706,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
     // verify the required parameter 'symbols' is set
     if (symbols == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbols' when calling quotesGet",
-        new ApiException(400, "Missing the required parameter 'symbols' when calling quotesGet"));
+      throw new ApiException(400, "Missing the required parameter 'symbols' when calling quotesGet");
     }
 
     // create path and map variables
@@ -2750,7 +2749,7 @@ public class TradingPanelOrdersBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -2769,8 +2768,9 @@ public class TradingPanelOrdersBridgeApi {
 
     // verify the required parameter 'symbols' is set
     if (symbols == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbols' when calling quotesGet",
-        new ApiException(400, "Missing the required parameter 'symbols' when calling quotesGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'symbols' when calling quotesGet",
+        new ApiException(400, "Missing the required parameter 'symbols' when calling quotesGet")));
+      return;
     }
 
     // create path and map variables

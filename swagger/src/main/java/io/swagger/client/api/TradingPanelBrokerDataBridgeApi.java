@@ -68,23 +68,19 @@ public class TradingPanelBrokerDataBridgeApi {
     Object postBody = null;
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling historyGet"));
+      throw new ApiException(400, "Missing the required parameter 'symbol' when calling historyGet");
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling historyGet"));
+      throw new ApiException(400, "Missing the required parameter 'resolution' when calling historyGet");
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling historyGet"));
+      throw new ApiException(400, "Missing the required parameter 'from' when calling historyGet");
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling historyGet"));
+      throw new ApiException(400, "Missing the required parameter 'to' when calling historyGet");
     }
 
     // create path and map variables
@@ -131,7 +127,7 @@ public class TradingPanelBrokerDataBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -150,23 +146,27 @@ public class TradingPanelBrokerDataBridgeApi {
 
     // verify the required parameter 'symbol' is set
     if (symbol == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'symbol' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'symbol' when calling historyGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'symbol' when calling historyGet",
+        new ApiException(400, "Missing the required parameter 'symbol' when calling historyGet")));
+      return;
     }
     // verify the required parameter 'resolution' is set
     if (resolution == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'resolution' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'resolution' when calling historyGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'resolution' when calling historyGet",
+        new ApiException(400, "Missing the required parameter 'resolution' when calling historyGet")));
+      return;
     }
     // verify the required parameter 'from' is set
     if (from == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'from' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'from' when calling historyGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'from' when calling historyGet",
+        new ApiException(400, "Missing the required parameter 'from' when calling historyGet")));
+      return;
     }
     // verify the required parameter 'to' is set
     if (to == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'to' when calling historyGet",
-        new ApiException(400, "Missing the required parameter 'to' when calling historyGet"));
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'to' when calling historyGet",
+        new ApiException(400, "Missing the required parameter 'to' when calling historyGet")));
+      return;
     }
 
     // create path and map variables
@@ -273,7 +273,7 @@ public class TradingPanelBrokerDataBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;
@@ -387,7 +387,7 @@ public class TradingPanelBrokerDataBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
         }
       }
       throw ex;

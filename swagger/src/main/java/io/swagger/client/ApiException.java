@@ -12,9 +12,14 @@
 
 package io.swagger.client;
 
+import com.android.volley.VolleyError;
+
+import java.io.UnsupportedEncodingException;
+
 public class ApiException extends Exception {
   int code = 0;
   String message = null;
+  private VolleyError volleyError;
 
   public ApiException() {
   }
@@ -22,6 +27,11 @@ public class ApiException extends Exception {
   public ApiException(int code, String message) {
     this.code = code;
     this.message = message;
+  }
+
+  public ApiException(int code, VolleyError volleyError) {
+    this(code, volleyError.getMessage());
+    this.volleyError = volleyError;
   }
 
   /**
@@ -48,7 +58,11 @@ public class ApiException extends Exception {
    * @return Error message.
    */
   public String getMessage() {
-    return message;
+    String networkResponse = getNetworkResponse();
+    if (message == null) {
+      return networkResponse;
+    }
+    return message + (networkResponse == null ? "" : "\n" + networkResponse);
   }
 
   /**
@@ -58,5 +72,17 @@ public class ApiException extends Exception {
    */
   public void setMessage(String message) {
     this.message = message;
+  }
+
+  public String getNetworkResponse() {
+    try {
+      if (volleyError == null) {
+        return null;
+      }
+      return new String(volleyError.networkResponse.data, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }
