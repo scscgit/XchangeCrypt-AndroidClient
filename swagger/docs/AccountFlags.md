@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **supportEditAmount** | **Boolean** | Whether you support editing orders quantity. If you set it to &#x60;false&#x60;, the quantity control in the order ticket will be disabled when modifing an order. |  [optional]
 **supportLevel2Data** | **Boolean** | Whether you support Level 2 data. It is required to display DOM levels. You must implement &#x60;/streaming&#x60; to display DOM. |  [optional]
 **supportMultiposition** | **Boolean** | Whether you support multiple positions at one instrument at the same time |  [optional]
-**supportPLUpdate** | **Boolean** | Whether you provide &#x60;unrealizedPl&#x60; for positions. Otherwise P&amp;L will be calculated automatically based on a simple algorithm |  [optional]
+**supportPLUpdate** | **Boolean** | Whether you provide &#x60;unrealizedPl&#x60; for positions. Otherwise P&amp;amp;L will be calculated automatically based on a simple algorithm |  [optional]
 **supportReducePosition** | **Boolean** | Reserved for future use |  [optional]
 **supportStopLimitOrders** | **Boolean** | Whether you support StopLimit orders |  [optional]
 **supportOrdersHistory** | **Boolean** | Whether you support /ordersHistory request |  [optional]

@@ -4,8 +4,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**asks** | [**List&lt;DepthItem&gt;**](DepthItem.md) | Array of Asks | 
-**bids** | [**List&lt;DepthItem&gt;**](DepthItem.md) | Array of Bids | 
+**asks** | [**List&lt;List&lt;Double&gt;&gt;**](List.md) | Array of Asks | 
+**bids** | [**List&lt;List&lt;Double&gt;&gt;**](List.md) | Array of Bids | 
 
 
 

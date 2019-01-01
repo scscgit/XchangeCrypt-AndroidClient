@@ -1,0 +1,2793 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "XchangeCrypt REST API Specification",
+    "description": "TradingView REST API Specification for Brokers (ASP.NET Core 2.0)",
+    "termsOfService": "",
+    "contact": {
+      "name": "Steve",
+      "url": "https://localhost/",
+      "email": ""
+    },
+    "license": {
+      "name": "Apache License Version 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/trading/history": {
+      "get": {
+        "tags": [
+          "TradingPanelBrokerDataBridge"
+        ],
+        "summary": "",
+        "description": "Bars request. You can find examples in the [documentation](https://github.com/tradingview/charting_library/wiki/UDF#bars).",
+        "operationId": "HistoryGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": "Symbol name or ticker",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "description": "Symbol resolution. Possible resolutions are daily (`1D`, `2D` ... ), weekly (`1W`, `2W` ...), monthly (`1M`, `2M`...) and an intra-day resolution &amp;ndash; minutes(`1`, `2` ...).",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the leftmost required bar, including `from`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the rightmost required bar, including `to`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "countback",
+            "in": "query",
+            "description": "Number of bars (higher priority than `from`) starting with `to`. If `countback` is set, `from` should be ignorred. It is used only by tradingview.com, Trading Terminal will never use it.",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response is expected to be an object with properties listed below. Each property is treated as a table column",
+            "schema": {
+              "$ref": "#/definitions/BarsArrays"
+            }
+          }
+        }
+      }
+    },
+    "/trading/streaming": {
+      "get": {
+        "tags": [
+          "TradingPanelBrokerDataBridge"
+        ],
+        "summary": "",
+        "description": "Stream of prices. Server constantly keeps the connection alive. If the connection is broken the server constantly tries to restore it. Transfer mode is 'chunked encoding'. The data feed should set 'Transfer-Encoding: chunked' and make sure that all intermediate proxies are set to use this mode. All messages are finished with '\\\\n'. Streaming data should contain real-time only. It shouldn't contain snapshots of data.",
+        "operationId": "StreamingGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Data feed should provide ticks (trades, asks, bids) and daily bars.  If there is no trades the data feed should set trades to bids.  If there is only ask/bid implementation you must also set the trade (same as bid but it's size must be &gt;= 1).  Size for trades is always &gt;= 1 except for a correction. In case of correction size can be 0.  All times should be UNIX time UTC.  Daily bars are required if they cannot be built from ticks (has_dwm should be set to true in the symbol information).  Fields for asks, bids and trades: `id`, `p`, `s` (optional for asks and bids), `t`, `f`.  Fields for daily bars: `id`, `t`, `o`, `h`, `l`, `c`, `v`.  Messages: 1. trade `{\\\"id\\\":\\\"symbol\\\",\\\"p\\\":price,\\\"s\\\":size,\\\"t\\\":time}` 2. ask `{\\\"id\\\":\\\"symbol\\\",\\\"p\\\":price,\\\"s\\\":size,\\\"t\\\":time,\\\"f\\\":\\\"a\\\"}` 3. bid `{\\\"id\\\":\\\"symbol\\\",\\\"p\\\":price,\\\"s\\\":size,\\\"t\\\":time,\\\"f\\\":\\\"b\\\"}` 4. daily bar `{\\\"id\\\":\\\"symbol\\\",\\\"o\\\":open,\\\"h\\\":high,\\\"l\\\":low,\\\"c\\\":close,\\\"v\\\":volume,\\\"t\\\":time,\\\"f\\\":\\\"d\\\"}`",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse20014"
+            }
+          }
+        }
+      }
+    },
+    "/trading/symbol_info": {
+      "get": {
+        "tags": [
+          "TradingPanelBrokerDataBridge"
+        ],
+        "summary": "",
+        "description": "Get a list of all instruments",
+        "operationId": "SymbolInfoGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of instruments",
+            "schema": {
+              "$ref": "#/definitions/SymbolInfoArrays"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/executions": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get a list of executions (i.e. fills or trades) for an account and an instrument. Executions are displayed on a chart",
+        "operationId": "AccountsAccountIdExecutionsGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instrument",
+            "in": "query",
+            "description": "Broker instrument name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "maxCount",
+            "in": "query",
+            "description": "Maximum count of executions to return",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of executions",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse20010"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/instruments": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get a list of tradeable instruments that are available for trading with the account specified",
+        "operationId": "AccountsAccountIdInstrumentsGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of instruments",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse20011"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/orders": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get pending orders for an account.",
+        "operationId": "AccountsAccountIdOrdersGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pending orders. It is also expected that broker returns orders filled/cancelled/rejected during current session.",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2004"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Create a new order",
+        "operationId": "AccountsAccountIdOrdersPost",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "instrument",
+            "in": "formData",
+            "description": "Instrument to open the order on",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "qty",
+            "in": "formData",
+            "description": "The number of units to open order for",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "side",
+            "in": "formData",
+            "description": "Side. Possible values &amp;ndash; `buy` and `sell`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "Type. Possible values &amp;ndash; `market`, `stop`, `limit`, `stoplimit`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limitPrice",
+            "in": "formData",
+            "description": "Limit Price for Limit or StopLimit order",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "stopPrice",
+            "in": "formData",
+            "description": "Stop Price for Stop or StopLimit order",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "durationType",
+            "in": "formData",
+            "description": "Duration ID (if supported)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "durationDateTime",
+            "in": "formData",
+            "description": "Expiration datetime UNIX timestamp (if supported by duration type)",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "stopLoss",
+            "in": "formData",
+            "description": "StopLoss price (if supported)",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "takeProfit",
+            "in": "formData",
+            "description": "TakeProfit price (if supported)",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "digitalSignature",
+            "in": "formData",
+            "description": "Digital signature (if supported)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "requestId",
+            "in": "query",
+            "description": "Unique identifier for a request",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status. `message` should be filled if erroneous. `orderId` should present if successful.",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2005"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/ordersHistory": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get order history for an account. It is expected that returned orders will have a final status (rejected, filled, cancelled). This request is optional. If you don't support history of orders set `AccountFlags::supportOrdersHistory` to `false`.",
+        "operationId": "AccountsAccountIdOrdersHistoryGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "maxCount",
+            "in": "query",
+            "description": "Maximum amount of orders to return",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2004"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get an order for an account. It can be an active or historical order.",
+        "operationId": "AccountsAccountIdOrdersOrderIdGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "Order ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2006"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Modify an existing order",
+        "operationId": "AccountsAccountIdOrdersOrderIdPut",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "Order ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "qty",
+            "in": "formData",
+            "description": "Number of units",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "limitPrice",
+            "in": "formData",
+            "description": "Limit Price for Limit or StopLimit order",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "stopPrice",
+            "in": "formData",
+            "description": "Stop Price for Stop or StopLimit order",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "stopLoss",
+            "in": "formData",
+            "description": "StopLoss price (if supported)",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "takeProfit",
+            "in": "formData",
+            "description": "TakeProfit price (if supported)",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "digitalSignature",
+            "in": "formData",
+            "description": "Digital signature (if supported)",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2007"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Cancel an existing order",
+        "operationId": "AccountsAccountIdOrdersOrderIdDelete",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "Order ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2007"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/positions": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get positions for an account",
+        "operationId": "AccountsAccountIdPositionsGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of positions",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2008"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/positions/{positionId}": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get a position for an account",
+        "operationId": "AccountsAccountIdPositionsPositionIdGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "Position ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Position object",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2009"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Modify an existing position stop loss or take profit or both",
+        "operationId": "AccountsAccountIdPositionsPositionIdPut",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "Position ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "stopLoss",
+            "in": "formData",
+            "description": "StopLoss price",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "takeProfit",
+            "in": "formData",
+            "description": "TakeProfit price",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2007"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Close an existing position",
+        "operationId": "AccountsAccountIdPositionsPositionIdDelete",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "Position ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2007"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts/{accountId}/state": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get account information.",
+        "operationId": "AccountsAccountIdStateGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Locale (language) id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2003"
+            }
+          }
+        }
+      }
+    },
+    "/trading/accounts": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get a list of accounts owned by the user",
+        "operationId": "AccountsGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Accounts list",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2002"
+            }
+          }
+        }
+      }
+    },
+    "/trading/authorize": {
+      "post": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Oauth2 Password authorization",
+        "operationId": "AuthorizePost",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "login",
+            "in": "formData",
+            "description": "User Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "User Password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Access Token. TradingView will set Authorization header to 'Bearer ' + access_token for all requests with authorization.",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse200"
+            }
+          }
+        }
+      }
+    },
+    "/trading/config": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get localized configuration",
+        "operationId": "ConfigGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Locale (language) id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse2001"
+            }
+          }
+        }
+      }
+    },
+    "/trading/depth": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get current depth of market for the instrument. Optional.",
+        "operationId": "DepthGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": "instrument name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Depth of market",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse20013"
+            }
+          }
+        }
+      }
+    },
+    "/trading/mapping": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Return all broker instruments with corresponding TradingView instruments. It is required to add a Broker to TradingView.com. It is not required for Trading Terminal integration. This request works without authorization!",
+        "operationId": "MappingGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Broker &amp;ndash; TradingView instruments map",
+            "schema": {
+              "$ref": "#/definitions/SymbolMapping"
+            }
+          }
+        }
+      }
+    },
+    "/trading/quotes": {
+      "get": {
+        "tags": [
+          "TradingPanelOrdersBridge"
+        ],
+        "summary": "",
+        "description": "Get current prices of the instrument. You can see an example of this response [here](https://demo_feed.tradingview.com/quotes?symbols=AAPL%2CMSFT%2CIBM%2CNasdaqNM%3AAAPL).",
+        "operationId": "QuotesGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "symbols",
+            "in": "query",
+            "description": "comma separated symbols",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current prices",
+            "schema": {
+              "$ref": "#/definitions/InlineResponse20012"
+            }
+          }
+        }
+      }
+    },
+    "/trading/marks": {
+      "get": {
+        "tags": [
+          "TradingTerminalIntegration"
+        ],
+        "summary": "",
+        "description": "Request for bar marks (circles on top of bars). You can display custom marks only in the Trading Terminal",
+        "operationId": "MarksGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": "Symbol name or ticker",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "description": "Symbol resolution. Possible resolutions are daily (`1D`, `2D` ... ), weekly (`1W`, `2W` ...), monthly (`1M`, `2M`...) and an intra-day resolution &amp;ndash; minutes(`1`, `2` ...).",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the leftmost required bar, including `from`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the rightmost required bar, including `to`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response is expected to be an object with properties listed below. Each property is an array",
+            "schema": {
+              "$ref": "#/definitions/MarksArrays"
+            }
+          }
+        }
+      }
+    },
+    "/trading/timescale_marks": {
+      "get": {
+        "tags": [
+          "TradingTerminalIntegration"
+        ],
+        "summary": "",
+        "description": "Request for timescale marks (circles on the timescale). You can display custom marks only in the Trading Terminal",
+        "operationId": "TimescaleMarksGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": "Symbol name or ticker",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "description": "Symbol resolution. Possible resolutions are daily (`1D`, `2D` ... ), weekly (`1W`, `2W` ...), monthly (`1M`, `2M`...) and an intra-day resolution &amp;ndash; minutes(`1`, `2` ...).",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the leftmost required bar, including `from`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "Unix timestamp (UTC) of the rightmost required bar, including `to`.",
+            "required": true,
+            "type": "number",
+            "format": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response is expected to be an array.",
+            "schema": {
+              "uniqueItems": false,
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TimescaleMark"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "tags": [
+          "UserBridge"
+        ],
+        "summary": "Receives all profile details related to an account of the authorized user.",
+        "operationId": "Profile",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ProfileDetails"
+            }
+          }
+        }
+      }
+    },
+    "/user/wallets": {
+      "get": {
+        "tags": [
+          "UserBridge"
+        ],
+        "summary": "Receives details of all wallets of the authorized user.",
+        "operationId": "Wallets",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "uniqueItems": false,
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WalletDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/accounts/{accountId}/wallet": {
+      "get": {
+        "tags": [
+          "UserBridge"
+        ],
+        "summary": "Receives details of a single specific wallet of the authorized user.",
+        "operationId": "Wallet",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier. A unique symbol identification of a coin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/WalletDetails"
+            }
+          }
+        }
+      }
+    },
+    "/user/accounts/{accountId}/withdraw": {
+      "post": {
+        "tags": [
+          "UserBridge"
+        ],
+        "summary": "Requests a coin withdrawal from a specific wallet of the authorized user.",
+        "operationId": "Wallet",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json",
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "The account identifier. A unique symbol identification of a coin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "recipientPublicKey",
+            "in": "body",
+            "description": "Recipient address of a wallet for coins to be sent to",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "withdrawalAmount",
+            "in": "body",
+            "description": "Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BarsArrays": {
+      "description": "Bars data.",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Status code.",
+          "enum": [
+            "ok",
+            "error",
+            "no_data"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Error message. Should be provided if s = \\\"error\\\"",
+          "type": "string"
+        },
+        "nb": {
+          "format": "double",
+          "description": "unix time of the next bar if there is no data (status code is no_data) in the requested period (optional)",
+          "type": "number"
+        },
+        "t": {
+          "description": "bar time, unix timestamp (UTC). Daily bars should only have the date part, time should be 0.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "o": {
+          "description": "open price",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "h": {
+          "description": "high price",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "l": {
+          "description": "low price",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "c": {
+          "description": "close price",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "v": {
+          "description": "volume",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        }
+      }
+    },
+    "InlineResponse20014": {
+      "description": "",
+      "required": [
+        "id",
+        "t"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Symbol",
+          "type": "string"
+        },
+        "p": {
+          "format": "double",
+          "description": "Price",
+          "type": "number"
+        },
+        "s": {
+          "format": "double",
+          "description": "Size",
+          "type": "number"
+        },
+        "t": {
+          "format": "double",
+          "description": "Time",
+          "type": "number"
+        },
+        "f": {
+          "description": "Type (a - ask, b - bid, t - trade, d - daily bar). Default value is `t` (trade).",
+          "enum": [
+            "a",
+            "b",
+            "d",
+            "t"
+          ],
+          "type": "string"
+        },
+        "o": {
+          "format": "double",
+          "description": "Open",
+          "type": "number"
+        },
+        "h": {
+          "format": "double",
+          "description": "High",
+          "type": "number"
+        },
+        "l": {
+          "format": "double",
+          "description": "Low",
+          "type": "number"
+        },
+        "c": {
+          "format": "double",
+          "description": "Close",
+          "type": "number"
+        },
+        "v": {
+          "format": "double",
+          "description": "Volume",
+          "type": "number"
+        }
+      }
+    },
+    "SymbolInfoArrays": {
+      "description": "SymbolInfo is an object containing symbols metadata. Each value of this object is an array of values which size is equal to symbols count or a single value that is applied to all symbols.",
+      "required": [
+        "symbol",
+        "description",
+        "exchange-listed",
+        "exchange-traded",
+        "minmovement",
+        "pricescale",
+        "timezone",
+        "session-regular"
+      ],
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "description": "It's name of a symbol. It is a string which your users will see. Also, it will be used for data requests if you are not using tickers.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "description": "Description of a symbol. Will be printed in chart legend for this symbol.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exchange-listed": {
+          "description": "Short name of exchange where this symbol is listed",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exchange-traded": {
+          "description": "Short name of exchange where this symbol is traded",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minmovement": {
+          "description": "Minimal integer price change",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "minmov2": {
+          "description": "It's a number for complex price formatting cases",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "fractional": {
+          "description": "Boolean showing whether this symbol wants to have complex price formatting (see minmov2) or not",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "pricescale": {
+          "description": "MinimalPossiblePriceChange = minmovement / pricescale",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "has-intraday": {
+          "description": "Boolean showing whether symbol has intraday (minutes) history data. If it's false then all buttons for intradays resolutions will be disabled when this symbol is active in chart. If it is set to true, all resolutions that are supplied directly by the datafeed must be provided in intraday_multipliers array.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "has-no-volume": {
+          "description": "Boolean showing whether symbol has volume data or not",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "type": {
+          "description": "Symbol type (forex/stock etc.)",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ticker": {
+          "description": "It's an unique identifier for this symbol in your symbology. If you specify this property then its value will be used for all data requests for this symbol. ticker is treated to be equal to symbol if not specified explicitly.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timezone": {
+          "description": "Exchange timezone for this symbol. We expect to get name of time zone in olsondb format",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "session-regular": {
+          "description": "Trading hours for this symbol. See the [Trading Sessions](https://github.com/tradingview/charting_library/wiki/Trading-Sessions) article to know more details.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supported-resolutions": {
+          "description": "An array of resolutions which should be enabled in resolutions picker for this symbol. Each item of an array is expected to be a string.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "uniqueItems": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "has-daily": {
+          "description": "The boolean value showing whether datafeed has its own D resolution bars or not. If has_daily = false then Charting Library will build respective resolutions from intraday by itself. If not, then it will request those bars from datafeed.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "intraday-multipliers": {
+          "description": "It is an array containing intraday resolutions (in minutes) the datafeed wants to build by itself. E.g., if the datafeed reported he supports resolutions [\\\"1\\\", \\\"5\\\", \\\"15\\\"], but in fact it has only 1 minute bars for symbol X, it should set intraday_multipliers of X = [1]. This will make Charting Library to build 5 and 15 resolutions by itself.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "uniqueItems": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "has-weekly-and-monthly": {
+          "description": "The boolean value showing whether datafeed has its own W and M resolution bars or not. If has_weekly_and_monthly = false then Charting Library will build respective resolutions from D by itself. If not, then it will request those bars from datafeed.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "InlineResponse20010": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "description": "Gets or Sets D",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Execution"
+          }
+        }
+      }
+    },
+    "Execution": {
+      "description": "",
+      "required": [
+        "id",
+        "instrument",
+        "price",
+        "time",
+        "qty",
+        "side"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier",
+          "type": "string"
+        },
+        "instrument": {
+          "description": "Instrument id",
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "description": "Execution price",
+          "type": "number"
+        },
+        "time": {
+          "format": "double",
+          "description": "Execution time",
+          "type": "number"
+        },
+        "qty": {
+          "format": "double",
+          "description": "Execution quantity",
+          "type": "number"
+        },
+        "side": {
+          "description": "Side. Possible values &amp;ndash; \\\"buy\\\" and \\\"sell\\\".",
+          "enum": [
+            "buy",
+            "sell"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "InlineResponse20011": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "description": "Gets or Sets D",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Instrument"
+          }
+        }
+      }
+    },
+    "Instrument": {
+      "description": "",
+      "required": [
+        "name",
+        "description"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Broker instrument name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Instrument description",
+          "type": "string"
+        },
+        "minQty": {
+          "format": "double",
+          "description": "Minimum quantity for trading",
+          "type": "number"
+        },
+        "maxQty": {
+          "format": "double",
+          "description": "Maximum quantity for trading",
+          "type": "number"
+        },
+        "qtyStep": {
+          "format": "double",
+          "description": "Quantity step",
+          "type": "number"
+        },
+        "pipSize": {
+          "format": "double",
+          "description": "Size of 1 pip. It is equal to minTick for non-forex symbols. For forex pairs it equals either the minTick, or the minTick multiplied by 10. For example, for EURCAD minTick is 0.00001 and pipSize is 0.0001",
+          "type": "number"
+        },
+        "pipValue": {
+          "format": "double",
+          "description": "Value of 1 pip in account currency",
+          "type": "number"
+        },
+        "minTick": {
+          "format": "double",
+          "description": "Minimum price movement",
+          "type": "number"
+        },
+        "lotSize": {
+          "format": "double",
+          "description": "Size of 1 lot",
+          "type": "number"
+        }
+      }
+    },
+    "InlineResponse2004": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "description": "Gets or Sets D",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Order"
+          }
+        }
+      }
+    },
+    "Order": {
+      "description": "",
+      "required": [
+        "id",
+        "instrument",
+        "qty",
+        "side",
+        "type",
+        "status"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "instrument": {
+          "description": "Instrument name that is used on a broker's side",
+          "type": "string"
+        },
+        "qty": {
+          "format": "double",
+          "description": "Quantity",
+          "type": "number"
+        },
+        "side": {
+          "description": "Side. Possible values &amp;ndash; \\\"buy\\\" and \\\"sell\\\".",
+          "enum": [
+            "buy",
+            "sell"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "description": "Type. Possible values &amp;ndash; \\\"market\\\", \\\"stop\\\", \\\"limit\\\", \\\"stoplimit\\\".",
+          "enum": [
+            "market",
+            "stop",
+            "limit",
+            "stoplimit"
+          ],
+          "type": "string"
+        },
+        "filledQty": {
+          "format": "double",
+          "description": "Filled quantity.",
+          "type": "number"
+        },
+        "avgPrice": {
+          "format": "double",
+          "description": "Average price of order fills. It should be provided for filled / partly filled orders.",
+          "type": "number"
+        },
+        "limitPrice": {
+          "format": "double",
+          "description": "Limit Price for Limit or StopLimit order.",
+          "type": "number"
+        },
+        "stopPrice": {
+          "format": "double",
+          "description": "Stop Price for Stop or StopLimit order.",
+          "type": "number"
+        },
+        "parentId": {
+          "description": "Identifier of a parent order or a parent position (for position brackets) depending on `parentType`. Should be set only for bracket orders.",
+          "type": "string"
+        },
+        "parentType": {
+          "description": "Type of order's parent. Should be set only for bracket orders.",
+          "enum": [
+            "order",
+            "position"
+          ],
+          "type": "string"
+        },
+        "duration": {
+          "$ref": "#/definitions/OrderDuration",
+          "description": "Gets or Sets Duration"
+        },
+        "status": {
+          "description": "String constants to describe an order status.  `Status`  | Description - -- -- -- -- -|- -- -- -- -- -- -- placing   | order is not created on a broker's side yet inactive  | bracket order is created but waiting for a base order to be filled working   | order is created but not executed yet rejected  | order is rejected for some reason filled    | order is fully executed cancelled  | order is cancelled",
+          "enum": [
+            "placing",
+            "inactive",
+            "working",
+            "rejected",
+            "filled",
+            "cancelled"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "OrderDuration": {
+      "description": "Expiration type and UNIX timestamp date/time",
+      "required": [
+        "type"
+      ],
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Duration ID. Internal ID that you set in ConfigResponse.",
+          "type": "string"
+        },
+        "datetime": {
+          "format": "double",
+          "description": "Unit timestamp (UTC)",
+          "type": "number"
+        }
+      }
+    },
+    "InlineResponse2005": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/InlineResponse2005D",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "InlineResponse2005D": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "description": "Gets or Sets OrderId",
+          "type": "string"
+        }
+      }
+    },
+    "InlineResponse2007": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        }
+      }
+    },
+    "InlineResponse2006": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/Order",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "InlineResponse2008": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "description": "Gets or Sets D",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Position"
+          }
+        }
+      }
+    },
+    "Position": {
+      "description": "",
+      "required": [
+        "id",
+        "instrument",
+        "qty",
+        "side",
+        "avgPrice",
+        "unrealizedPl"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "instrument": {
+          "description": "Instrument name that is used on a broker's side",
+          "type": "string"
+        },
+        "qty": {
+          "format": "double",
+          "description": "Quantity",
+          "type": "number"
+        },
+        "side": {
+          "description": "Side. Possible values &amp;ndash; \\\"buy\\\" and \\\"sell\\\".",
+          "enum": [
+            "buy",
+            "sell"
+          ],
+          "type": "string"
+        },
+        "avgPrice": {
+          "format": "double",
+          "description": "Average price of position trades",
+          "type": "number"
+        },
+        "unrealizedPl": {
+          "format": "double",
+          "description": "Unrealized (open) profit/loss",
+          "type": "number"
+        }
+      }
+    },
+    "InlineResponse2009": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/Position",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "InlineResponse2003": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/AccountStateResponse",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "AccountStateResponse": {
+      "description": "",
+      "required": [
+        "balance",
+        "unrealizedPl"
+      ],
+      "type": "object",
+      "properties": {
+        "balance": {
+          "format": "double",
+          "description": "Account Balance",
+          "type": "number"
+        },
+        "unrealizedPl": {
+          "format": "double",
+          "description": "Unrealized Profit/loss",
+          "type": "number"
+        },
+        "equity": {
+          "format": "double",
+          "description": "Equity",
+          "type": "number"
+        },
+        "amData": {
+          "description": "Account Manager data. Structure of Account Manager is defined by `/config` response. Each element of this array is a table.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "uniqueItems": false,
+            "type": "array",
+            "items": {
+              "uniqueItems": false,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "InlineResponse2002": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "description": "Gets or Sets D",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Account"
+          }
+        }
+      }
+    },
+    "Account": {
+      "description": "",
+      "required": [
+        "id",
+        "name",
+        "config"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Account title that is displayed to a user",
+          "type": "string"
+        },
+        "currency": {
+          "description": "Abbreviation of account currency",
+          "type": "string"
+        },
+        "currencySign": {
+          "description": "Account currency symbol",
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/definitions/AccountFlags",
+          "description": "Gets or Sets Config"
+        }
+      }
+    },
+    "AccountFlags": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "showQuantityInsteadOfAmount": {
+          "description": "Renames Amount to Quantity in the Order Ticket",
+          "type": "boolean"
+        },
+        "supportDOM": {
+          "description": "Whether you want for DOM (Depth of market) widget to be available",
+          "type": "boolean"
+        },
+        "supportBrackets": {
+          "description": "Whether you support brackets. Deprecated. Use supportOrderBrackets and supportPositionBrackets instead.",
+          "type": "boolean"
+        },
+        "supportOrderBrackets": {
+          "description": "Whether you support adding (or modifying) stop loss and take profit to orders",
+          "type": "boolean"
+        },
+        "supportPositionBrackets": {
+          "description": "Whether you support adding (or modifying) stop loss and take profit to positions",
+          "type": "boolean"
+        },
+        "supportClosePosition": {
+          "description": "Whether you support closing of a position without a need for a user to fill an order. If it is `true` the Trading Terminal shows a confirmation dialog and sends a DELETE request instead of bringing up an order ticket.",
+          "type": "boolean"
+        },
+        "supportEditAmount": {
+          "description": "Whether you support editing orders quantity. If you set it to `false`, the quantity control in the order ticket will be disabled when modifing an order.",
+          "type": "boolean"
+        },
+        "supportLevel2Data": {
+          "description": "Whether you support Level 2 data. It is required to display DOM levels. You must implement `/streaming` to display DOM.",
+          "type": "boolean"
+        },
+        "supportMultiposition": {
+          "description": "Whether you support multiple positions at one instrument at the same time",
+          "type": "boolean"
+        },
+        "supportPLUpdate": {
+          "description": "Whether you provide `unrealizedPl` for positions. Otherwise P&amp;L will be calculated automatically based on a simple algorithm",
+          "type": "boolean"
+        },
+        "supportReducePosition": {
+          "description": "Reserved for future use",
+          "type": "boolean"
+        },
+        "supportStopLimitOrders": {
+          "description": "Whether you support StopLimit orders",
+          "type": "boolean"
+        },
+        "supportOrdersHistory": {
+          "description": "Whether you support /ordersHistory request",
+          "type": "boolean"
+        },
+        "supportExecutions": {
+          "description": "Whether you support /executions request",
+          "type": "boolean"
+        },
+        "supportDigitalSignature": {
+          "description": "Whether you support Digital signature input field in the Order Ticket",
+          "type": "boolean"
+        }
+      }
+    },
+    "InlineResponse200": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/AuthorizationResponse",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "AuthorizationResponse": {
+      "description": "Authorization Response",
+      "required": [
+        "access_token",
+        "expiration"
+      ],
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "description": "Access token acts as a session ID that the application uses for making requests. This token should be protected as if it were user credentials",
+          "type": "string"
+        },
+        "expiration": {
+          "format": "double",
+          "description": "The time when the token is expired is represented as the number of seconds since the Unix epoch (00:00:00 UTC on 1 January 1970)",
+          "type": "number"
+        }
+      }
+    },
+    "InlineResponse2001": {
+      "description": "",
+      "required": [
+        "s"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Gets or Sets Errmsg",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/ConfigResponse",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "ConfigResponse": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "accountManager": {
+          "description": "Localized account manager's tables configuration. Account Manager is a page in the bottom widget. This page can have multiple tables. Data of the tables is filled using `/state` response.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AccountManagerTable"
+          }
+        },
+        "durations": {
+          "description": "Localized array of durations displayed in Order Ticket",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Duration"
+          }
+        },
+        "pullingInterval": {
+          "$ref": "#/definitions/PullingInterval",
+          "description": "Gets or Sets PullingInterval"
+        }
+      }
+    },
+    "AccountManagerTable": {
+      "description": "",
+      "required": [
+        "id",
+        "title",
+        "columns"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Localized title of a table",
+          "type": "string"
+        },
+        "columns": {
+          "description": "Gets or Sets Columns",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AccountManagerColumn"
+          }
+        }
+      }
+    },
+    "Duration": {
+      "description": "Single duration option",
+      "required": [
+        "id",
+        "title"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Localized title",
+          "type": "string"
+        },
+        "hasDatePicker": {
+          "description": "Display date control in Order Ticket for this duration type",
+          "type": "boolean"
+        },
+        "hasTimePicker": {
+          "description": "Display time control in Order Ticket for this duration type",
+          "type": "boolean"
+        }
+      }
+    },
+    "PullingInterval": {
+      "description": "Time intervals in milliseconds that Trading Terminal uses to pull data from the server",
+      "type": "object",
+      "properties": {
+        "history": {
+          "format": "double",
+          "description": "Time interval in milliseconds that Trading Terminal uses to request chart real-time bar udpates. Default value is 500 ms",
+          "type": "number"
+        },
+        "quotes": {
+          "format": "double",
+          "description": "Time interval in milliseconds that Trading Terminal uses to request quote udpates. Default value is 500 ms",
+          "type": "number"
+        },
+        "orders": {
+          "format": "double",
+          "description": "Time interval in milliseconds that Trading Terminal uses to request orders. Default value is 500 ms",
+          "type": "number"
+        },
+        "positions": {
+          "format": "double",
+          "description": "Time interval in milliseconds that Trading Terminal uses to request positions. Default value is 1000 ms",
+          "type": "number"
+        },
+        "accountManager": {
+          "format": "double",
+          "description": "Time interval in milliseconds that Trading Terminal uses to update Account Manager tables. Default value is 500 ms",
+          "type": "number"
+        }
+      }
+    },
+    "AccountManagerColumn": {
+      "description": "",
+      "required": [
+        "id",
+        "title"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Gets or Sets Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Localized title of a column",
+          "type": "string"
+        },
+        "tooltip": {
+          "description": "Tooltip that is shown on mouse hover",
+          "type": "string"
+        },
+        "fixedWidth": {
+          "description": "Set it to true if data length is frequently changed",
+          "type": "boolean"
+        },
+        "sortable": {
+          "description": "Set it to false if this columns data should not be sortable",
+          "type": "boolean"
+        }
+      }
+    },
+    "InlineResponse20013": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Error message",
+          "type": "string"
+        },
+        "d": {
+          "$ref": "#/definitions/Depth",
+          "description": "Gets or Sets D"
+        }
+      }
+    },
+    "Depth": {
+      "description": "Depth of market for an instrument",
+      "required": [
+        "asks",
+        "bids"
+      ],
+      "type": "object",
+      "properties": {
+        "asks": {
+          "description": "Array of Asks",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "uniqueItems": false,
+            "type": "array",
+            "items": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        },
+        "bids": {
+          "description": "Array of Bids",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "uniqueItems": false,
+            "type": "array",
+            "items": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "SymbolMapping": {
+      "description": "Map of Broker instrument names and TradingView instrument names",
+      "type": "object",
+      "properties": {
+        "symbols": {
+          "description": "Gets or Sets Symbols",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SingleMapping"
+          }
+        },
+        "fields": {
+          "description": "Array with the only one element `['brokerSymbol']`.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "enum": [
+              "brokerSymbol"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SingleMapping": {
+      "description": "Map of Broker instrument name to TradingView instrument name",
+      "type": "object",
+      "properties": {
+        "f": {
+          "description": "An array with the only one string element &amp;ndash; broker symbol name",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "s": {
+          "description": "TradingView symbol name with prefix (AA:XXXX)",
+          "type": "string"
+        }
+      }
+    },
+    "InlineResponse20012": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "errmsg": {
+          "description": "Error message",
+          "type": "string"
+        },
+        "d": {
+          "description": "Data",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QuotesResponse"
+          }
+        }
+      }
+    },
+    "QuotesResponse": {
+      "description": "Price response for an instrument",
+      "required": [
+        "s",
+        "n",
+        "v"
+      ],
+      "type": "object",
+      "properties": {
+        "s": {
+          "description": "Gets or Sets S",
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "type": "string"
+        },
+        "n": {
+          "description": "Symbol name. Should be equal to the requested one",
+          "type": "string"
+        },
+        "v": {
+          "$ref": "#/definitions/SingleQuote",
+          "description": "Gets or Sets V"
+        }
+      }
+    },
+    "SingleQuote": {
+      "description": "Price data for an instrument",
+      "type": "object",
+      "properties": {
+        "ch": {
+          "format": "double",
+          "description": "Change (displayed in Watch and Detail)",
+          "type": "number"
+        },
+        "chp": {
+          "format": "double",
+          "description": "Change percent (displayed in Watch and Detail)",
+          "type": "number"
+        },
+        "lp": {
+          "format": "double",
+          "description": "Last price",
+          "type": "number"
+        },
+        "ask": {
+          "format": "double",
+          "description": "Ask price",
+          "type": "number"
+        },
+        "bid": {
+          "format": "double",
+          "description": "Bid price",
+          "type": "number"
+        },
+        "open_price": {
+          "format": "double",
+          "description": "Open",
+          "type": "number"
+        },
+        "high_price": {
+          "format": "double",
+          "description": "High price",
+          "type": "number"
+        },
+        "low_price": {
+          "format": "double",
+          "description": "Low price",
+          "type": "number"
+        },
+        "prev_close_price": {
+          "format": "double",
+          "description": "Previous close price",
+          "type": "number"
+        },
+        "volume": {
+          "format": "double",
+          "description": "Volume",
+          "type": "number"
+        }
+      }
+    },
+    "MarksArrays": {
+      "description": "Bar marks data.",
+      "required": [
+        "id",
+        "time",
+        "label"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifiers of marks.",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "time": {
+          "description": "bar time, unix timestamp (UTC)",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "color": {
+          "description": "Mark colors",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "text": {
+          "description": "mark popup text. HTML supported",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "label": {
+          "description": "a letter to be printed on a mark. Single character",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labelFontColor": {
+          "description": "color of a letter on a mark",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minSize": {
+          "description": "minimal size of mark (diameter, pixels)",
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        }
+      }
+    },
+    "TimescaleMark": {
+      "description": "Timescale marks data.",
+      "required": [
+        "id",
+        "time",
+        "label"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of marks",
+          "type": "string"
+        },
+        "time": {
+          "format": "double",
+          "description": "bar time, unix timestamp (UTC)",
+          "type": "number"
+        },
+        "color": {
+          "description": "Mark color",
+          "enum": [
+            "red",
+            "green",
+            "blue",
+            "yellow"
+          ],
+          "type": "string"
+        },
+        "tooltip": {
+          "description": "Tooltip text",
+          "type": "string"
+        },
+        "label": {
+          "description": "A letter to be printed on a mark. Single character",
+          "type": "string"
+        }
+      }
+    },
+    "ProfileDetails": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "login": {
+          "type": "string"
+        },
+        "emailAddress": {
+          "type": "string"
+        },
+        "realName": {
+          "type": "string"
+        }
+      }
+    },
+    "WalletDetails": {
+      "description": "Details of a single wallet representing a balance of a single coin of one user.",
+      "type": "object",
+      "properties": {
+        "coinSymbol": {
+          "description": "Short and unique coin name, used as a part of instrument trading pair name. Also used as account identifier.",
+          "type": "string"
+        },
+        "walletPublicKey": {
+          "description": "Address to be used for receiving coins into the wallet.",
+          "type": "string"
+        },
+        "balance": {
+          "format": "double",
+          "description": "User balance of the wallet represented in multiplies of the lowest tradable amount, which is specified by the wallet.",
+          "type": "number"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "name": "Authorization",
+      "in": "header",
+      "type": "apiKey",
+      "description": "Please enter JWT with Bearer into field"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

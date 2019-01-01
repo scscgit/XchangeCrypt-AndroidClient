@@ -4,7 +4,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**orderId** | **String** |  |  [optional]
+**orderId** | **String** | Gets or Sets OrderId |  [optional]
 
 
 

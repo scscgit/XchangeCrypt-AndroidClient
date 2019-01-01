@@ -1,28 +1,28 @@
-# TradingPanelBridgeOrdersOnlyApi
+# TradingPanelOrdersBridgeApi
 
-All URIs are relative to *https://rest-demo.tradingview.com/tradingview/v1/*
+All URIs are relative to *https://localhost/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**accountsAccountIdExecutionsGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdExecutionsGet) | **GET** /accounts/{accountId}/executions | 
-[**accountsAccountIdInstrumentsGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdInstrumentsGet) | **GET** /accounts/{accountId}/instruments | 
-[**accountsAccountIdOrdersGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersGet) | **GET** /accounts/{accountId}/orders | 
-[**accountsAccountIdOrdersHistoryGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersHistoryGet) | **GET** /accounts/{accountId}/ordersHistory | 
-[**accountsAccountIdOrdersOrderIdDelete**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersOrderIdDelete) | **DELETE** /accounts/{accountId}/orders/{orderId} | 
-[**accountsAccountIdOrdersOrderIdGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersOrderIdGet) | **GET** /accounts/{accountId}/orders/{orderId} | 
-[**accountsAccountIdOrdersOrderIdPut**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersOrderIdPut) | **PUT** /accounts/{accountId}/orders/{orderId} | 
-[**accountsAccountIdOrdersPost**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdOrdersPost) | **POST** /accounts/{accountId}/orders | 
-[**accountsAccountIdPositionsGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdPositionsGet) | **GET** /accounts/{accountId}/positions | 
-[**accountsAccountIdPositionsPositionIdDelete**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdPositionsPositionIdDelete) | **DELETE** /accounts/{accountId}/positions/{positionId} | 
-[**accountsAccountIdPositionsPositionIdGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdPositionsPositionIdGet) | **GET** /accounts/{accountId}/positions/{positionId} | 
-[**accountsAccountIdPositionsPositionIdPut**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdPositionsPositionIdPut) | **PUT** /accounts/{accountId}/positions/{positionId} | 
-[**accountsAccountIdStateGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsAccountIdStateGet) | **GET** /accounts/{accountId}/state | 
-[**accountsGet**](TradingPanelBridgeOrdersOnlyApi.md#accountsGet) | **GET** /accounts | 
-[**authorizePost**](TradingPanelBridgeOrdersOnlyApi.md#authorizePost) | **POST** /authorize | 
-[**configGet**](TradingPanelBridgeOrdersOnlyApi.md#configGet) | **GET** /config | 
-[**depthGet**](TradingPanelBridgeOrdersOnlyApi.md#depthGet) | **GET** /depth | 
-[**mappingGet**](TradingPanelBridgeOrdersOnlyApi.md#mappingGet) | **GET** /mapping | 
-[**quotesGet**](TradingPanelBridgeOrdersOnlyApi.md#quotesGet) | **GET** /quotes | 
+[**accountsAccountIdExecutionsGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdExecutionsGet) | **GET** /trading/accounts/{accountId}/executions | 
+[**accountsAccountIdInstrumentsGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdInstrumentsGet) | **GET** /trading/accounts/{accountId}/instruments | 
+[**accountsAccountIdOrdersGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersGet) | **GET** /trading/accounts/{accountId}/orders | 
+[**accountsAccountIdOrdersHistoryGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersHistoryGet) | **GET** /trading/accounts/{accountId}/ordersHistory | 
+[**accountsAccountIdOrdersOrderIdDelete**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersOrderIdDelete) | **DELETE** /trading/accounts/{accountId}/orders/{orderId} | 
+[**accountsAccountIdOrdersOrderIdGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersOrderIdGet) | **GET** /trading/accounts/{accountId}/orders/{orderId} | 
+[**accountsAccountIdOrdersOrderIdPut**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersOrderIdPut) | **PUT** /trading/accounts/{accountId}/orders/{orderId} | 
+[**accountsAccountIdOrdersPost**](TradingPanelOrdersBridgeApi.md#accountsAccountIdOrdersPost) | **POST** /trading/accounts/{accountId}/orders | 
+[**accountsAccountIdPositionsGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdPositionsGet) | **GET** /trading/accounts/{accountId}/positions | 
+[**accountsAccountIdPositionsPositionIdDelete**](TradingPanelOrdersBridgeApi.md#accountsAccountIdPositionsPositionIdDelete) | **DELETE** /trading/accounts/{accountId}/positions/{positionId} | 
+[**accountsAccountIdPositionsPositionIdGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdPositionsPositionIdGet) | **GET** /trading/accounts/{accountId}/positions/{positionId} | 
+[**accountsAccountIdPositionsPositionIdPut**](TradingPanelOrdersBridgeApi.md#accountsAccountIdPositionsPositionIdPut) | **PUT** /trading/accounts/{accountId}/positions/{positionId} | 
+[**accountsAccountIdStateGet**](TradingPanelOrdersBridgeApi.md#accountsAccountIdStateGet) | **GET** /trading/accounts/{accountId}/state | 
+[**accountsGet**](TradingPanelOrdersBridgeApi.md#accountsGet) | **GET** /trading/accounts | 
+[**authorizePost**](TradingPanelOrdersBridgeApi.md#authorizePost) | **POST** /trading/authorize | 
+[**configGet**](TradingPanelOrdersBridgeApi.md#configGet) | **GET** /trading/config | 
+[**depthGet**](TradingPanelOrdersBridgeApi.md#depthGet) | **GET** /trading/depth | 
+[**mappingGet**](TradingPanelOrdersBridgeApi.md#mappingGet) | **GET** /trading/mapping | 
+[**quotesGet**](TradingPanelOrdersBridgeApi.md#quotesGet) | **GET** /trading/quotes | 
 
 
 <a name="accountsAccountIdExecutionsGet"></a>
@@ -36,17 +36,17 @@ Get a list of executions (i.e. fills or trades) for an account and an instrument
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String instrument = "instrument_example"; // String | Broker instrument name
-BigDecimal maxCount = new BigDecimal(); // BigDecimal | Maximum count of executions to return
+Integer maxCount = 56; // Integer | Maximum count of executions to return
 try {
     InlineResponse20010 result = apiInstance.accountsAccountIdExecutionsGet(accountId, instrument, maxCount);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdExecutionsGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdExecutionsGet");
     e.printStackTrace();
 }
 ```
@@ -57,7 +57,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
  **instrument** | **String**| Broker instrument name |
- **maxCount** | **BigDecimal**| Maximum count of executions to return | [optional]
+ **maxCount** | **Integer**| Maximum count of executions to return | [optional]
 
 ### Return type
 
@@ -65,12 +65,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdInstrumentsGet"></a>
 # **accountsAccountIdInstrumentsGet**
@@ -83,15 +83,15 @@ Get a list of tradeable instruments that are available for trading with the acco
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 try {
     InlineResponse20011 result = apiInstance.accountsAccountIdInstrumentsGet(accountId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdInstrumentsGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdInstrumentsGet");
     e.printStackTrace();
 }
 ```
@@ -108,12 +108,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersGet"></a>
 # **accountsAccountIdOrdersGet**
@@ -126,15 +126,15 @@ Get pending orders for an account.
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 try {
     InlineResponse2004 result = apiInstance.accountsAccountIdOrdersGet(accountId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersGet");
     e.printStackTrace();
 }
 ```
@@ -151,12 +151,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersHistoryGet"></a>
 # **accountsAccountIdOrdersHistoryGet**
@@ -169,16 +169,16 @@ Get order history for an account. It is expected that returned orders will have 
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
-BigDecimal maxCount = new BigDecimal(); // BigDecimal | Maximum amount of orders to return
+Double maxCount = 3.4D; // Double | Maximum amount of orders to return
 try {
     InlineResponse2004 result = apiInstance.accountsAccountIdOrdersHistoryGet(accountId, maxCount);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersHistoryGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersHistoryGet");
     e.printStackTrace();
 }
 ```
@@ -188,7 +188,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
- **maxCount** | **BigDecimal**| Maximum amount of orders to return | [optional]
+ **maxCount** | **Double**| Maximum amount of orders to return | [optional]
 
 ### Return type
 
@@ -196,12 +196,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersOrderIdDelete"></a>
 # **accountsAccountIdOrdersOrderIdDelete**
@@ -214,16 +214,16 @@ Cancel an existing order
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String orderId = "orderId_example"; // String | Order ID
 try {
     InlineResponse2007 result = apiInstance.accountsAccountIdOrdersOrderIdDelete(accountId, orderId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersOrderIdDelete");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersOrderIdDelete");
     e.printStackTrace();
 }
 ```
@@ -241,12 +241,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersOrderIdGet"></a>
 # **accountsAccountIdOrdersOrderIdGet**
@@ -259,16 +259,16 @@ Get an order for an account. It can be an active or historical order.
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String orderId = "orderId_example"; // String | Order ID
 try {
     InlineResponse2006 result = apiInstance.accountsAccountIdOrdersOrderIdGet(accountId, orderId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersOrderIdGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersOrderIdGet");
     e.printStackTrace();
 }
 ```
@@ -286,12 +286,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersOrderIdPut"></a>
 # **accountsAccountIdOrdersOrderIdPut**
@@ -304,22 +304,22 @@ Modify an existing order
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String orderId = "orderId_example"; // String | Order ID
-BigDecimal qty = new BigDecimal(); // BigDecimal | Number of units
-BigDecimal limitPrice = new BigDecimal(); // BigDecimal | Limit Price for Limit or StopLimit order
-BigDecimal stopPrice = new BigDecimal(); // BigDecimal | Stop Price for Stop or StopLimit order
-BigDecimal stopLoss = new BigDecimal(); // BigDecimal | StopLoss price (if supported)
-BigDecimal takeProfit = new BigDecimal(); // BigDecimal | TakeProfit price (if supported)
+Double qty = 3.4D; // Double | Number of units
+Double limitPrice = 3.4D; // Double | Limit Price for Limit or StopLimit order
+Double stopPrice = 3.4D; // Double | Stop Price for Stop or StopLimit order
+Double stopLoss = 3.4D; // Double | StopLoss price (if supported)
+Double takeProfit = 3.4D; // Double | TakeProfit price (if supported)
 String digitalSignature = "digitalSignature_example"; // String | Digital signature (if supported)
 try {
     InlineResponse2007 result = apiInstance.accountsAccountIdOrdersOrderIdPut(accountId, orderId, qty, limitPrice, stopPrice, stopLoss, takeProfit, digitalSignature);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersOrderIdPut");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersOrderIdPut");
     e.printStackTrace();
 }
 ```
@@ -330,11 +330,11 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
  **orderId** | **String**| Order ID |
- **qty** | **BigDecimal**| Number of units |
- **limitPrice** | **BigDecimal**| Limit Price for Limit or StopLimit order | [optional]
- **stopPrice** | **BigDecimal**| Stop Price for Stop or StopLimit order | [optional]
- **stopLoss** | **BigDecimal**| StopLoss price (if supported) | [optional]
- **takeProfit** | **BigDecimal**| TakeProfit price (if supported) | [optional]
+ **qty** | **Double**| Number of units |
+ **limitPrice** | **Double**| Limit Price for Limit or StopLimit order | [optional]
+ **stopPrice** | **Double**| Stop Price for Stop or StopLimit order | [optional]
+ **stopLoss** | **Double**| StopLoss price (if supported) | [optional]
+ **takeProfit** | **Double**| TakeProfit price (if supported) | [optional]
  **digitalSignature** | **String**| Digital signature (if supported) | [optional]
 
 ### Return type
@@ -343,12 +343,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: multipart/form-data
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdOrdersPost"></a>
 # **accountsAccountIdOrdersPost**
@@ -361,27 +361,27 @@ Create a new order
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String instrument = "instrument_example"; // String | Instrument to open the order on
-BigDecimal qty = new BigDecimal(); // BigDecimal | The number of units to open order for
-String side = "side_example"; // String | Side. Possible values &ndash; `buy` and `sell`.
-String type = "type_example"; // String | Type. Possible values &ndash; `market`, `stop`, `limit`, `stoplimit`.
-BigDecimal limitPrice = new BigDecimal(); // BigDecimal | Limit Price for Limit or StopLimit order
-BigDecimal stopPrice = new BigDecimal(); // BigDecimal | Stop Price for Stop or StopLimit order
+Double qty = 3.4D; // Double | The number of units to open order for
+String side = "side_example"; // String | Side. Possible values &amp;ndash; `buy` and `sell`.
+String type = "type_example"; // String | Type. Possible values &amp;ndash; `market`, `stop`, `limit`, `stoplimit`.
+Double limitPrice = 3.4D; // Double | Limit Price for Limit or StopLimit order
+Double stopPrice = 3.4D; // Double | Stop Price for Stop or StopLimit order
 String durationType = "durationType_example"; // String | Duration ID (if supported)
-BigDecimal durationDateTime = new BigDecimal(); // BigDecimal | Expiration datetime UNIX timestamp (if supported by duration type)
-BigDecimal stopLoss = new BigDecimal(); // BigDecimal | StopLoss price (if supported)
-BigDecimal takeProfit = new BigDecimal(); // BigDecimal | TakeProfit price (if supported)
+Double durationDateTime = 3.4D; // Double | Expiration datetime UNIX timestamp (if supported by duration type)
+Double stopLoss = 3.4D; // Double | StopLoss price (if supported)
+Double takeProfit = 3.4D; // Double | TakeProfit price (if supported)
 String digitalSignature = "digitalSignature_example"; // String | Digital signature (if supported)
 String requestId = "requestId_example"; // String | Unique identifier for a request
 try {
     InlineResponse2005 result = apiInstance.accountsAccountIdOrdersPost(accountId, instrument, qty, side, type, limitPrice, stopPrice, durationType, durationDateTime, stopLoss, takeProfit, digitalSignature, requestId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdOrdersPost");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdOrdersPost");
     e.printStackTrace();
 }
 ```
@@ -392,15 +392,15 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
  **instrument** | **String**| Instrument to open the order on |
- **qty** | **BigDecimal**| The number of units to open order for |
- **side** | **String**| Side. Possible values &amp;ndash; &#x60;buy&#x60; and &#x60;sell&#x60;. | [enum: buy, sell]
- **type** | **String**| Type. Possible values &amp;ndash; &#x60;market&#x60;, &#x60;stop&#x60;, &#x60;limit&#x60;, &#x60;stoplimit&#x60;. | [enum: market, stop, limit, stoplimit]
- **limitPrice** | **BigDecimal**| Limit Price for Limit or StopLimit order | [optional]
- **stopPrice** | **BigDecimal**| Stop Price for Stop or StopLimit order | [optional]
+ **qty** | **Double**| The number of units to open order for |
+ **side** | **String**| Side. Possible values &amp;amp;ndash; &#x60;buy&#x60; and &#x60;sell&#x60;. |
+ **type** | **String**| Type. Possible values &amp;amp;ndash; &#x60;market&#x60;, &#x60;stop&#x60;, &#x60;limit&#x60;, &#x60;stoplimit&#x60;. |
+ **limitPrice** | **Double**| Limit Price for Limit or StopLimit order | [optional]
+ **stopPrice** | **Double**| Stop Price for Stop or StopLimit order | [optional]
  **durationType** | **String**| Duration ID (if supported) | [optional]
- **durationDateTime** | **BigDecimal**| Expiration datetime UNIX timestamp (if supported by duration type) | [optional]
- **stopLoss** | **BigDecimal**| StopLoss price (if supported) | [optional]
- **takeProfit** | **BigDecimal**| TakeProfit price (if supported) | [optional]
+ **durationDateTime** | **Double**| Expiration datetime UNIX timestamp (if supported by duration type) | [optional]
+ **stopLoss** | **Double**| StopLoss price (if supported) | [optional]
+ **takeProfit** | **Double**| TakeProfit price (if supported) | [optional]
  **digitalSignature** | **String**| Digital signature (if supported) | [optional]
  **requestId** | **String**| Unique identifier for a request | [optional]
 
@@ -410,12 +410,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: multipart/form-data
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdPositionsGet"></a>
 # **accountsAccountIdPositionsGet**
@@ -428,15 +428,15 @@ Get positions for an account
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 try {
     InlineResponse2008 result = apiInstance.accountsAccountIdPositionsGet(accountId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdPositionsGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdPositionsGet");
     e.printStackTrace();
 }
 ```
@@ -453,12 +453,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdPositionsPositionIdDelete"></a>
 # **accountsAccountIdPositionsPositionIdDelete**
@@ -471,16 +471,16 @@ Close an existing position
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String positionId = "positionId_example"; // String | Position ID
 try {
     InlineResponse2007 result = apiInstance.accountsAccountIdPositionsPositionIdDelete(accountId, positionId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdPositionsPositionIdDelete");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdPositionsPositionIdDelete");
     e.printStackTrace();
 }
 ```
@@ -498,12 +498,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdPositionsPositionIdGet"></a>
 # **accountsAccountIdPositionsPositionIdGet**
@@ -516,16 +516,16 @@ Get a position for an account
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String positionId = "positionId_example"; // String | Position ID
 try {
     InlineResponse2009 result = apiInstance.accountsAccountIdPositionsPositionIdGet(accountId, positionId);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdPositionsPositionIdGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdPositionsPositionIdGet");
     e.printStackTrace();
 }
 ```
@@ -543,12 +543,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdPositionsPositionIdPut"></a>
 # **accountsAccountIdPositionsPositionIdPut**
@@ -561,18 +561,18 @@ Modify an existing position stop loss or take profit or both
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String positionId = "positionId_example"; // String | Position ID
-BigDecimal stopLoss = new BigDecimal(); // BigDecimal | StopLoss price
-BigDecimal takeProfit = new BigDecimal(); // BigDecimal | TakeProfit price
+Double stopLoss = 3.4D; // Double | StopLoss price
+Double takeProfit = 3.4D; // Double | TakeProfit price
 try {
     InlineResponse2007 result = apiInstance.accountsAccountIdPositionsPositionIdPut(accountId, positionId, stopLoss, takeProfit);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdPositionsPositionIdPut");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdPositionsPositionIdPut");
     e.printStackTrace();
 }
 ```
@@ -583,8 +583,8 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
  **positionId** | **String**| Position ID |
- **stopLoss** | **BigDecimal**| StopLoss price | [optional]
- **takeProfit** | **BigDecimal**| TakeProfit price | [optional]
+ **stopLoss** | **Double**| StopLoss price | [optional]
+ **takeProfit** | **Double**| TakeProfit price | [optional]
 
 ### Return type
 
@@ -592,12 +592,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: multipart/form-data
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsAccountIdStateGet"></a>
 # **accountsAccountIdStateGet**
@@ -610,16 +610,16 @@ Get account information.
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String accountId = "accountId_example"; // String | The account identifier
 String locale = "locale_example"; // String | Locale (language) id
 try {
     InlineResponse2003 result = apiInstance.accountsAccountIdStateGet(accountId, locale);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsAccountIdStateGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsAccountIdStateGet");
     e.printStackTrace();
 }
 ```
@@ -629,7 +629,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **accountId** | **String**| The account identifier |
- **locale** | **String**| Locale (language) id | [enum: ar, cs, de, el, en, es, fa, fr, hu, it, ja, ko, nl, pl, pt, ro, ru, sk, sv, th, tr, vi, zh]
+ **locale** | **String**| Locale (language) id |
 
 ### Return type
 
@@ -637,12 +637,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="accountsGet"></a>
 # **accountsGet**
@@ -655,14 +655,14 @@ Get a list of accounts owned by the user
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 try {
     InlineResponse2002 result = apiInstance.accountsGet();
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#accountsGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#accountsGet");
     e.printStackTrace();
 }
 ```
@@ -676,12 +676,12 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="authorizePost"></a>
 # **authorizePost**
@@ -694,16 +694,16 @@ Oauth2 Password authorization
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String login = "login_example"; // String | User Login
 String password = "password_example"; // String | User Password
 try {
     InlineResponse200 result = apiInstance.authorizePost(login, password);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#authorizePost");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#authorizePost");
     e.printStackTrace();
 }
 ```
@@ -721,12 +721,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: multipart/form-data
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="configGet"></a>
 # **configGet**
@@ -739,15 +739,15 @@ Get localized configuration
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String locale = "locale_example"; // String | Locale (language) id
 try {
     InlineResponse2001 result = apiInstance.configGet(locale);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#configGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#configGet");
     e.printStackTrace();
 }
 ```
@@ -756,7 +756,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **locale** | **String**| Locale (language) id | [enum: ar, cs, de, el, en, es, fa, fr, hu, it, ja, ko, nl, pl, pt, ro, ru, sk, sv, th, tr, vi, zh]
+ **locale** | **String**| Locale (language) id |
 
 ### Return type
 
@@ -764,12 +764,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="depthGet"></a>
 # **depthGet**
@@ -782,15 +782,15 @@ Get current depth of market for the instrument. Optional.
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String symbol = "symbol_example"; // String | instrument name
 try {
     InlineResponse20013 result = apiInstance.depthGet(symbol);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#depthGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#depthGet");
     e.printStackTrace();
 }
 ```
@@ -807,12 +807,12 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="mappingGet"></a>
 # **mappingGet**
@@ -825,14 +825,14 @@ Return all broker instruments with corresponding TradingView instruments. It is 
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 try {
     SymbolMapping result = apiInstance.mappingGet();
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#mappingGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#mappingGet");
     e.printStackTrace();
 }
 ```
@@ -846,12 +846,12 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-No authorization required
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 <a name="quotesGet"></a>
 # **quotesGet**
@@ -864,15 +864,15 @@ Get current prices of the instrument. You can see an example of this response [h
 ### Example
 ```java
 // Import classes:
-//import io.swagger.client.api.TradingPanelBridgeOrdersOnlyApi;
+//import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 
-TradingPanelBridgeOrdersOnlyApi apiInstance = new TradingPanelBridgeOrdersOnlyApi();
+TradingPanelOrdersBridgeApi apiInstance = new TradingPanelOrdersBridgeApi();
 String symbols = "symbols_example"; // String | comma separated symbols
 try {
     InlineResponse20012 result = apiInstance.quotesGet(symbols);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling TradingPanelBridgeOrdersOnlyApi#quotesGet");
+    System.err.println("Exception when calling TradingPanelOrdersBridgeApi#quotesGet");
     e.printStackTrace();
 }
 ```
@@ -889,10 +889,10 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[oauth](../README.md#oauth)
+[Bearer](../README.md#Bearer)
 
 ### HTTP request headers
 
- - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 

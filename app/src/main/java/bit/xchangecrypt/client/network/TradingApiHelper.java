@@ -8,12 +8,14 @@ import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.ui.MainActivity;
 import io.swagger.client.ApiException;
-import io.swagger.client.api.AccountApi;
-import io.swagger.client.api.TradingPanelBridgeBrokerDataOrdersApi;
-import io.swagger.client.auth.FastAccessTokenApiKey;
+import io.swagger.client.ApiInvoker;
+import io.swagger.client.api.TradingPanelOrdersBridgeApi;
+import io.swagger.client.api.UserBridgeApi;
+import io.swagger.client.auth.ApiKeyAuth;
 import io.swagger.client.model.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,19 +26,27 @@ import java.util.concurrent.TimeoutException;
  * Created by Peter on 29.04.2018.
  */
 public class TradingApiHelper {
+    public static List<String> API_DOMAINS = Arrays.asList(
+        "http://192.168.0.20/api/v1",
+        "http://192.168.8.101/api/v1",
+        "https://rest-demo.tradingview.com/tradingview/v1",
+        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1"
+    );
+
     // API helper context
-    private TradingPanelBridgeBrokerDataOrdersApi tradingApi;
-    private AccountApi accountApi;
+    private TradingPanelOrdersBridgeApi tradingApi;
+    private UserBridgeApi userApi;
     private MainActivity mainActivity;
     private Context context;
     private List<Integer> pendingTask;
+    private int apiDomainIndex;
 
     // Asynchronously loaded responses
     private InlineResponse200 authorizationResponses;
     private HashMap<String, InlineResponse2004> accountOrders;
     private HashMap<String, InlineResponse2004> historyAccountOrders;
     private HashMap<String, InlineResponse20013> depthData;
-    private List<AccountWalletResponse> accountWalletResponses;
+    private List<WalletDetails> walletDetails;
     private List<Instrument> instruments;
     private HashMap<String, List<Execution>> executionHashMap = new HashMap<>();
 
@@ -46,17 +56,22 @@ public class TradingApiHelper {
         this.accountOrders = new HashMap<>();
         this.depthData = new HashMap<>();
         this.pendingTask = new CopyOnWriteArrayList<>();
-        this.accountApi = new AccountApi();
         this.historyAccountOrders = new HashMap<>();
     }
 
-    public FastAccessTokenApiKey getApiAuthentication() {
-        return (FastAccessTokenApiKey) tradingApi.getAuthentications("oauth");
+    public ApiKeyAuth getApiAuthentication() {
+        return (ApiKeyAuth) ApiInvoker.getInstance().getAuthentication("Bearer");
     }
 
     public void createTradingApi() {
         if (tradingApi == null) {
-            this.tradingApi = new TradingPanelBridgeBrokerDataOrdersApi();
+            this.tradingApi = new TradingPanelOrdersBridgeApi(API_DOMAINS.get(apiDomainIndex));
+        }
+    }
+
+    public void createUserApi() {
+        if (userApi == null) {
+            this.userApi = new UserBridgeApi(API_DOMAINS.get(apiDomainIndex));
         }
     }
 
@@ -84,8 +99,8 @@ public class TradingApiHelper {
         return depthData.get(pair);
     }
 
-    public List<AccountWalletResponse> getAccountWalletResponses() {
-        return accountWalletResponses;
+    public List<WalletDetails> getWalletDetailsAccounts() {
+        return walletDetails;
     }
 
     public List<Instrument> getInstruments() {
@@ -102,15 +117,15 @@ public class TradingApiHelper {
 
     public void accountBalance(final int taskId) {
         @SuppressLint("StaticFieldLeak")
-        AsyncTask task = new AsyncTask<Void, Void, List<AccountWalletResponse>>() {
+        AsyncTask task = new AsyncTask<Void, Void, List<WalletDetails>>() {
             @Override
-            protected List<AccountWalletResponse> doInBackground(Void... voids) {
+            protected List<WalletDetails> doInBackground(Void... voids) {
 //                mainActivity.showProgressDialog("Načítavám dáta");
-                accountApi.setInvoker(tradingApi.getInvoker());
+                createUserApi();
                 pendingTask.add(taskId);
-                List<AccountWalletResponse> accountWalletResponse = null;
+                List<WalletDetails> accountWalletResponse = null;
                 try {
-                    accountWalletResponse = accountApi.walletGet();
+                    accountWalletResponse = userApi.wallets();
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
                     e.printStackTrace();
@@ -123,10 +138,10 @@ public class TradingApiHelper {
             }
 
             @Override
-            protected void onPostExecute(List<AccountWalletResponse> accountWalletResponse) {
+            protected void onPostExecute(List<WalletDetails> accountWalletResponse) {
                 Intent i = new Intent("account_wallet_update");
                 if (accountWalletResponse != null) {
-                    accountWalletResponses = accountWalletResponse;
+                    walletDetails = accountWalletResponse;
                 } else {
                     i.putExtra("error", "execution");
                 }
@@ -163,7 +178,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse20011 inlineResponse20011) {
                 Intent i = new Intent("account_instruments");
                 if (inlineResponse20011 != null) {
-                    if (inlineResponse20011.getS().equals("ok")) {
+                    if (inlineResponse20011.getS() == InlineResponse20011.SEnum.ok) {
                         instruments = inlineResponse20011.getD();
                     } else {
                         i.putExtra("error", "return " + inlineResponse20011.getErrmsg());
@@ -188,7 +203,7 @@ public class TradingApiHelper {
                 pendingTask.add(taskId);
                 InlineResponse20010 inlineResponse20010 = null;
                 try {
-                    inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(), pair, BigDecimal.valueOf(maxCount));
+                    inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(), pair, BigDecimal.valueOf(maxCount).intValue());
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
                     e.printStackTrace();
@@ -206,7 +221,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse20010 inlineResponse20010) {
                 Intent i = new Intent("account_executions");
                 if (inlineResponse20010 != null) {
-                    if (inlineResponse20010.getS().equals("ok")) {
+                    if (inlineResponse20010.getS() == InlineResponse20010.SEnum.ok) {
                         putExecutions(pair, inlineResponse20010.getD());
                     } else {
                         i.putExtra("error", "return " + inlineResponse20010.getErrmsg());
@@ -249,7 +264,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse2004 inlineResponse2004) {
                 Intent i = new Intent("account_offer_update");
                 if (inlineResponse2004 != null) {
-                    if (inlineResponse2004.getS().equals("ok")) {
+                    if (inlineResponse2004.getS() == InlineResponse2004.SEnum.ok) {
                         accountOrders.put(user.getAccountId(), inlineResponse2004);
                     } else {
                         i.putExtra("error", "return " + inlineResponse2004.getErrmsg());
@@ -286,7 +301,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse20013 inlineResponse20013) {
                 Intent i = new Intent("depth_update");
                 if (inlineResponse20013 != null) {
-                    if (inlineResponse20013.getS().equals("ok")) {
+                    if (inlineResponse20013.getS() == InlineResponse20013.SEnum.ok) {
                         depthData.put(pair, inlineResponse20013);
                     } else {
                         i.putExtra("error", "return " + inlineResponse20013.getErrmsg());
@@ -340,15 +355,15 @@ public class TradingApiHelper {
                     response = tradingApi.accountsAccountIdOrdersPost(
                         mainActivity.getContentProvider().getUser().getAccountId(),
                         offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
-                        BigDecimal.valueOf(offer.getBaseCurrencyAmount()),
+                        BigDecimal.valueOf(offer.getBaseCurrencyAmount()).doubleValue(),
                         offer.getSide().toString(),
                         offer.getType().toString(),
-                        limitPrice,
-                        stopPrice,
+                        limitPrice == null ? null : limitPrice.doubleValue(),
+                        stopPrice == null ? null : stopPrice.doubleValue(),
                         null,
                         null,
-                        stopLoss,
-                        takeProfit,
+                        stopLoss == null ? null : stopLoss.doubleValue(),
+                        takeProfit == null ? null : takeProfit.doubleValue(),
                         null,
                         null
                     );
@@ -363,7 +378,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse2005 inlineResponse2005) {
                 Intent i = new Intent("order_send");
                 if (inlineResponse2005 != null) {
-                    if (inlineResponse2005.getS().equals("ok")) {
+                    if (inlineResponse2005.getS() == InlineResponse2005.SEnum.ok) {
                         offer.setOrderId(inlineResponse2005.getD().getOrderId());
                     } else {
                         i.putExtra("error", "return " + inlineResponse2005.getErrmsg());
@@ -399,7 +414,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse2007 inlineResponse2007) {
                 Intent i = new Intent("order_delete");
                 if (inlineResponse2007 != null) {
-                    if (!inlineResponse2007.getS().equals("ok")) {
+                    if (inlineResponse2007.getS() != InlineResponse2007.SEnum.ok) {
                         i.putExtra("error", "return " + inlineResponse2007.getErrmsg());
                     }
                 } else {
@@ -421,7 +436,7 @@ public class TradingApiHelper {
                 pendingTask.add(taskId);
                 InlineResponse2004 response = null;
                 try {
-                    response = tradingApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count));
+                    response = tradingApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count).doubleValue());
                 } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
                     //throw new TradingException("Cannot get trading order history for account " + user.getAccountId(), e);
                     e.printStackTrace();
@@ -433,7 +448,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse2004 inlineResponse2004) {
                 Intent i = new Intent("account_history_update");
                 if (inlineResponse2004 != null) {
-                    if (inlineResponse2004.getS().equals("ok")) {
+                    if (inlineResponse2004.getS() == InlineResponse2004.SEnum.ok) {
                         historyAccountOrders.put(user.getAccountId(), inlineResponse2004);
                     } else {
                         i.putExtra("error", "return " + inlineResponse2004.getErrmsg());
@@ -468,7 +483,7 @@ public class TradingApiHelper {
             protected void onPostExecute(InlineResponse200 inlineResponse200) {
                 Intent i = new Intent("auth_update");
                 if (inlineResponse200 != null) {
-                    if (inlineResponse200.getS().equals("ok")) {
+                    if (inlineResponse200.getS() == InlineResponse200.SEnum.ok) {
                         authorizationResponses = inlineResponse200;
                         user.setAccessToken(inlineResponse200.getD().getAccessToken());
                         user.setExpiration(inlineResponse200.getD().getExpiration().doubleValue());

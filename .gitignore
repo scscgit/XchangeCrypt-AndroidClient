@@ -39,7 +39,11 @@ captures/
 
 # Intellij
 *.iml
-.idea
+.idea/*
+
+# Exclude Android Studio Project code style settings
+
+!.idea/codeStyles
 
 
 # Keystore files

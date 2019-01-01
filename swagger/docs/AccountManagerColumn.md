@@ -4,7 +4,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **String** |  | 
+**id** | **String** | Gets or Sets Id | 
 **title** | **String** | Localized title of a column | 
 **tooltip** | **String** | Tooltip that is shown on mouse hover |  [optional]
 **fixedWidth** | **Boolean** | Set it to true if data length is frequently changed |  [optional]

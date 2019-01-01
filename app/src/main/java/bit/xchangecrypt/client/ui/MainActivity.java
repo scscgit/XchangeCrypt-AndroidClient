@@ -663,23 +663,23 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         if (depthData == null || depthData.getAsks() == null || depthData.getBids() == null) {
                             throw new TradingException("Market Depth for pair " + pair + " received null data");
                         }
-                        for (DepthItem ask : depthData.getAsks()) {
+                        for (List<Double> ask : depthData.getAsks()) {
                             orders.add(new Order(
-                                ask.get(0).doubleValue(),
-                                ask.get(0).doubleValue(),
+                                ask.get(0),
+                                ask.get(0),
                                 pair.split("_")[0],
-                                ask.get(1).doubleValue(),
+                                ask.get(1),
                                 pair.split("_")[1],
                                 OrderSide.BUY,
                                 OrderType.LIMIT
                             ));
                         }
-                        for (DepthItem bid : depthData.getBids()) {
+                        for (List<Double> bid : depthData.getBids()) {
                             orders.add(new Order(
-                                bid.get(0).doubleValue(),
-                                bid.get(0).doubleValue(),
+                                bid.get(0),
+                                bid.get(0),
                                 pair.split("_")[0],
-                                bid.get(1).doubleValue(),
+                                bid.get(1),
                                 pair.split("_")[1],
                                 OrderSide.SELL,
                                 OrderType.LIMIT
@@ -720,7 +720,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         }
                         getContentProvider().setAccountOrderHistory(orderHistory);
                     } else {
-                        Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Chyba pri ziskavaní histórie ponúk.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
                     if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {
@@ -803,13 +803,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     int taskID = intent.getExtras().getInt("taskId");
                     String error = intent.getExtras().getString("error");
                     if (error == null) {
-                        List<AccountWalletResponse> accountWalletResponses = tradingApiHelper.getAccountWalletResponses();
-                        System.out.print(accountWalletResponses.toString());
+                        List<WalletDetails> walletDetailsAccounts = tradingApiHelper.getWalletDetailsAccounts();
                         List<Coin> coins = new ArrayList<>();
-                        for (AccountWalletResponse accountWalletResponse : accountWalletResponses) {
+                        for (WalletDetails walletDetails : walletDetailsAccounts) {
                             coins.add(new Coin(
-                                accountWalletResponse.getCoinSymbol(),
-                                accountWalletResponse.getBalance().doubleValue()
+                                walletDetails.getCoinSymbol(),
+                                walletDetails.getBalance()
                             ));
                         }
                         getContentProvider().setCoinsBalance(coins);
@@ -842,15 +841,15 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                                     OrderSide.fromString(execution.getSide().toString()),
                                     execution.getInstrument().split("_")[0],
                                     execution.getInstrument().split("_")[1],
-                                    execution.getPrice().doubleValue(),
-                                    execution.getQty().doubleValue(),
+                                    execution.getPrice(),
+                                    execution.getQty(),
                                     new Date(execution.getTime().longValue())
                                 ));
                             }
                         }
                         getContentProvider().setAccountTransactionHistory(pair, transactions);
                     } else {
-                        Toast.makeText(context, "Chyba pri ziskavaní histórie.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Chyba pri ziskavaní histórie transakcií.", Toast.LENGTH_SHORT).show();
                     }
                     tradingApiHelper.deleteFromPendingTask(taskID);
                     if (tradingApiHelper.noPendingTask() && fragmentIdSwitchTarget != null) {

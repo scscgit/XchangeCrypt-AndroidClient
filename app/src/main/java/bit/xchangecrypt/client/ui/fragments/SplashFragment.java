@@ -38,7 +38,9 @@ public class SplashFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
-                    switchToFragmentAndClear(FRAGMENT_LOGIN, null);
+                    if (isAdded()) {
+                        switchToFragmentAndClear(FRAGMENT_LOGIN, null);
+                    }
                 } catch (IllegalStateException e) {
                     Log.i(TAG, "Couldn't switch fragment to login, because the app is no longer visible. Exiting instead");
                     System.exit(1);
