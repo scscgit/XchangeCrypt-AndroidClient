@@ -51,10 +51,10 @@ dependencies {
 
     // Open issue: Cannot compile with AndroidX and Instant Run
     // https://github.com/AzureAD/microsoft-authentication-library-for-android/issues/469
-    implementation 'com.microsoft.identity.client:msal:0.1.3'
+    implementation 'com.microsoft.identity.client:msal:0.2.+'
 
     // Disambiguating gson version to prevent conflict
-    implementation "com.google.code.gson:gson:2.8.2"
+    implementation 'com.google.code.gson:gson:2.8.4'
 
     // Lightweight-Stream-API: Stream API from Java 8 rewritten on iterators for Java 7 and below.
     implementation 'com.annimon:stream:1.2.1'

@@ -18,12 +18,14 @@ public interface Constants {
 //    String SISU_POLICY = "B2C_1_SUSI";
 //    String EDIT_PROFILE_POLICY = "B2C_1_edit_profile";
 
-    // Azure AD B2C Configs (Production)
+    // Azure AD B2C authority details
     String AUTHORITY = "https://login.microsoftonline.com/tfp/%s/%s";
     String TENANT = "XchangeCryptTest.onmicrosoft.com";
+    String SISU_POLICY = "b2c_1_signupsignin";
+    String EDIT_PROFILE_POLICY = "b2c_1_edit_profile";
+
+    // Azure AD B2C app configuration
     String CLIENT_ID = "aeb4f22f-00af-4b54-bf7b-5652684a2f03";
     String SCOPES = "openid https://XchangeCryptTest.onmicrosoft.com/testapi/user_impersonation";
     String API_URL = "https://xchangecrypttest-convergencebackend.azurewebsites.net/api";
-    String SISU_POLICY = "b2c_1_signupsignin";
-    String EDIT_PROFILE_POLICY = "b2c_1_edit_profile";
 }

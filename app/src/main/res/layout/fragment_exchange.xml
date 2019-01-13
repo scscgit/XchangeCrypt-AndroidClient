@@ -90,6 +90,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:layout_marginBottom="3dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
@@ -98,14 +99,12 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:layout_marginBottom="1dp"
                         android:text="Zostatok:" />
 
                     <TextView
                         android:id="@+id/exchange_coin_balance_value"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="1dp"
                         android:text="VALUE CURRENCY" />
 
                 </LinearLayout>

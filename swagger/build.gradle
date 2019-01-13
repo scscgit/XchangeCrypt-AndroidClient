@@ -45,7 +45,7 @@ android {
 
 dependencies {
     implementation "io.swagger:swagger-annotations:1.5.0"
-    implementation "com.google.code.gson:gson:2.8.2"
+    implementation "com.google.code.gson:gson:2.8.4"
     implementation "org.apache.httpcomponents:httpcore:4.4.9"
     // httpmime above 4.3.6 crashes during API call error handling:
     // java.lang.NoSuchFieldError: org.apache.http.message.BasicHeaderValueFormatter.INSTANCE

@@ -2,7 +2,6 @@ package bit.xchangecrypt.client.ui;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,11 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import bit.xchangecrypt.client.BuildConfig;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.Constants;
 import bit.xchangecrypt.client.datamodel.*;
 import bit.xchangecrypt.client.datamodel.Order;
-import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.exceptions.TradingException;
@@ -37,7 +36,7 @@ import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.network.TradingApiHelper;
 import bit.xchangecrypt.client.ui.fragments.*;
 import bit.xchangecrypt.client.util.ConnectionHelper;
-import bit.xchangecrypt.client.util.UserHelper;
+import bit.xchangecrypt.client.util.MicrosoftIdentityHelper;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +46,11 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.identity.client.*;
+import com.microsoft.identity.client.exception.MsalClientException;
+import com.microsoft.identity.client.exception.MsalException;
+import com.microsoft.identity.client.exception.MsalServiceException;
+import com.microsoft.identity.client.exception.MsalUiRequiredException;
+import com.microsoft.identity.common.internal.providers.oauth2.AuthorizationStrategy;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.model.*;
 import org.json.JSONException;
@@ -56,6 +60,8 @@ import java.util.*;
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final boolean MSAL_USE_CUSTOM_AUTHORITY = true;
+
     public static int asyncTaskId = 0;
 
     private BroadcastReceiver accountOrdersHistory;
@@ -72,12 +78,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private TradingApiHelper tradingApiHelper;
 
-    //private GoogleApiClient googleApiClient;
-    //private static final int RC_SIGN_IN = 9001;
-    //private GoogleSignInAccount googleAccount;
-
     // Azure AD MSAL context variables
-    private PublicClientApplication sampleApp;
+    private PublicClientApplication activeDirectoryApp;
 
     // Fragment switch target for async tasks
     private Integer fragmentIdSwitchTarget;
@@ -95,66 +97,23 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
         // Initial data
         //createDumbData();
-        // TODO: use actual user reference
-        getContentProvider().setUser(new User("1", "mockLogin", "mock@user", "RealMockName"));
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
 
-//        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.BUY);
-//        getContentProvider().setMarketPrice("QBC_BTC", 0, OrderSide.SELL);
-
-//        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail()
-//                .requestIdToken(getString(R.string.server_client_id))
-//                .requestServerAuthCode(getString(R.string.server_client_id))
-//                .build();
-//
-//        GoogleSignInOptions gso1 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                //.requestIdToken(getString(R.string.google_sign_client_id))
-//                .requestIdToken(getString(R.string.server_client_id))
-//                .requestServerAuthCode(getString(R.string.server_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        scopes = gso1.getScopeArray();
-//
-//        googleApiClient = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this, this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso1)
-//                .build();
-//
-//        try {
-//            mobileServiceClient = new MobileServiceClient("https://xchangecrypttest-convergencebackend.azurewebsites.net",this);
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-
-//        callApiButton = (Button) findViewById(R.id.callApi);
-//        learnMoreButton = (Button) findViewById(R.id.learnMore);
-//
-//        callApiButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                onCallApiClicked(scopes);
-//            }
-//        });
-//
-//        learnMoreButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                learnMore();
-//            }
-//        });
-
         getContentProvider().setScopes(Constants.SCOPES.split("\\s+"));
 
-        /* Initializes the app context using MSAL */
-
-        /* Initialize the MSAL App context */
-        String authority = String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY);
-        if (sampleApp == null) {
-            sampleApp = new PublicClientApplication(
-                this,
-                Constants.CLIENT_ID,
-                authority);
+        // Initialize the MSAL App context
+        if (activeDirectoryApp == null) {
+            Log.d(TAG, "Initialized the Azure AD MSAL App context");
+            if (MSAL_USE_CUSTOM_AUTHORITY) {
+                activeDirectoryApp = new PublicClientApplication(
+                    this,
+                    Constants.CLIENT_ID,
+                    String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY)
+                );
+            } else {
+                activeDirectoryApp = new PublicClientApplication(this, Constants.CLIENT_ID);
+            }
             try {
                 com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                     @Override
@@ -163,62 +122,47 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     }
                 });
             } catch (IllegalStateException e) {
-                //already set
+                // Already set
             }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        sampleApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
+        // null intent has been observed to happen request prematurely during browser loading on low Android API auth
+        if (requestCode == AuthorizationStrategy.BROWSER_FLOW && data == null) {
+            Toast.makeText(this,
+                "Authentication using browser has failed probably due to low Android API",
+                Toast.LENGTH_LONG
+            ).show();
+        }
+        activeDirectoryApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
     }
 
     /**
      * Use MSAL to acquireToken for the end-user
-     * Call API
      * Pass UserInfo response data to AuthenticatedActivity
      */
-    public void onCallApiClicked(String[] scopes) {
-        /* Attempt to get a user and acquireTokenSilently
-         * If this fails we will do an interactive request
-         */
-        Log.d(TAG, "Call API Clicked");
-        try {
-            com.microsoft.identity.client.User currentUser =
-                UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
-            if (currentUser != null) {
-                /* We have 1 user */
-                sampleApp.acquireTokenSilentAsync(
-                    scopes,
-                    currentUser,
-                    String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
-                    false,
-                    getAuthSilentCallback());
-            } else {
-                /* We have no user */
-                sampleApp.acquireToken(getActivity(), scopes, getAuthInteractiveCallback());
-            }
-        } catch (MsalClientException e) {
-            /* No token in cache, proceed with normal unauthenticated app experience */
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-        } catch (IndexOutOfBoundsException e) {
-            Log.d(TAG, "User at this position does not exist: " + e.toString());
+    public void onClickedActiveDirectorySignIn(String[] scopes) {
+        // Attempt to get a user and acquireTokenSilently
+        // If this fails we will do an interactive request
+        Log.d(TAG, "onClickedActiveDirectorySignIn");
+        IAccount currentAccount =
+            MicrosoftIdentityHelper.getUserByPolicy(activeDirectoryApp.getAccounts(), Constants.SISU_POLICY);
+        if (currentAccount != null) {
+            // We have 1 user
+            activeDirectoryApp.acquireTokenSilentAsync(
+                scopes,
+                currentAccount,
+                getAuthSilentCallback());
+        } else {
+            // We have no user (for required policy)
+            activeDirectoryApp.acquireToken(MainActivity.this, scopes, getAuthInteractiveCallback());
         }
     }
 
-    //
-    // App callbacks for MSAL
-    // ======================
-    // getActivity() - returns activity so we can acquireToken within a callback
-    // getAuthSilentCallback() - callback defined to handle acquireTokenSilent() case
-    // getAuthInteractiveCallback() - callback defined to handle acquireToken() case
-    //
-
-    public Activity getActivity() {
-        return this;
-    }
-
-    /* Callback used in for silent acquireToken calls.
+    /**
+     * Callback used in for silent acquireToken calls.
      * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
      * else errors that we need to do an interactive request.
      */
@@ -226,112 +170,132 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         return new AuthenticationCallback() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
-                /* Successfully got a token, call api now */
-                Log.d(TAG, "Successfully authenticated");
-                String accessToken = authenticationResult.getAccessToken();
-                tradingApiHelper.createTradingApi();
-                tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
-
-                /* Start authenticated activity */
-                getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
-                //switchToFragment(FRAGMENT_EXCHANGE, null);
-                callAPI(accessToken);
+                activeDirectoryOnSignInSuccess(authenticationResult);
             }
 
             @Override
             public void onError(MsalException exception) {
-                /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-                if (exception instanceof MsalClientException) {
-                    /* Exception inside MSAL, more info inside MsalError.java */
-                    assert true;
-                } else if (exception instanceof MsalServiceException) {
-                    /* Exception when communicating with the STS, likely config issue */
-                    assert true;
-                } else if (exception instanceof MsalUiRequiredException) {
-                    /* Tokens expired or no session, retry with interactive */
-                    sampleApp.acquireToken(getActivity(), getContentProvider().getScopes(), getAuthInteractiveCallback());
+                // Failed to acquireToken
+                Log.d(TAG, "Silent authentication failed: " + exception.toString());
+                if (exception instanceof MsalUiRequiredException) {
+                    // Tokens expired or no session, retry with interactive
+                    activeDirectoryApp.acquireToken(MainActivity.this, getContentProvider().getScopes(), getAuthInteractiveCallback());
+                    return;
                 }
+                activeDirectoryOnSignInError(exception);
             }
 
             @Override
             public void onCancel() {
-                /* User canceled the authentication */
-                Log.d(TAG, "User cancelled login.");
+                activeDirectoryOnSignInCancel();
             }
         };
     }
 
-    /* Callback used for interactive request.  If succeeds we use the access
+    /**
+     * Callback used for interactive request.  If succeeds we use the access
      * token to call the api. Does not check cache.
      */
     private AuthenticationCallback getAuthInteractiveCallback() {
         return new AuthenticationCallback() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
-                /* Successfully got a token, call api now */
-                Log.d(TAG, "Successfully authenticated");
-                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
-                String accessToken = authenticationResult.getAccessToken();
-                tradingApiHelper.createTradingApi();
-                tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
-
-                /* Start authenticated activity */
-                getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
-                callAPI(accessToken);
+                activeDirectoryOnSignInSuccess(authenticationResult);
             }
 
             @Override
             public void onError(MsalException exception) {
-                /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-                if (exception instanceof MsalClientException) {
-                    /* Exception inside MSAL, more info inside MsalError.java */
-                    assert true;
-                } else assert !(exception instanceof MsalServiceException) || true;
+                // Failed to acquireToken
+                Log.d(TAG, "Interactive authentication failed: " + exception.toString());
+                activeDirectoryOnSignInError(exception);
             }
 
             @Override
             public void onCancel() {
-                /* User canceled the authentication */
-                Log.d(TAG, "User cancelled login.");
+                activeDirectoryOnSignInCancel();
             }
         };
     }
 
-    public void clearCache() {
-        List<com.microsoft.identity.client.User> users = null;
-        try {
-            Log.d(TAG, "Clearing app cache");
-            users = sampleApp.getUsers();
-            if (users == null) {
-                /* We have no users */
-                Log.d(TAG, "Failed to Sign out/clear cache, no user");
-            } else {
-                int userCount = users.size();
-                for (int i = 0; i < users.size(); i++) {
-                    sampleApp.remove(users.get(i));
-                }
-                Log.d(TAG, String.format("Signed out/cleared cache for %d users", userCount));
-            }
-            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
-        } catch (MsalClientException e) {
-            /* No token in cache, proceed with normal unauthenticated app experience */
-            Log.e(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-        } catch (IndexOutOfBoundsException e) {
-            Log.e(TAG, "User at this position does not exist: " + e.toString());
+    private void activeDirectoryOnSignInSuccess(AuthenticationResult authenticationResult) {
+        // Successfully got a token, call api now
+        Log.d(TAG, "Successfully authenticated");
+        String accessToken = authenticationResult.getAccessToken();
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Authentication ID Token: " + authenticationResult.getIdToken());
+            Log.d(TAG, "Authentication Access Token: " + accessToken);
         }
+        tradingApiHelper.createTradingApi();
+        tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
+
+        //TODO: mock
+        getContentProvider().setUser(new User(
+            "1",
+            "mockLogin",
+            "mock@user",
+            "mockName mMockSurname"
+        ));
+
+        callActiveDirectoryToCreateUser(accessToken);
+
+        // Start authenticated activity
+        getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
+    }
+
+    private void activeDirectoryOnSignInError(MsalException exception) {
+        Toast.makeText(
+            MainActivity.this,
+            "Authentication failed: " + exception.getMessage(),
+            Toast.LENGTH_SHORT
+        ).show();
+        if (exception instanceof MsalClientException) {
+            // Exception inside MSAL, more info inside MsalError.java
+            exception.printStackTrace();
+        } else if (exception instanceof MsalServiceException) {
+            // Exception when communicating with the STS, likely config issue
+            exception.printStackTrace();
+        }
+    }
+
+    private void activeDirectoryOnSignInCancel() {
+        // User canceled the authentication
+        Log.d(TAG, "User canceled login");
+        Toast.makeText(MainActivity.this, "Login canceled", Toast.LENGTH_SHORT).show();
+    }
+
+    public void activeDirectorySignOutClearCache() {
+        Log.d(TAG, "AD signing out/clearing app cache");
+        List<IAccount> accounts = activeDirectoryApp.getAccounts();
+        int accountsCount = accounts.size();
+        for (int i = 0; i < accountsCount; i++) {
+            activeDirectoryApp.removeAccount(accounts.get(i));
+        }
+        String message;
+        switch (accountsCount) {
+            case 0:
+                message = "Failed to Sign Out, no user";
+                break;
+            case 1:
+                message = "Signed Out";
+                break;
+            default:
+                message = String.format("Signed Out for %d users", accountsCount);
+                break;
+        }
+        Log.d(TAG, message);
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Use Volley to request the /me endpoint from API
      * Sets the UI to what we get back
      */
-    private void callAPI(final String accessToken) {
-        Log.d(TAG, "Starting volley request to API");
+    private void callActiveDirectoryToCreateUser(final String accessToken) {
+        Log.d(TAG, "Starting volley request to Active Directory API");
         RequestQueue queue = Volley.newRequestQueue(this);
         JSONObject parameters = new JSONObject();
         try {
+            // TODO
             parameters.put("key", "value");
         } catch (Exception e) {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
@@ -343,12 +307,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    /* Successfully called API */
+                    // Successfully called API
                     Log.d(TAG, "Response: " + response);
                     try {
-                        getContentProvider().getUser().setRealName(response.getString("name"));
+                        // TODO: Create a user with AD data here
+                        getContentProvider().setUser(new User(
+                            "1",
+                            "mockLogin",
+                            "mock@user",
+                            response.getString("name")
+                        ));
                         Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "ActiveDirectory successfully configured user");
                     } catch (JSONException e) {
+                        // TODO
                         Log.d(TAG, "JSONException Error: " + e.toString());
                     }
                 }
@@ -356,13 +328,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    // TODO
                     Log.d(TAG, "Error: " + error.toString());
                 }
-            }) {
+            }
+        ) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                Log.d(TAG, "Token: " + accessToken);
                 headers.put("Authorization", "Bearer " + accessToken);
                 return headers;
             }
@@ -370,81 +343,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         queue.add(request);
     }
 
-//    public void hasRefreshToken() {
-//
-//        /* Attempt to get a user and acquireTokenSilently
-//         * If this fails we will do an interactive request
-//         */
-//        List<com.microsoft.identity.client.User> users = null;
-//        try {
-//            com.microsoft.identity.client.User currentUser = UserHelper.getUserByPolicy(sampleApp.getUsers(), Constants.SISU_POLICY);
-//
-//            if (currentUser != null) {
-//            /* We have 1 user */
-//                boolean forceRefresh = true;
-//                sampleApp.acquireTokenSilentAsync(
-//                        scopes,
-//                        currentUser,
-//                        String.format(Constants.AUTHORITY, Constants.TENANT, Constants.SISU_POLICY),
-//                        forceRefresh,
-//                        getAuthSilentCallbackToken());
-//            } else {
-//                /* We have no user for this policy*/
-//            }
-//        } catch (MsalClientException e) {
-//            /* No token in cache, proceed with normal unauthenticated app experience */
-//            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-//
-//        } catch (IndexOutOfBoundsException e) {
-//            Log.d(TAG, "User at this position does not exist: " + e.toString());
-//        }
-//    }
-//
-//    /* Callback used in for silent acquireToken calls.
-//    * Used in here solely to test whether or not we have a refresh token in the cache
-//    */
-//    private AuthenticationCallback getAuthSilentCallbackToken() {
-//        return new AuthenticationCallback() {
-//            @Override
-//            public void onSuccess(AuthenticationResult authenticationResult) {
-//                /* Successfully got a token */
-//
-//                /* If the token is refreshed we should refresh our data */
-//                callAPI();
-//            }
-//
-//            @Override
-//            public void onError(MsalException exception) {
-//                /* Failed to acquireToken */
-//                Log.d(TAG, "Authentication failed: " + exception.toString());
-//                if (exception instanceof MsalClientException) {
-//                    /* Exception inside MSAL, more info inside MsalError.java */
-//                    assert true;
-//
-//                } else if (exception instanceof MsalServiceException) {
-//                    /* Exception when communicating with the STS, likely config issue */
-//                    assert true;
-//
-//                } else if (exception instanceof MsalUiRequiredException) {
-//                    /* Tokens expired or no session, retry with interactive */
-//                    assert true;
-//                }
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                /* User canceled the authentication */
-//                Log.d(TAG, "User cancelled login.");
-//            }
-//        };
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//        Log.i(TAG, "onConnectionFailed: " + connectionResult);
-//        Toast.makeText(this, "Chyba pri komunikácii: " + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
-//    }
-
+    @Deprecated
     private void createDumbData() {
         getContentProvider().setUser(new User("1", "dumbUser", "dumb@email", "dumb name"));
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");

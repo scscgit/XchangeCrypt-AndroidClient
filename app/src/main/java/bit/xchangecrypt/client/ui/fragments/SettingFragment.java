@@ -73,7 +73,7 @@ public class SettingFragment extends BaseFragment {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMainActivity().clearCache();
+                getMainActivity().activeDirectorySignOutClearCache();
                 switchToFragmentAndClear(FRAGMENT_LOGIN, null);
             }
         });
