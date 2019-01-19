@@ -82,7 +82,7 @@ public class TradingTerminalIntegrationApi {
     }
 
     // create path and map variables
-    String path = "/trading/marks";
+    String path = "/marks";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -167,7 +167,7 @@ public class TradingTerminalIntegrationApi {
     }
 
     // create path and map variables
-    String path = "/trading/marks".replaceAll("\\{format\\}", "json");
+    String path = "/marks".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -251,7 +251,7 @@ public class TradingTerminalIntegrationApi {
     }
 
     // create path and map variables
-    String path = "/trading/timescale_marks";
+    String path = "/timescale_marks";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -336,7 +336,7 @@ public class TradingTerminalIntegrationApi {
     }
 
     // create path and map variables
-    String path = "/trading/timescale_marks".replaceAll("\\{format\\}", "json");
+    String path = "/timescale_marks".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();

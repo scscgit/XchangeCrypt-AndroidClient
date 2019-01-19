@@ -74,7 +74,6 @@ public class SettingFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 getMainActivity().activeDirectorySignOutClearCache();
-                switchToFragmentAndClear(FRAGMENT_LOGIN, null);
             }
         });
     }

@@ -36,6 +36,7 @@ import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.network.TradingApiHelper;
 import bit.xchangecrypt.client.ui.fragments.*;
 import bit.xchangecrypt.client.util.ConnectionHelper;
+import bit.xchangecrypt.client.util.HttpsTrustHelper;
 import bit.xchangecrypt.client.util.MicrosoftIdentityHelper;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -60,7 +61,6 @@ import java.util.*;
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final boolean MSAL_USE_CUSTOM_AUTHORITY = true;
 
     public static int asyncTaskId = 0;
 
@@ -90,6 +90,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         setContentView(R.layout.activity_main);
         setToolbarAndDrawer(savedInstanceState);
         setBottomNavigationView();
+
+        if (BuildConfig.DEBUG) {
+            HttpsTrustHelper.allowAllSSL();
+        }
+
         createNetworkReceiver();
         getFragmentsManager().clearAndInit(this, true);
         switchToFragmentAndClear(FRAGMENT_SPLASH, null);
@@ -105,7 +110,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // Initialize the MSAL App context
         if (activeDirectoryApp == null) {
             Log.d(TAG, "Initialized the Azure AD MSAL App context");
-            if (MSAL_USE_CUSTOM_AUTHORITY) {
+            if (!"".equals(Constants.AUTHORITY)) {
                 activeDirectoryApp = new PublicClientApplication(
                     this,
                     Constants.CLIENT_ID,
@@ -218,25 +223,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void activeDirectoryOnSignInSuccess(AuthenticationResult authenticationResult) {
-        // Successfully got a token, call api now
         Log.d(TAG, "Successfully authenticated");
+        String idToken = authenticationResult.getIdToken();
         String accessToken = authenticationResult.getAccessToken();
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "Authentication ID Token: " + authenticationResult.getIdToken());
+            Log.d(TAG, "Authentication ID Token: " + idToken);
             Log.d(TAG, "Authentication Access Token: " + accessToken);
         }
         tradingApiHelper.createTradingApi();
-        tradingApiHelper.getApiAuthentication().setApiKey(accessToken);
+        tradingApiHelper.getApiAuthentication().setApiKeyPrefix("Bearer");
+        tradingApiHelper.getApiAuthentication().setApiKey(idToken);
+        callActiveDirectoryToPrepareUser(accessToken);
 
-        //TODO: mock
+        //TODO: Refactor exchange so that it can start launching even without fake user
         getContentProvider().setUser(new User(
             "1",
-            "mockLogin",
-            "mock@user",
+            "fakeLogin",
+            "fake@user",
             "mockName mMockSurname"
         ));
-
-        callActiveDirectoryToCreateUser(accessToken);
 
         // Start authenticated activity
         getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
@@ -284,63 +289,65 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
         Log.d(TAG, message);
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+        switchToFragmentAndClear(FRAGMENT_LOGIN, null);
+        getContentProvider().setUser(null);
     }
 
     /**
-     * Use Volley to request the /me endpoint from API
-     * Sets the UI to what we get back
+     * Use Volley to request the /me endpoint from API.
+     * Sets the User properties to what we get back.
      */
-    private void callActiveDirectoryToCreateUser(final String accessToken) {
+    private void callActiveDirectoryToPrepareUser(final String bearerToken) {
         Log.d(TAG, "Starting volley request to Active Directory API");
         RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-        try {
-            // TODO
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.GET,
             Constants.API_URL,
-            parameters,
+            null,
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     // Successfully called API
-                    Log.d(TAG, "Response: " + response);
+                    Log.d(TAG, "Active Directory user properties response: " + response);
                     try {
-                        // TODO: Create a user with AD data here
                         getContentProvider().setUser(new User(
-                            "1",
+                            response.getString("sub"),
                             "mockLogin",
                             "mock@user",
                             response.getString("name")
                         ));
-                        Toast.makeText(getBaseContext(), "Response: " + response.get("name"), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "ActiveDirectory successfully configured user");
+                        Log.d(TAG, "Active Directory successfully configured user");
                     } catch (JSONException e) {
-                        // TODO
-                        Log.d(TAG, "JSONException Error: " + e.toString());
+                        Toast.makeText(MainActivity.this,
+                            "Failed to verify your identity, signing off", Toast.LENGTH_LONG
+                        ).show();
+                        Log.d(TAG, "JSONException during ActiveDirectory user property configuration: " + e.toString());
+                        activeDirectorySignOutClearCache();
                     }
                 }
             },
             new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    // TODO
-                    Log.d(TAG, "Error: " + error.toString());
+                public void onErrorResponse(VolleyError e) {
+                    Log.d(TAG, "VolleyError during ActiveDirectory user property configuration: " + e.toString());
+                    activeDirectorySignOutClearCache();
                 }
             }
         ) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Authorization", "Bearer " + bearerToken);
                 return headers;
             }
         };
         queue.add(request);
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Object>() {
+            @Override
+            public void onRequestFinished(Request<Object> request) {
+                queue.stop();
+            }
+        });
     }
 
     @Deprecated
@@ -854,7 +861,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         if (actualDate1.getTime() - lastInstrumentUpdate.getTime() < 30000 &&
                             actualDate1.getTime() - lastMarketUpdate.getTime() < 30000 &&
                             actualDate1.getTime() - lastUserUpdate.getTime() < 30000
-                            ) {
+                        ) {
                             switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                             return;
                         }

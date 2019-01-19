@@ -62,7 +62,7 @@ public class UserBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/user/profile";
+    String path = "/profile";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -117,7 +117,7 @@ public class UserBridgeApi {
 
 
     // create path and map variables
-    String path = "/user/profile".replaceAll("\\{format\\}", "json");
+    String path = "/profile".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -181,7 +181,7 @@ public class UserBridgeApi {
     }
 
     // create path and map variables
-    String path = "/user/accounts/{accountId}/wallet".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallet".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -244,7 +244,7 @@ public class UserBridgeApi {
     }
 
     // create path and map variables
-    String path = "/user/accounts/{accountId}/wallet".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallet".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -318,7 +318,7 @@ public class UserBridgeApi {
     }
 
     // create path and map variables
-    String path = "/user/accounts/{accountId}/withdraw".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/withdraw".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -401,7 +401,7 @@ public class UserBridgeApi {
     }
 
     // create path and map variables
-    String path = "/user/accounts/{accountId}/withdraw".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/withdraw".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -460,7 +460,7 @@ public class UserBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/user/wallets";
+    String path = "/wallets";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -515,7 +515,7 @@ public class UserBridgeApi {
 
 
     // create path and map variables
-    String path = "/user/wallets".replaceAll("\\{format\\}", "json");
+    String path = "/wallets".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();

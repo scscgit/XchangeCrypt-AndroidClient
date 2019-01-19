@@ -26,11 +26,18 @@ import java.util.concurrent.TimeoutException;
  * Created by Peter on 29.04.2018.
  */
 public class TradingApiHelper {
-    public static List<String> API_DOMAINS = Arrays.asList(
-        "http://192.168.0.20/api/v1",
-        "http://192.168.8.101/api/v1",
+    public static List<String> API_TRADING_DOMAINS = Arrays.asList(
+        "https://192.168.0.20/api/v1/trading",
+        "https://192.168.8.101/api/v1/trading",
         "https://rest-demo.tradingview.com/tradingview/v1",
-        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1"
+        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/trading"
+    );
+
+    public static List<String> API_USER_DOMAINS = Arrays.asList(
+        "https://192.168.0.20/api/v1/user",
+        "https://192.168.8.101/api/v1/user",
+        "https://rest-demo.tradingview.com/tradingview/v1/fake-invalid-api",
+        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/user"
     );
 
     // API helper context
@@ -65,13 +72,13 @@ public class TradingApiHelper {
 
     public void createTradingApi() {
         if (tradingApi == null) {
-            this.tradingApi = new TradingPanelOrdersBridgeApi(API_DOMAINS.get(apiDomainIndex));
+            this.tradingApi = new TradingPanelOrdersBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
         }
     }
 
     public void createUserApi() {
         if (userApi == null) {
-            this.userApi = new UserBridgeApi(API_DOMAINS.get(apiDomainIndex));
+            this.userApi = new UserBridgeApi(API_USER_DOMAINS.get(apiDomainIndex));
         }
     }
 

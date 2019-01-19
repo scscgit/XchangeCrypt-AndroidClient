@@ -84,7 +84,7 @@ public class TradingPanelBrokerDataBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/history";
+    String path = "/history";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -170,7 +170,7 @@ public class TradingPanelBrokerDataBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/history".replaceAll("\\{format\\}", "json");
+    String path = "/history".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -235,7 +235,7 @@ public class TradingPanelBrokerDataBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/trading/streaming";
+    String path = "/streaming";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -290,7 +290,7 @@ public class TradingPanelBrokerDataBridgeApi {
 
 
     // create path and map variables
-    String path = "/trading/streaming".replaceAll("\\{format\\}", "json");
+    String path = "/streaming".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -349,7 +349,7 @@ public class TradingPanelBrokerDataBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/trading/symbol_info";
+    String path = "/symbol_info";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -404,7 +404,7 @@ public class TradingPanelBrokerDataBridgeApi {
 
 
     // create path and map variables
-    String path = "/trading/symbol_info".replaceAll("\\{format\\}", "json");
+    String path = "/symbol_info".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();

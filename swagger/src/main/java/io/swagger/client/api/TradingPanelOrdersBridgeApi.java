@@ -72,7 +72,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/executions".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/executions".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -143,7 +143,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/executions".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/executions".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -210,7 +210,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/instruments".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/instruments".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -273,7 +273,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/instruments".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/instruments".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -337,7 +337,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/orders".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -400,7 +400,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/orders".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -465,7 +465,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/ordersHistory".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/ordersHistory".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -529,7 +529,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/ordersHistory".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/ordersHistory".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -600,7 +600,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -669,7 +669,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -738,7 +738,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -807,7 +807,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -886,7 +886,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -986,7 +986,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
+    String path = "/accounts/{accountId}/orders/{orderId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "orderId" + "\\}", apiInvoker.escapeString(orderId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1108,7 +1108,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/orders".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1241,7 +1241,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/orders".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/orders".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1362,7 +1362,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/positions".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1425,7 +1425,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/positions".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1494,7 +1494,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1563,7 +1563,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1632,7 +1632,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1701,7 +1701,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1772,7 +1772,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1850,7 +1850,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
+    String path = "/accounts/{accountId}/positions/{positionId}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "positionId" + "\\}", apiInvoker.escapeString(positionId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1929,7 +1929,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/state".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/state".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1999,7 +1999,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/accounts/{accountId}/state".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/state".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2060,7 +2060,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/trading/accounts";
+    String path = "/accounts";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2115,7 +2115,7 @@ public class TradingPanelOrdersBridgeApi {
 
 
     // create path and map variables
-    String path = "/trading/accounts".replaceAll("\\{format\\}", "json");
+    String path = "/accounts".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2184,7 +2184,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/authorize";
+    String path = "/authorize";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2262,7 +2262,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/authorize".replaceAll("\\{format\\}", "json");
+    String path = "/authorize".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2336,7 +2336,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/config";
+    String path = "/config";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2400,7 +2400,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/config".replaceAll("\\{format\\}", "json");
+    String path = "/config".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2466,7 +2466,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/depth";
+    String path = "/depth";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2530,7 +2530,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/depth".replaceAll("\\{format\\}", "json");
+    String path = "/depth".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2591,7 +2591,7 @@ public class TradingPanelOrdersBridgeApi {
     Object postBody = null;
 
     // create path and map variables
-    String path = "/trading/mapping";
+    String path = "/mapping";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2646,7 +2646,7 @@ public class TradingPanelOrdersBridgeApi {
 
 
     // create path and map variables
-    String path = "/trading/mapping".replaceAll("\\{format\\}", "json");
+    String path = "/mapping".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2710,7 +2710,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/quotes";
+    String path = "/quotes";
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -2774,7 +2774,7 @@ public class TradingPanelOrdersBridgeApi {
     }
 
     // create path and map variables
-    String path = "/trading/quotes".replaceAll("\\{format\\}", "json");
+    String path = "/quotes".replaceAll("\\{format\\}", "json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
