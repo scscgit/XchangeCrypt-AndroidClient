@@ -51,7 +51,7 @@ public class LoginFragment extends BaseFragment {
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMainActivity().onClickedActiveDirectorySignIn(getMainActivity().getContentProvider().getScopes());
+                getMainActivity().onClickedActiveDirectorySignIn();
                 //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
         });

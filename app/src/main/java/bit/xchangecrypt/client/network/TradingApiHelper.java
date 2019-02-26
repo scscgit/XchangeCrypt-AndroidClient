@@ -28,6 +28,7 @@ import java.util.concurrent.TimeoutException;
 public class TradingApiHelper {
     public static List<String> API_TRADING_DOMAINS = Arrays.asList(
         "https://192.168.0.20/api/v1/trading",
+        "https://192.168.0.20:8000/api/v1/trading",
         "https://192.168.8.101/api/v1/trading",
         "https://rest-demo.tradingview.com/tradingview/v1",
         "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/trading"
@@ -35,6 +36,7 @@ public class TradingApiHelper {
 
     public static List<String> API_USER_DOMAINS = Arrays.asList(
         "https://192.168.0.20/api/v1/user",
+        "https://192.168.0.20:8000/api/v1/user",
         "https://192.168.8.101/api/v1/user",
         "https://rest-demo.tradingview.com/tradingview/v1/fake-invalid-api",
         "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/user"

@@ -5,7 +5,6 @@ package bit.xchangecrypt.client.datamodel;
  */
 public enum ContentCacheType {
     INSTRUMENTS,
-    MARKET_DEPTH,
     ACCOUNT_ORDERS,
     ACCOUNT_ORDER_HISTORY,
     ACCOUNT_TRANSACTION_HISTORY,

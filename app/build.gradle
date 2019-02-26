@@ -46,8 +46,8 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
 
     // AndroidX
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
-    implementation 'com.google.android.material:material:1.1.0-alpha02'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'com.google.android.material:material:1.1.0-alpha03'
 
     // Open issue: Cannot compile with AndroidX and Instant Run
     // https://github.com/AzureAD/microsoft-authentication-library-for-android/issues/469

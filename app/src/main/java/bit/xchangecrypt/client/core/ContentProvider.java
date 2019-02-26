@@ -31,6 +31,10 @@ public class ContentProvider {
     private final String ACCOUNT_TRANSACTION_HISTORY_TAG = "AccountTransactionHistory_";
     private final String COINS_BALANCE_TAG = "CoinsBalance_";
 
+    // Cache freshness meta-data tags
+    private final String LAST_UPDATES_TAG = "LastUpdates";
+    private final String LAST_UPDATES_OF_MARKET_DEPTH_TAG = "LastUpdatesOfMarketDepth";
+
     // Android-specific references
     private Context context;
 
@@ -46,18 +50,21 @@ public class ContentProvider {
     private HashMap<String, List<MyTransaction>> accountTransactionHistoryMap = new HashMap<>();
     private List<Coin> coinsBalance;
 
+    // Locks
+    private final Object marketDepthLock = new Object();
+
     // Generated views
     private HashMap<String, Double> marketPriceBuy = new HashMap<>();
     private HashMap<String, Double> marketPriceSell = new HashMap<>();
     private HashMap<String, List<Order>> marketDepthBuyMap = new HashMap<>();
     private HashMap<String, List<Order>> marketDepthSellMap = new HashMap<>();
 
-    // The MSAL representation of the authenticated user and his scopes
-    private String[] scopes;
+    // The MSAL representation of the authenticated user
     private User user;
 
     // Metadata describing how fresh the content provider's content is
     private HashMap<ContentCacheType, Date> lastUpdates = new HashMap<>();
+    private HashMap<String, Date> lastUpdatesOfMarketDepth = new HashMap<>();
 
     private ContentProvider() {
     }
@@ -117,8 +124,42 @@ public class ContentProvider {
                 fullyLoaded = false;
             }
 
+            // Loading cache freshness meta-data
+            HashMap<ContentCacheType, Date> cachedLastUpdates = (HashMap<ContentCacheType, Date>)
+                InternalStorage.readObject(context, LAST_UPDATES_TAG);
+            if (cachedLastUpdates != null) {
+                lastUpdates = cachedLastUpdates;
+            } else {
+                fullyLoaded = false;
+            }
+
+            HashMap<String, Date> cachedLastUpdatesOfMarketDepth = (HashMap<String, Date>)
+                InternalStorage.readObject(context, LAST_UPDATES_OF_MARKET_DEPTH_TAG);
+            if (cachedLastUpdatesOfMarketDepth != null) {
+                lastUpdatesOfMarketDepth = cachedLastUpdatesOfMarketDepth;
+            } else {
+                fullyLoaded = false;
+            }
+        } catch (Exception e) {
+            fullyLoaded = false;
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        }
+        // Only load the user cache if the user is actually logged in
+        if (this.user != null && !loadPrivateUserContentFromCache()) {
+            fullyLoaded = false;
+        }
+
+        Log.d(TAG, "Result of loading content from cache: " + fullyLoaded);
+        return fullyLoaded;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean loadPrivateUserContentFromCache() {
+        boolean fullyLoaded = true;
+        try {
             List<Order> cachedAccountOrders = (List<Order>)
-                InternalStorage.readObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_ORDERS_TAG + user.getUserId());
             if (cachedAccountOrders != null) {
                 accountOrders = cachedAccountOrders;
             } else {
@@ -126,7 +167,7 @@ public class ContentProvider {
             }
 
             List<Order> cachedAccountOrderHistory = (List<Order>)
-                InternalStorage.readObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getUserId());
             if (cachedAccountOrderHistory != null) {
                 accountOrderHistory = cachedAccountOrderHistory;
             } else {
@@ -134,7 +175,7 @@ public class ContentProvider {
             }
 
             HashMap<String, List<MyTransaction>> cachedAccountTransactionHistoryMap = (HashMap<String, List<MyTransaction>>)
-                InternalStorage.readObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId());
+                InternalStorage.readObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getUserId());
             if (cachedAccountTransactionHistoryMap != null) {
                 accountTransactionHistoryMap = cachedAccountTransactionHistoryMap;
             } else {
@@ -142,7 +183,7 @@ public class ContentProvider {
             }
 
             List<Coin> cachedCoinsBalance = (List<Coin>)
-                InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getAccountId());
+                InternalStorage.readObject(context, COINS_BALANCE_TAG + user.getUserId());
             if (cachedCoinsBalance != null) {
                 coinsBalance = cachedCoinsBalance;
             } else {
@@ -153,7 +194,6 @@ public class ContentProvider {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
         }
-        Log.d(TAG, "Result of loading content from cache: " + fullyLoaded);
         return fullyLoaded;
     }
 
@@ -163,6 +203,16 @@ public class ContentProvider {
 
     public void setLastUpdateTime(ContentCacheType updateType, Date date) {
         this.lastUpdates.put(updateType, date);
+        saveLastUpdates();
+    }
+
+    public Date getLastUpdateTimeOfMarketDepth(String currencyPair) {
+        return lastUpdatesOfMarketDepth.get(currencyPair);
+    }
+
+    public void setLastUpdateTimeOfMarketDepth(String currencyPair, Date date) {
+        this.lastUpdatesOfMarketDepth.put(currencyPair, date);
+        saveLastUpdates();
     }
 
     public void saveCurrentCurrencyPair() {
@@ -182,19 +232,24 @@ public class ContentProvider {
     }
 
     public void saveAccountOrders() {
-        InternalStorage.writeObject(context, ACCOUNT_ORDERS_TAG + user.getAccountId(), accountOrders);
+        InternalStorage.writeObject(context, ACCOUNT_ORDERS_TAG + user.getUserId(), accountOrders);
     }
 
     public void saveAccountOrderHistory() {
-        InternalStorage.writeObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getAccountId(), accountOrderHistory);
+        InternalStorage.writeObject(context, ACCOUNT_ORDER_HISTORY_TAG + user.getUserId(), accountOrderHistory);
     }
 
     public void saveAccountTransactionHistory() {
-        InternalStorage.writeObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getAccountId(), accountTransactionHistoryMap);
+        InternalStorage.writeObject(context, ACCOUNT_TRANSACTION_HISTORY_TAG + user.getUserId(), accountTransactionHistoryMap);
     }
 
     public void saveCoinsBalance() {
-        InternalStorage.writeObject(context, COINS_BALANCE_TAG + user.getAccountId(), coinsBalance);
+        InternalStorage.writeObject(context, COINS_BALANCE_TAG + user.getUserId(), coinsBalance);
+    }
+
+    public void saveLastUpdates() {
+        InternalStorage.writeObject(context, LAST_UPDATES_TAG, coinsBalance);
+        InternalStorage.writeObject(context, LAST_UPDATES_OF_MARKET_DEPTH_TAG, coinsBalance);
     }
 
     public String getCurrentCurrencyPair() {
@@ -245,13 +300,29 @@ public class ContentProvider {
     }
 
     public List<Order> getMarketDepthOrders(String currencyPair, OrderSide side) {
-        switch (side) {
-            case BUY:
-                return this.marketDepthBuyMap.get(currencyPair);
-            case SELL:
-                return this.marketDepthSellMap.get(currencyPair);
-            default:
-                throw new RuntimeException("Unexpected side argument");
+        synchronized (this.marketDepthLock) {
+            switch (side) {
+                case BUY:
+                    return this.marketDepthBuyMap.get(currencyPair);
+                case SELL:
+                    return this.marketDepthSellMap.get(currencyPair);
+                default:
+                    throw new RuntimeException("Unexpected side argument");
+            }
+        }
+    }
+
+    public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
+        if (orders == null) {
+            throw new IllegalArgumentException("orders");
+        }
+        synchronized (this.marketDepthLock) {
+            // Sorting happens later on get
+            this.marketDepthMap.put(currencyPair, orders);
+            saveDepthOrders();
+            setLastUpdateTimeOfMarketDepth(currencyPair, new Date());
+            Log.d(TAG, String.format("Configured %d market depth orders for pair %s.", this.marketDepthMap.size(), currencyPair));
+            generateSortedMarketDepthOrdersAndMarketPrices(currencyPair);
         }
     }
 
@@ -274,13 +345,13 @@ public class ContentProvider {
         Log.d(TAG, String.format("Generated sorted market depth orders and market prices for pair %s.", currencyPair));
     }
 
-    public void setMarketDepthOrders(String currencyPair, List<Order> orders) {
-        // Sorting happens later on get
-        this.marketDepthMap.put(currencyPair, orders);
-        saveDepthOrders();
-        setLastUpdateTime(ContentCacheType.MARKET_DEPTH, new Date());
-        Log.d(TAG, String.format("Configured %d market depth orders for pair %s.", this.marketDepthMap.size(), currencyPair));
-        generateSortedMarketDepthOrdersAndMarketPrices(currencyPair);
+    public List<Order> getAccountOrders(String currencyPair, OrderSide side) {
+        String[] currencies = currencyPair.split("_");
+        return Stream.of(this.accountOrders)
+            .filter(order -> order.getBaseCurrency().equals(currencies[0])
+                && order.getQuoteCurrency().equals(currencies[1])
+                && order.getSide() == side)
+            .collect(Collectors.toList());
     }
 
     public void setAccountOrders(List<Order> accountOrders) {
@@ -304,15 +375,6 @@ public class ContentProvider {
             }
         }
         throw new TradingException("Attempted to remove a reference to a non-existing order");
-    }
-
-    public List<Order> getAccountOrders(String currencyPair, OrderSide side) {
-        String[] currencies = currencyPair.split("_");
-        return Stream.of(this.accountOrders)
-            .filter(order -> order.getBaseCurrency().equals(currencies[0])
-                && order.getQuoteCurrency().equals(currencies[1])
-                && order.getSide() == side)
-            .collect(Collectors.toList());
     }
 
     public List<Order> getAccountOrderHistory() {
@@ -360,21 +422,17 @@ public class ContentProvider {
         return null;
     }
 
-    public String[] getScopes() {
-        return scopes;
-    }
-
-    public void setScopes(String[] scopes) {
-        this.scopes = scopes;
-    }
-
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public boolean setUserAndLoadCache(User user) {
         this.user = user;
-        loadContentFromCache();
+        accountOrders = null;
+        accountOrderHistory = null;
+        accountTransactionHistoryMap = null;
+        coinsBalance = null;
+        return loadContentFromCache();
     }
 
     public boolean isPublicExchangeLoaded() {

@@ -76,7 +76,7 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public ContentProvider getContentProvider() {
-        return getMainActivity().getContentProvider();
+        return ContentProvider.getInstance(getContext());
     }
 
     public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force) {

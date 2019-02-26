@@ -105,8 +105,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
 
-        getContentProvider().setScopes(Constants.SCOPES.split("\\s+"));
-
         // Initialize the MSAL App context
         if (activeDirectoryApp == null) {
             Log.d(TAG, "Initialized the Azure AD MSAL App context");
@@ -148,12 +146,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
      * Use MSAL to acquireToken for the end-user
      * Pass UserInfo response data to AuthenticatedActivity
      */
-    public void onClickedActiveDirectorySignIn(String[] scopes) {
+    public void onClickedActiveDirectorySignIn() {
         // Attempt to get a user and acquireTokenSilently
         // If this fails we will do an interactive request
         Log.d(TAG, "onClickedActiveDirectorySignIn");
         IAccount currentAccount =
             MicrosoftIdentityHelper.getUserByPolicy(activeDirectoryApp.getAccounts(), Constants.SISU_POLICY);
+        final String[] scopes = Constants.SCOPES.split("\\s+");
         if (currentAccount != null) {
             // We have 1 user
             activeDirectoryApp.acquireTokenSilentAsync(
@@ -182,9 +181,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public void onError(MsalException exception) {
                 // Failed to acquireToken
                 Log.d(TAG, "Silent authentication failed: " + exception.toString());
+                final String[] scopes = Constants.SCOPES.split("\\s+");
                 if (exception instanceof MsalUiRequiredException) {
                     // Tokens expired or no session, retry with interactive
-                    activeDirectoryApp.acquireToken(MainActivity.this, getContentProvider().getScopes(), getAuthInteractiveCallback());
+                    activeDirectoryApp.acquireToken(MainActivity.this, scopes, getAuthInteractiveCallback());
                     return;
                 }
                 activeDirectoryOnSignInError(exception);
@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         callActiveDirectoryToPrepareUser(accessToken);
 
         //TODO: Refactor exchange so that it can start launching even without fake user
-        getContentProvider().setUser(new User(
+        getContentProvider().setUserAndLoadCache(new User(
             "1",
             "fakeLogin",
             "fake@user",
@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         Log.d(TAG, message);
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
         switchToFragmentAndClear(FRAGMENT_LOGIN, null);
-        getContentProvider().setUser(null);
+        getContentProvider().setUserAndLoadCache(null);
     }
 
     /**
@@ -310,7 +310,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     // Successfully called API
                     Log.d(TAG, "Active Directory user properties response: " + response);
                     try {
-                        getContentProvider().setUser(new User(
+                        getContentProvider().setUserAndLoadCache(new User(
                             response.getString("sub"),
                             "mockLogin",
                             "mock@user",
@@ -352,7 +352,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Deprecated
     private void createDumbData() {
-        getContentProvider().setUser(new User("1", "dumbUser", "dumb@email", "dumb name"));
+        getContentProvider().setUserAndLoadCache(new User("1", "dumbUser", "dumb@email", "dumb name"));
         getContentProvider().setCurrentCurrencyPair("QBC_BTC");
         getContentProvider().setCurrentOrderSide(OrderSide.BUY);
         MyTransaction transaction0 = new MyTransaction(OrderSide.BUY, "QBC", "BTC", (float) 0.00000311, (float) 258.00058265, new Date());
@@ -839,10 +839,12 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         switchToFragment(fragmentID, args, true, false);
     }
 
+    @Deprecated
     public void getDataBeforeSwitch(int fragmentID, Bundle args) {
         getDataBeforeSwitch(fragmentID, args, false);
     }
 
+    @Deprecated
     @Override
     public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force) {
         switch (fragmentID) {
@@ -853,14 +855,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
                 if (!force) {
                     Date lastInstrumentUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.INSTRUMENTS);
-                    Date lastMarketUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.MARKET_DEPTH);
+                    Date lastMarketUpdate = getContentProvider().getLastUpdateTimeOfMarketDepth(getContentProvider().getCurrentCurrencyPair());
                     Date lastUserUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
-                    Date actualDate1 = new Date();
+                    Date currentDate = new Date();
 
                     if (lastInstrumentUpdate != null && lastMarketUpdate != null && lastUserUpdate != null) {
-                        if (actualDate1.getTime() - lastInstrumentUpdate.getTime() < 30000 &&
-                            actualDate1.getTime() - lastMarketUpdate.getTime() < 30000 &&
-                            actualDate1.getTime() - lastUserUpdate.getTime() < 30000
+                        if (currentDate.getTime() - lastInstrumentUpdate.getTime() < 30000 &&
+                            currentDate.getTime() - lastMarketUpdate.getTime() < 30000 &&
+                            currentDate.getTime() - lastUserUpdate.getTime() < 30000
                         ) {
                             switchToFragmentAndClear(FRAGMENT_EXCHANGE, null);
                             return;
@@ -891,12 +893,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 if (!force) {
                     Date lastHistoryUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
                     Date lastBalanceUpdate = getContentProvider().getLastUpdateTime(ContentCacheType.COINS_BALANCE);
-                    Date actualDate = new Date();
+                    Date currentDate = new Date();
                     if (lastHistoryUpdate != null && lastBalanceUpdate != null) {
-//                        long i1 = lastHistoryUpdate.getTime() - actualDate.getTime();
-//                        long i2 = lastBalanceUpdate.getTime() - actualDate.getTime();
-                        if (actualDate.getTime() - lastHistoryUpdate.getTime() < 30000 &&
-                            actualDate.getTime() - lastBalanceUpdate.getTime() < 30000) {
+                        if (currentDate.getTime() - lastHistoryUpdate.getTime() < 30000 &&
+                            currentDate.getTime() - lastBalanceUpdate.getTime() < 30000) {
                             switchToFragmentAndClear(FRAGMENT_WALLET, null);
                             return;
                         }

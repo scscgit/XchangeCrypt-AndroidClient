@@ -22,6 +22,7 @@ import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.listeners.ConnectionListener;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
+import bit.xchangecrypt.client.network.ContentRefresher;
 import bit.xchangecrypt.client.util.ApplicationStorage;
 import bit.xchangecrypt.client.util.FragmentsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -115,6 +116,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public ContentRefresher getContentRefresher() {
+        return ContentRefresher.getInstance(this);
     }
 
     public ContentProvider getContentProvider() {
