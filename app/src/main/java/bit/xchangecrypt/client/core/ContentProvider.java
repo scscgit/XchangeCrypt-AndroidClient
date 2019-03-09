@@ -414,6 +414,9 @@ public class ContentProvider {
     }
 
     public Coin getCoinBalanceByName(String coinSymbol) {
+        if (coinsBalance == null) {
+            return null;
+        }
         for (Coin coin : coinsBalance) {
             if (coin.getSymbolName().equals(coinSymbol)) {
                 return coin;
@@ -430,7 +433,7 @@ public class ContentProvider {
         this.user = user;
         accountOrders = null;
         accountOrderHistory = null;
-        accountTransactionHistoryMap = null;
+        accountTransactionHistoryMap = new HashMap<>();
         coinsBalance = null;
         return loadContentFromCache();
     }

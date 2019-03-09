@@ -617,7 +617,11 @@ public class ExchangeFragment extends BaseFragment {
     private void showCoinBalance() {
         String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
         Coin coin = getContentProvider().getCoinBalanceByName(currencies[orderSide == OrderSide.SELL ? 0 : 1]);
-        ballanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
+        if (coin == null) {
+            ballanceText.setText("");
+        } else {
+            ballanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
+        }
     }
 
     private List<Order> currentUserOrders = null;
