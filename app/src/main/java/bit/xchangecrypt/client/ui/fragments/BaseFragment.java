@@ -86,10 +86,6 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
         return getMainActivity().getFragmentsManager();
     }
 
-    public void showProgressBar(int title, int message) {
-        getMainActivity().showProgressDialog(title, message);
-    }
-
     public void showProgressBar(String message) {
         getMainActivity().showProgressDialog(message);
     }

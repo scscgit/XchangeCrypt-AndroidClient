@@ -5,16 +5,19 @@ package bit.xchangecrypt.client.datamodel;
  */
 public class Coin extends BaseObject {
     private String symbolName;
+    private String publicKey;
     private double amount;
 
-    public Coin(int id, String symbolName, double amount) {
+    public Coin(int id, String symbolName, String publicKey, double amount) {
         super(id);
         this.symbolName = symbolName;
+        this.publicKey = publicKey;
         this.amount = amount;
     }
 
-    public Coin(String symbolName, double amount) {
+    public Coin(String symbolName, String publicKey, double amount) {
         this.symbolName = symbolName;
+        this.publicKey = publicKey;
         this.amount = amount;
     }
 
@@ -24,6 +27,14 @@ public class Coin extends BaseObject {
 
     public void setSymbolName(String symbolName) {
         this.symbolName = symbolName;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public double getAmount() {

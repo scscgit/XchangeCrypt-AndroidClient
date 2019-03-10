@@ -24,13 +24,21 @@ public final class InternalStorage {
     }
 
     public static Object readObject(Context context, String key) {
-        FileInputStream fis;
+        FileInputStream fis = null;
         try {
             fis = context.openFileInput(key);
             ObjectInputStream ois = new ObjectInputStream(fis);
             return ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }

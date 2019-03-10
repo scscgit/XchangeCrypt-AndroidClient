@@ -19,10 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import bit.xchangecrypt.client.R;
-import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.listeners.ConnectionListener;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
-import bit.xchangecrypt.client.network.ContentRefresher;
 import bit.xchangecrypt.client.util.ApplicationStorage;
 import bit.xchangecrypt.client.util.FragmentsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,6 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private boolean isOnline;
     private ConnectionListener connectionListener;
     protected LinearLayout bottomNavigationLayout;
+    private String progressDialogMessage = "";
 
     public void showErrorDialog(int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -118,14 +117,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public ContentRefresher getContentRefresher() {
-        return ContentRefresher.getInstance(this);
-    }
-
-    public ContentProvider getContentProvider() {
-        return ContentProvider.getInstance(this);
-    }
-
     public ApplicationStorage getAppStorage() {
         return ApplicationStorage.getInstance(this);
     }
@@ -138,22 +129,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         getFragmentsManager().showTopFragmentInMainBS();
     }
 
-    public void showProgressDialog(int title, int message) {
-        if (progress != null) {
-            hideProgressDialog();
-        }
-        progress = ProgressDialog.show(
-            this, null, getResources().getString(message), true);
-    }
-
     public void showProgressDialog(String message) {
+        this.progressDialogMessage = message;
         if (progress != null) {
             hideProgressDialog();
         }
         progress = ProgressDialog.show(this, null, message, true);
     }
 
+    public void showProgressDialogPostfix(String postfix) {
+        if (progress != null) {
+            hideProgressDialog();
+        }
+        progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
+    }
+
     public void hideProgressDialog() {
+        this.progressDialogMessage = "";
         if (progress != null) {
             progress.dismiss();
         }

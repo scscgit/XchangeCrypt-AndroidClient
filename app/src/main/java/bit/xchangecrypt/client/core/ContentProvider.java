@@ -35,6 +35,9 @@ public class ContentProvider {
     private final String LAST_UPDATES_TAG = "LastUpdates";
     private final String LAST_UPDATES_OF_MARKET_DEPTH_TAG = "LastUpdatesOfMarketDepth";
 
+    // Cache settings
+    private int cacheExpireAfterMs = 30_000;
+
     // Android-specific references
     private Context context;
 
@@ -455,5 +458,24 @@ public class ContentProvider {
             && accountOrders != null
             && accountOrderHistory != null
             && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
+    }
+
+    public boolean isExchangeCacheNotExpired() {
+        Date currentDate = new Date();
+        Date lastInstrumentUpdate = getLastUpdateTime(ContentCacheType.INSTRUMENTS);
+        Date lastMarketUpdate = getLastUpdateTimeOfMarketDepth(getCurrentCurrencyPair());
+        Date lastUserUpdate = getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
+
+        return lastInstrumentUpdate != null && currentDate.getTime() - lastInstrumentUpdate.getTime() < cacheExpireAfterMs
+            && lastMarketUpdate != null && currentDate.getTime() - lastMarketUpdate.getTime() < cacheExpireAfterMs
+            && lastUserUpdate != null && currentDate.getTime() - lastUserUpdate.getTime() < cacheExpireAfterMs;
+    }
+
+    public boolean isWalletCacheNotExpired() {
+        Date currentDate = new Date();
+        Date lastHistoryUpdate = getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
+        Date lastBalanceUpdate = getLastUpdateTime(ContentCacheType.COINS_BALANCE);
+        return lastHistoryUpdate != null && currentDate.getTime() - lastHistoryUpdate.getTime() < cacheExpireAfterMs
+            && lastBalanceUpdate != null && currentDate.getTime() - lastBalanceUpdate.getTime() < cacheExpireAfterMs;
     }
 }
