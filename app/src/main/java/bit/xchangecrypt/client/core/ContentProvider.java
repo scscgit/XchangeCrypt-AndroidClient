@@ -251,8 +251,8 @@ public class ContentProvider {
     }
 
     public void saveLastUpdates() {
-        InternalStorage.writeObject(context, LAST_UPDATES_TAG, coinsBalance);
-        InternalStorage.writeObject(context, LAST_UPDATES_OF_MARKET_DEPTH_TAG, coinsBalance);
+        InternalStorage.writeObject(context, LAST_UPDATES_TAG, lastUpdates);
+        InternalStorage.writeObject(context, LAST_UPDATES_OF_MARKET_DEPTH_TAG, lastUpdatesOfMarketDepth);
     }
 
     public String getCurrentCurrencyPair() {
@@ -443,7 +443,6 @@ public class ContentProvider {
 
     public boolean isPublicExchangeLoaded() {
         return currentCurrencyPair != null
-            && currentOrderSide != null
             && instruments != null
             && marketDepthMap.get(currentCurrencyPair) != null;
     }
@@ -460,22 +459,44 @@ public class ContentProvider {
             && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
     }
 
+    @Deprecated
     public boolean isExchangeCacheNotExpired() {
+        // NOTE: this implementation is not sufficient, do not use!
         Date currentDate = new Date();
         Date lastInstrumentUpdate = getLastUpdateTime(ContentCacheType.INSTRUMENTS);
-        Date lastMarketUpdate = getLastUpdateTimeOfMarketDepth(getCurrentCurrencyPair());
-        Date lastUserUpdate = getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
+        Date lastMarketDepthUpdate = getLastUpdateTimeOfMarketDepth(getCurrentCurrencyPair());
+        Date lastAccountOrdersUpdate = getLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS);
 
-        return lastInstrumentUpdate != null && currentDate.getTime() - lastInstrumentUpdate.getTime() < cacheExpireAfterMs
-            && lastMarketUpdate != null && currentDate.getTime() - lastMarketUpdate.getTime() < cacheExpireAfterMs
-            && lastUserUpdate != null && currentDate.getTime() - lastUserUpdate.getTime() < cacheExpireAfterMs;
+        boolean instrumentCached = lastInstrumentUpdate != null && currentDate.getTime() - lastInstrumentUpdate.getTime() < cacheExpireAfterMs;
+        if (!instrumentCached) {
+            Log.d(TAG, "Instrument cache has expired");
+        }
+        boolean marketCached = lastMarketDepthUpdate != null && currentDate.getTime() - lastMarketDepthUpdate.getTime() < cacheExpireAfterMs;
+        if (!marketCached) {
+            Log.d(TAG, "Market cache has expired");
+        }
+        boolean accountOrdersCached = lastAccountOrdersUpdate != null && currentDate.getTime() - lastAccountOrdersUpdate.getTime() < cacheExpireAfterMs;
+        if (!accountOrdersCached) {
+            Log.d(TAG, "Account orders cache has expired");
+        }
+        return instrumentCached && marketCached && accountOrdersCached;
     }
 
+    @Deprecated
     public boolean isWalletCacheNotExpired() {
+        // NOTE: this implementation is not sufficient, do not use!
         Date currentDate = new Date();
         Date lastHistoryUpdate = getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
         Date lastBalanceUpdate = getLastUpdateTime(ContentCacheType.COINS_BALANCE);
-        return lastHistoryUpdate != null && currentDate.getTime() - lastHistoryUpdate.getTime() < cacheExpireAfterMs
-            && lastBalanceUpdate != null && currentDate.getTime() - lastBalanceUpdate.getTime() < cacheExpireAfterMs;
+
+        boolean historyCached = lastHistoryUpdate != null && currentDate.getTime() - lastHistoryUpdate.getTime() < cacheExpireAfterMs;
+        if (!historyCached) {
+            Log.d(TAG, "Account history cache has expired");
+        }
+        boolean balanceCached = lastBalanceUpdate != null && currentDate.getTime() - lastBalanceUpdate.getTime() < cacheExpireAfterMs;
+        if (!balanceCached) {
+            Log.d(TAG, "Balance cache has expired");
+        }
+        return historyCached && balanceCached;
     }
 }

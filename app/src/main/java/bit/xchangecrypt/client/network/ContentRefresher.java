@@ -81,7 +81,7 @@ public class ContentRefresher {
 
     public synchronized void switchFragment(int fragmentId) {
         fragmentIdSwitchTarget = fragmentId;
-        context.showProgressDialog("Načítavám dáta");
+        context.showProgressDialog("Načítavam dáta zmenárne");
         tryFragmentSwitch();
     }
 
@@ -110,15 +110,13 @@ public class ContentRefresher {
                             this::loadAccountOrders,
                             this::loadAccountOrdersHistory,
                             this::loadAccountExecutions,
-                            //TODO
-
+                            //TODO: optional
                             this::loadBalance
                         };
                         break;
                     case FRAGMENT_WALLET:
                         loaders = new Runnable[]{
                             this::loadBalance
-                            //TODO
                         };
                         break;
                     default:
@@ -145,7 +143,7 @@ public class ContentRefresher {
                     Thread thread = threads.get(i);
                     thread.join();
                     // Display progress
-                    context.showProgressDialogPostfix(" " + (i + 1) + "/" + threads.size());
+                    context.setProgressDialogPostfix(" (" + (i + 2) + "/" + threads.size() + ")");
                 }
                 if (uncaughtException[0] != null) {
                     throw uncaughtException[0];
@@ -178,11 +176,12 @@ public class ContentRefresher {
             // Exchange
             fragmentIdSwitchTarget == FRAGMENT_EXCHANGE
                 && getContentProvider().isPrivateExchangeLoaded()
-                && getContentProvider().isExchangeCacheNotExpired()
+                //&& getContentProvider().isExchangeCacheNotExpired()
 
                 // Wallet
                 || fragmentIdSwitchTarget == FRAGMENT_WALLET
-                && getContentProvider().isWalletCacheNotExpired()
+                && getContentProvider().isWalletLoaded()
+                //&& getContentProvider().isWalletCacheNotExpired()
 
                 // Settings
                 || fragmentIdSwitchTarget == FRAGMENT_SETTINGS
@@ -191,7 +190,7 @@ public class ContentRefresher {
             this.context.switchToFragmentAndClear(fragmentIdSwitchTarget, null);
             return true;
         } else {
-            Log.i(TAG, "Waiting before fragment switch, because the cached data is expired");
+            Log.i(TAG, "Waiting before fragment switch, because the data is not loade (or cached data is expired)");
             return false;
         }
     }

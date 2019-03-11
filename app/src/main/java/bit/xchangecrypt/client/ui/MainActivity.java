@@ -305,6 +305,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
      */
     private void callActiveDirectoryToPrepareUser(final String bearerToken) {
         Log.d(TAG, "Starting volley request to Active Directory API");
+        showProgressDialog("Prebieha overenie identity");
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.GET,
@@ -324,6 +325,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         ));
                         Log.d(TAG, "Active Directory successfully configured user");
                     } catch (JSONException e) {
+                        hideProgressDialog();
                         Toast.makeText(MainActivity.this,
                             "Failed to verify your identity, signing off", Toast.LENGTH_LONG
                         ).show();

@@ -137,11 +137,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         progress = ProgressDialog.show(this, null, message, true);
     }
 
-    public void showProgressDialogPostfix(String postfix) {
-        if (progress != null) {
-            hideProgressDialog();
+    public void setProgressDialogPostfix(String postfix) {
+        // Only display the postfix if there is a context!
+        if (!"".equals(progressDialogMessage)) {
+            runOnUiThread(() -> {
+                if (progress != null) {
+                    hideProgressDialog();
+                }
+                progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
+            });
         }
-        progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
     }
 
     public void hideProgressDialog() {
