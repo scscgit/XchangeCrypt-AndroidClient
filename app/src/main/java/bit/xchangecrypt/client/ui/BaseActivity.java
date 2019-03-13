@@ -40,6 +40,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ConnectionListener connectionListener;
     protected LinearLayout bottomNavigationLayout;
     private String progressDialogMessage = "";
+    // Just to make sure customer isn't annoyed by a random dialog hazard
+    private final Object dialogLock = new Object();
 
     public void showErrorDialog(int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -130,31 +132,39 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog(String message) {
-        this.progressDialogMessage = message;
-        if (progress != null) {
-            hideProgressDialog();
+        synchronized (this.dialogLock) {
+            this.progressDialogMessage = message;
+            if (progress != null) {
+                hideProgressDialog();
+            }
+            progress = ProgressDialog.show(this, null, message, true);
         }
-        progress = ProgressDialog.show(this, null, message, true);
     }
 
     public void setProgressDialogPostfix(String postfix) {
-        // Only display the postfix if there is a context!
-        if (!"".equals(progressDialogMessage)) {
-            runOnUiThread(() -> {
-                if (progress != null) {
-                    hideProgressDialog();
-                }
-                progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
-            });
+        synchronized (this.dialogLock) {
+            // Only display the postfix if there is a context!
+            if (!"".equals(progressDialogMessage)) {
+                runOnUiThread(() -> {
+                    if (progress != null) {
+                        hideProgressDialog();
+                    }
+                    progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
+                });
+            }
         }
     }
 
     public void hideProgressDialog() {
-        this.progressDialogMessage = "";
-        if (progress != null) {
-            progress.dismiss();
+        synchronized (this.dialogLock) {
+            runOnUiThread(() -> {
+                this.progressDialogMessage = "";
+                if (progress != null) {
+                    progress.dismiss();
+                }
+                progress = null;
+            });
         }
-        progress = null;
     }
 
     public void disableGestures() {

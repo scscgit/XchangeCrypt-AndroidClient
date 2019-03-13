@@ -62,4 +62,9 @@ public class SplashFragment extends BaseFragment {
     @Override
     protected void setViewContents() {
     }
+
+    @Override
+    public void refreshFragment() {
+        // Ignored
+    }
 }

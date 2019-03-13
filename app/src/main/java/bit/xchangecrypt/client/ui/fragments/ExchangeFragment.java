@@ -834,4 +834,10 @@ public class ExchangeFragment extends BaseFragment {
             .setNegativeButton(android.R.string.no, null)
             .show();
     }
+
+    @Override
+    public void refreshFragment() {
+        updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
+        Toast.makeText(getContext(), "Refreshed fragment (TODO)", Toast.LENGTH_SHORT).show();
+    }
 }

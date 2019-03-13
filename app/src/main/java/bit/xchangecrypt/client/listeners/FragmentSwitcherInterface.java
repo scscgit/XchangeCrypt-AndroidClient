@@ -17,4 +17,6 @@ public interface FragmentSwitcherInterface {
     void switchToFragmentAndClear(int fragmentID, Bundle args);
 
     void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force);
+
+    void refreshFragment();
 }

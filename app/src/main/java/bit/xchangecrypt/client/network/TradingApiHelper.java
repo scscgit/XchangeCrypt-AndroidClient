@@ -92,10 +92,11 @@ public class TradingApiHelper {
         createTradingApi();
         InlineResponse20011 inlineResponse20011 = null;
         try {
-            inlineResponse20011 = tradingApi.accountsAccountIdInstrumentsGet(user.getAccountId());
+            // By default, offline user uses accountId "0"
+            inlineResponse20011 = tradingApi.accountsAccountIdInstrumentsGet(user == null ? "0" : user.getAccountId());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
-            throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
+            throw new TradingException("Cannot get trading data per account " + (user == null ? "0" : user.getAccountId()), e);
         }
         if (inlineResponse20011 != null) {
             if (inlineResponse20011.getS() == InlineResponse20011.SEnum.ok) {

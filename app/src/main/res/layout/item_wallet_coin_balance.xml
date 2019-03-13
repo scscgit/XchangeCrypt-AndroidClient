@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listview_coin"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="50dp"
     android:orientation="horizontal"
     android:weightSum="6">
 
@@ -36,15 +36,38 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
+            android:textSize="13sp"
             android:text="AMOUNT" />
 
-        <TextView
-            android:id="@+id/listview_coin_public_key"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="PUBLIC_KEY" />
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingEnd="2dp"
+            android:weightSum="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:text="Adresa:" />
+
+            <TextView
+                android:id="@+id/listview_coin_public_key"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:lines="2"
+                android:text="PUBLIC_KEY"
+                android:fontFamily="serif-monospace"
+                android:textSize="10sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

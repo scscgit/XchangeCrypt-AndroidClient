@@ -10,6 +10,7 @@ import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.exceptions.TradingException;
+import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.ui.MainActivity;
 import com.annimon.stream.Stream;
 import io.swagger.client.ApiInvoker;
@@ -40,9 +41,11 @@ public class ContentRefresher {
     private ScheduledThreadPoolExecutor executor;
     private TradingApiHelper tradingApiHelper;
     private boolean loaded;
-    private Integer fragmentIdSwitchTarget;
+    private Integer switchFragmentTarget;
+    private Integer currentFragment;
     private int accountOrdersHistoryCount = 30;
     private int accountExecutionsCount = 30;
+    private ScheduledFuture<?> periodicTask;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -51,8 +54,8 @@ public class ContentRefresher {
     public static ContentRefresher getInstance(MainActivity context) {
         if (instance == null) {
             instance = new ContentRefresher().withContext(context);
-            instance.runPeriodically(instance::reloadContent);
             instance.tradingApiHelper = new TradingApiHelper(context);
+            instance.startRefresher();
         }
         return instance;
     }
@@ -73,16 +76,17 @@ public class ContentRefresher {
     public void setUser(User user) {
         loaded = false;
         loaded = getContentProvider().setUserAndLoadCache(user);
-        if (fragmentIdSwitchTarget == null) {
-            fragmentIdSwitchTarget = FRAGMENT_EXCHANGE;
+        if (switchFragmentTarget == null) {
+            switchFragmentTarget = FRAGMENT_EXCHANGE;
         }
-        switchFragment(fragmentIdSwitchTarget);
+        switchFragment(switchFragmentTarget);
     }
 
     public synchronized void switchFragment(int fragmentId) {
-        fragmentIdSwitchTarget = fragmentId;
         context.showProgressDialog("Načítavam dáta zmenárne");
-        tryFragmentSwitch();
+        switchFragmentTarget = fragmentId;
+        // The refresher now started to work, but we also try to immediately load the fragment using cached data
+        trySwitchFragment(fragmentId);
     }
 
     private ScheduledFuture<?> runPeriodically(Runnable runnable) {
@@ -90,10 +94,20 @@ public class ContentRefresher {
         return this.executor.scheduleWithFixedDelay(runnable, 0, DELAY_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
+    public void startRefresher() {
+        if (this.periodicTask == null || this.periodicTask.isCancelled()) {
+            this.periodicTask = runPeriodically(instance::reloadContent);
+        }
+    }
+
+    public void pauseRefresher() {
+        this.periodicTask.cancel(true);
+    }
+
     private void reloadContent() {
         try {
             // Wait for initialization
-            if (fragmentIdSwitchTarget == null || getContentProvider().getUser() == null) {
+            if (switchFragmentTarget == null) {
                 Log.d(TAG, "Refresher is not ready yet, waiting...");
                 return;
             }
@@ -101,26 +115,41 @@ public class ContentRefresher {
             Runnable[] loaders;
             int reloadFragment;
             synchronized (this) {
-                reloadFragment = fragmentIdSwitchTarget;
-                switch (fragmentIdSwitchTarget) {
+                reloadFragment = switchFragmentTarget;
+                switch (switchFragmentTarget) {
                     case FRAGMENT_EXCHANGE:
-                        loaders = new Runnable[]{
-                            this::loadInstruments,
-                            this::loadMarketDepth,
-                            this::loadAccountOrders,
-                            this::loadAccountOrdersHistory,
-                            this::loadAccountExecutions,
-                            //TODO: optional
-                            this::loadBalance
-                        };
+                        if (getContentProvider().getUser() != null) {
+                            loaders = new Runnable[]{
+                                this::loadInstruments,
+                                this::loadMarketDepth,
+                                this::loadAccountOrders,
+                                this::loadAccountOrdersHistory,
+                                this::loadAccountExecutions,
+                                this::loadBalances
+                            };
+                        } else {
+                            loaders = new Runnable[]{
+                                this::loadInstruments,
+                                this::loadMarketDepth,
+                            };
+                        }
                         break;
                     case FRAGMENT_WALLET:
+                        if (getContentProvider().getUser() != null) {
+                            loaders = new Runnable[]{
+                                this::loadBalances
+                            };
+                        } else {
+                            loaders = new Runnable[]{
+                            };
+                        }
+                        break;
+                    case FRAGMENT_SETTINGS:
                         loaders = new Runnable[]{
-                            this::loadBalance
                         };
                         break;
                     default:
-                        throw new IllegalArgumentException("fragmentIdSwitchTarget");
+                        throw new IllegalArgumentException("switchFragmentTarget");
                 }
             }
 
@@ -139,6 +168,7 @@ public class ContentRefresher {
             }
             // Join all loaders
             try {
+                context.setProgressDialogPostfix(" (" + 1 + "/" + threads.size() + ")");
                 for (int i = 0; i < threads.size(); i++) {
                     Thread thread = threads.get(i);
                     thread.join();
@@ -157,46 +187,67 @@ public class ContentRefresher {
             }
 
             synchronized (this) {
-                if (reloadFragment != this.fragmentIdSwitchTarget) {
+                if (reloadFragment != this.switchFragmentTarget) {
                     Log.i(TAG, "Ignoring finished loader threads, as the switch target fragment has changed meanwhile");
                     return;
                 }
                 // Check the success and switch to the target fragment
-                boolean switched = tryFragmentSwitch();
+                boolean switched = trySwitchFragment(switchFragmentTarget);
             }
-        } catch (Exception e) {
+        } catch (
+            Exception e) {
             e.printStackTrace();
             Log.e(TAG, "Unexpected fatal error within content refresher, exiting.");
             System.exit(1);
         }
     }
 
-    private boolean tryFragmentSwitch() {
+    private boolean trySwitchFragment(int switchTargetFragment) {
         if (
             // Exchange
-            fragmentIdSwitchTarget == FRAGMENT_EXCHANGE
-                && getContentProvider().isPrivateExchangeLoaded()
+            switchTargetFragment == FRAGMENT_EXCHANGE
+                &&
+                (
+                    getContentProvider().getUser() == null && getContentProvider().isPublicExchangeLoaded()
+                        || getContentProvider().getUser() != null && getContentProvider().isPrivateExchangeLoaded()
+                )
                 //&& getContentProvider().isExchangeCacheNotExpired()
 
                 // Wallet
-                || fragmentIdSwitchTarget == FRAGMENT_WALLET
+                || switchTargetFragment == FRAGMENT_WALLET
                 && getContentProvider().isWalletLoaded()
                 //&& getContentProvider().isWalletCacheNotExpired()
 
                 // Settings
-                || fragmentIdSwitchTarget == FRAGMENT_SETTINGS
+                || switchTargetFragment == FRAGMENT_SETTINGS
         ) {
-            this.context.hideProgressDialog();
-            this.context.switchToFragmentAndClear(fragmentIdSwitchTarget, null);
+            if (currentFragment == null || currentFragment != switchTargetFragment) {
+                // Full fragment switch
+                this.context.hideProgressDialog();
+                this.context.switchToFragmentAndClear(switchTargetFragment, null);
+                this.currentFragment = switchTargetFragment;
+            } else {
+                // Only re-load the data in a current fragment
+                //this.context.hideProgressDialog();
+                context.runOnUiThread(() -> {
+                    ((FragmentSwitcherInterface)
+                        this.context
+                            .getFragmentsManager()
+                            .getSupportFragmentManager()
+                            .getFragments()
+                            .get(0)
+                    ).refreshFragment();
+                });
+            }
             return true;
         } else {
-            Log.i(TAG, "Waiting before fragment switch, because the data is not loade (or cached data is expired)");
+            Log.i(TAG, "Waiting before fragment loads, because the data was not loaded (or cached data has expired)");
             return false;
         }
     }
 
-    private void loadBalance() {
-        Log.d(TAG, "loadBalance called");
+    private void loadBalances() {
+        Log.d(TAG, "loadBalances called");
         List<WalletDetails> walletDetailsAccounts;
         try {
             walletDetailsAccounts = tradingApiHelper.accountBalance();

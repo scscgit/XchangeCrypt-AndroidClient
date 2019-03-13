@@ -9,7 +9,10 @@ import bit.xchangecrypt.client.util.InternalStorage;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
@@ -263,10 +266,10 @@ public class ContentProvider {
     }
 
     public void setCurrentCurrencyPair(String currentCurrencyPair) {
-        // TODO: remove. The current pair is temporarily always initialized even if it's empty
-        if (marketDepthMap.get(currentCurrencyPair) == null) {
-            marketDepthMap.put(currentCurrencyPair, new ArrayList<>());
-        }
+//        // TODO: remove. The current pair is temporarily always initialized even if it's empty
+//        if (marketDepthMap.get(currentCurrencyPair) == null) {
+//            marketDepthMap.put(currentCurrencyPair, new ArrayList<>());
+//        }
         this.currentCurrencyPair = currentCurrencyPair;
         saveCurrentCurrencyPair();
         Log.d(TAG, String.format("Configured current currency pair %s", currentCurrencyPair));

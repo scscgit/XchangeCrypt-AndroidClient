@@ -118,4 +118,9 @@ public class WalletFragment extends BaseFragment {
             }
         });
     }
+
+    @Override
+    public void refreshFragment() {
+
+    }
 }

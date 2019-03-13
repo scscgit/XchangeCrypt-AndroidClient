@@ -463,13 +463,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.home_item:
-                        getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
+                        getContentRefresher().switchFragment(FRAGMENT_EXCHANGE);
                         break;
                     case R.id.wallet_item:
-                        getDataBeforeSwitch(FRAGMENT_WALLET, null);
+                        getContentRefresher().switchFragment(FRAGMENT_WALLET);
                         break;
                     case R.id.settings_item:
-                        switchToFragmentAndClear(FRAGMENT_SETTINGS, null);
+                        getContentRefresher().switchFragment(FRAGMENT_SETTINGS);
                         break;
                 }
                 return true;
@@ -677,6 +677,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //                }
                 break;
         }
+    }
+
+    @Override
+    public void refreshFragment() {
+        // This is only used by fragments
     }
 
     private void switchToFragment(int fragmentID, Bundle args, boolean clear, boolean getData) {
