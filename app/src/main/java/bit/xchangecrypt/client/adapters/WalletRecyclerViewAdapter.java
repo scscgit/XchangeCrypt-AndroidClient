@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.MyTransaction;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
+import bit.xchangecrypt.client.util.CoinHelper;
 import bit.xchangecrypt.client.util.DateFormatter;
 
 import java.util.List;
@@ -64,28 +64,9 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         holder.amount.setText(String.format("%.6f", transaction.getAmount()));
         holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         if (transaction.getSide() == OrderSide.BUY) {
-            switch (transaction.getQuoteCurrency()) {
-                case "BTC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
-                    break;
-                case "QBC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
-                    break;
-                case "LTC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
-            }
+            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context, transaction.getQuoteCurrency()));
         } else {
-            switch (transaction.getBaseCurrency()) {
-                case "BTC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
-                    break;
-                case "QBC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
-                    break;
-                case "LTC":
-                    holder.logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
-                    break;
-            }
+            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context, transaction.getBaseCurrency()));
         }
     }
 

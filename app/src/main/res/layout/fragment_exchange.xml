@@ -62,7 +62,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:src="@drawable/qbc_icon" />
+                        android:src="@drawable/coin_default" />
 
                     <ImageView
                         android:id="@+id/second_coin_logo_image"
@@ -74,7 +74,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:src="@drawable/btc_icon" />
+                        android:src="@drawable/coin_default" />
 
                     <TextView
                         android:id="@+id/second_coin_logo_text"

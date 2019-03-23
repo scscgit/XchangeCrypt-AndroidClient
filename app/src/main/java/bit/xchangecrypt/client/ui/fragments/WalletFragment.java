@@ -1,6 +1,7 @@
 package bit.xchangecrypt.client.ui.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class WalletFragment extends BaseFragment {
     protected void setViewContents() {
         Date date = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
         if (date != null) {
-            datetextView.setText("Naposledy aktualizované\n" + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
+            datetextView.setText("Naposledy aktualizované" + "\n" + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         }
         List<Coin> coinList = getContentProvider().getCoinsBalance();
         balanceListView.setAdapter(new WalletListViewAdapter(getContext(), coinList));
@@ -121,6 +122,8 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     public void refreshFragment() {
-
+        setViews();
+        setViewContents();
+        Log.d(WalletFragment.class.getSimpleName(), "Refreshed fragment");
     }
 }

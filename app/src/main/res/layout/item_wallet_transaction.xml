@@ -32,7 +32,7 @@
                 android:layout_marginEnd="@dimen/margin_image"
                 android:layout_marginRight="@dimen/margin_image"
                 android:layout_marginBottom="@dimen/margin_image"
-                android:src="@drawable/btc_icon" />
+                android:src="@drawable/coin_default" />
         </LinearLayout>
 
         <!-- Second column -->

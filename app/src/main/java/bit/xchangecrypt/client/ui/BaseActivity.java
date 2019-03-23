@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
@@ -39,7 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private boolean isOnline;
     private ConnectionListener connectionListener;
     protected LinearLayout bottomNavigationLayout;
-    private String progressDialogMessage = "";
+    private volatile String progressDialogMessage = "";
     // Just to make sure customer isn't annoyed by a random dialog hazard
     private final Object dialogLock = new Object();
 
@@ -132,39 +133,42 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog(String message) {
-        synchronized (this.dialogLock) {
-            this.progressDialogMessage = message;
-            if (progress != null) {
-                hideProgressDialog();
+        runOnUiThread(() -> {
+            synchronized (this.dialogLock) {
+                this.progressDialogMessage = message;
+                Log.i(BaseActivity.class.getSimpleName(), "Setting dialog to: " + message);
+                if (progress != null) {
+                    progress.setMessage(message);
+                } else {
+                    progress = ProgressDialog.show(this, null, message, true);
+                }
             }
-            progress = ProgressDialog.show(this, null, message, true);
-        }
+        });
     }
 
     public void setProgressDialogPostfix(String postfix) {
-        synchronized (this.dialogLock) {
-            // Only display the postfix if there is a context!
-            if (!"".equals(progressDialogMessage)) {
-                runOnUiThread(() -> {
-                    if (progress != null) {
-                        hideProgressDialog();
-                    }
-                    progress = ProgressDialog.show(this, null, this.progressDialogMessage + postfix, true);
-                });
+        runOnUiThread(() -> {
+            synchronized (this.dialogLock) {
+                // Only display the postfix if there is a context!
+                if (progress != null && !"".equals(progressDialogMessage)) {
+                    progress.setMessage(this.progressDialogMessage + postfix);
+                    Log.i(BaseActivity.class.getSimpleName(), "Setting dialog with postfix to: " + this.progressDialogMessage + postfix);
+                }
             }
-        }
+        });
     }
 
     public void hideProgressDialog() {
-        synchronized (this.dialogLock) {
-            runOnUiThread(() -> {
+        runOnUiThread(() -> {
+            synchronized (this.dialogLock) {
                 this.progressDialogMessage = "";
                 if (progress != null) {
                     progress.dismiss();
+                    Log.i(BaseActivity.class.getSimpleName(), "Dismissed dialog");
                 }
                 progress = null;
-            });
-        }
+            }
+        });
     }
 
     public void disableGestures() {

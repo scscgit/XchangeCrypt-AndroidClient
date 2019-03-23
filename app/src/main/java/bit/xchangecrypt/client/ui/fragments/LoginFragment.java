@@ -77,7 +77,6 @@ public class LoginFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 getMainActivity().getContentRefresher().setUser(null);
-                getMainActivity().getContentRefresher().switchFragment(FRAGMENT_EXCHANGE);
             }
         });
     }

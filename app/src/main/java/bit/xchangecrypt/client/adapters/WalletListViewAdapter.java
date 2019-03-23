@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.Coin;
+import bit.xchangecrypt.client.util.CoinHelper;
 
 import java.util.List;
 
@@ -43,17 +43,7 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
         coinTitle.setText(coin.getSymbolName());
         coinAmount.setText(String.format("%.6f", coin.getAmount()));
         coinPublicKey.setText(coin.getPublicKey());
-        switch (coin.getSymbolName()) {
-            case "BTC":
-                logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.btc_icon));
-                break;
-            case "QBC":
-                logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qbc_icon));
-                break;
-            case "LTC":
-                logo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ltc_icon));
-                break;
-        }
+        logo.setImageDrawable((CoinHelper.getDrawableForCoin(context, coin.getSymbolName())));
         return rowView;
     }
 }

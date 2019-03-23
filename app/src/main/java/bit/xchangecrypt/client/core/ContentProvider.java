@@ -260,7 +260,18 @@ public class ContentProvider {
 
     public String getCurrentCurrencyPair() {
         if (currentCurrencyPair == null) {
-            throw new RuntimeException("ContentProvider's current currency pair not initialized. Refactoring gone wrong?");
+            if (getInstruments().size() == 0) {
+                try {
+                    Log.w(TAG, "No instruments loaded yet, ever, even the cache is empty. Waiting for 2 more seconds, assuming this is the first run");
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (getInstruments().size() == 0) {
+                throw new RuntimeException("ContentProvider's current currency pair not initialized and there are no instruments loaded yet.");
+            }
+            setCurrentCurrencyPair(getInstruments().get(0));
         }
         return currentCurrencyPair;
     }

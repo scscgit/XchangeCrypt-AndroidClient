@@ -80,6 +80,6 @@ public class SettingFragment extends BaseFragment {
 
     @Override
     public void refreshFragment() {
-
+        // Ignored
     }
 }

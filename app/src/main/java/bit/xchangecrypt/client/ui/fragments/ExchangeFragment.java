@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,11 @@ import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
+import bit.xchangecrypt.client.util.CoinHelper;
+import bit.xchangecrypt.client.util.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 /**
  * Created by V3502505 on 20/09/2016.
@@ -267,14 +268,14 @@ public class ExchangeFragment extends BaseFragment {
         buttonBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchToBuyMode();
+                switchToBuyMode(true);
             }
         });
 
         buttonSell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchToSellMode();
+                switchToSellMode(true);
             }
         });
 
@@ -288,6 +289,10 @@ public class ExchangeFragment extends BaseFragment {
         userOrders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getContentProvider().getUser() == null) {
+                    getMainActivity().loginDialog();
+                    return;
+                }
                 showUserOrders();
             }
         });
@@ -411,8 +416,12 @@ public class ExchangeFragment extends BaseFragment {
         buttonMarketOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getContentProvider().getUser() == null) {
+                    getMainActivity().loginDialog();
+                    return;
+                }
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    confirmationDialog(
+                    DialogHelper.confirmationDialog(
                         getContext(),
                         "Market ponuka",
                         "Potvrďte prosím " + (orderSide == OrderSide.BUY ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
@@ -432,8 +441,12 @@ public class ExchangeFragment extends BaseFragment {
         buttonLimitOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getContentProvider().getUser() == null) {
+                    getMainActivity().loginDialog();
+                    return;
+                }
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    confirmationDialog(
+                    DialogHelper.confirmationDialog(
                         getContext(),
                         "Limit ponuka",
                         "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
@@ -453,8 +466,12 @@ public class ExchangeFragment extends BaseFragment {
         buttonStopOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getContentProvider().getUser() == null) {
+                    getMainActivity().loginDialog();
+                    return;
+                }
                 if (amountEdit.getText().toString().trim().length() > 0) {
-                    confirmationDialog(
+                    DialogHelper.confirmationDialog(
                         getContext(),
                         "Stop ponuka",
                         "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
@@ -586,7 +603,7 @@ public class ExchangeFragment extends BaseFragment {
         getMainActivity().sendOrder(order);
     }
 
-    public void switchToBuyMode() {
+    public void switchToBuyMode(boolean forceResetPrice) {
         getContentProvider().setCurrentOrderSide(OrderSide.BUY);
         orderSide = OrderSide.BUY;
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
@@ -597,10 +614,14 @@ public class ExchangeFragment extends BaseFragment {
         } else {
             showMarketDepthOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+
+        // Only edit the price as long as it's an initialization
+        if (forceResetPrice || priceEdit.getText().toString().equals("")) {
+            priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+        }
     }
 
-    public void switchToSellMode() {
+    public void switchToSellMode(boolean forceResetPrice) {
         getContentProvider().setCurrentOrderSide(OrderSide.SELL);
         orderSide = OrderSide.SELL;
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
@@ -611,7 +632,11 @@ public class ExchangeFragment extends BaseFragment {
         } else {
             showMarketDepthOrders();
         }
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+
+        // Only edit the price as long as it's an initialization
+        if (forceResetPrice || priceEdit.getText().toString().equals("")) {
+            priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+        }
     }
 
     private void showCoinBalance() {
@@ -645,24 +670,22 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void setLogo(String coin, ImageView logo) {
-        switch (coin) {
-            case "BTC":
-                logo.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.btc_icon));
-                break;
-            case "QBC":
-                logo.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.qbc_icon));
-        }
+        logo.setImageDrawable(CoinHelper.getDrawableForCoin(getContext(), coin));
     }
 
     private void updateOnCurrencyPairChange(String pair, boolean hasData) {
         getContentProvider().setCurrentCurrencyPair(pair);
         if (!hasData) {
-            getMainActivity().getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
+            // Currency pair was changed, so we have to force reset the price
+            priceEdit.setText("");
+            // Loads the new currency pair using refresher by displaying a loading dialog
+            getMainActivity().getContentRefresher().switchFragment(FRAGMENT_EXCHANGE);
+            //getMainActivity().getDataBeforeSwitch(FRAGMENT_EXCHANGE, null, true);
             return;
         }
         //getMainActivity().getTradingApiHelper().marketDepthForPair(MainActivity.asyncTaskId++,pair);
         //getMainActivity().showProgressDialog("Načítavám dáta");
-        priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(pair, orderSide)));
+
         String[] currencies = pair.split("_");
         firstCurrencyText.setText(currencies[0]);
         secondCurrencyText.setText(currencies[1]);
@@ -674,10 +697,10 @@ public class ExchangeFragment extends BaseFragment {
         sumCoin.setText(currencies[1]);
         switch (orderSide) {
             case SELL:
-                switchToSellMode();
+                switchToSellMode(false);
                 break;
             case BUY:
-                switchToBuyMode();
+                switchToBuyMode(false);
                 break;
             default:
                 throw new RuntimeException("Unexpected order side");
@@ -819,25 +842,9 @@ public class ExchangeFragment extends BaseFragment {
         secondFrameAdvancedLinearLayout.setLayoutParams(param4);
     }
 
-    private void confirmationDialog(final Context context, String title, String message, final Runnable action) {
-        new AlertDialog.Builder(context)
-            .setTitle(title)
-            .setMessage(message)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    if (whichButton == BUTTON_POSITIVE) {
-                        action.run();
-                    }
-                }
-            })
-            .setNegativeButton(android.R.string.no, null)
-            .show();
-    }
-
     @Override
     public void refreshFragment() {
         updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
-        Toast.makeText(getContext(), "Refreshed fragment (TODO)", Toast.LENGTH_SHORT).show();
+        Log.d(ExchangeFragment.class.getSimpleName(), "Refreshed fragment");
     }
 }

@@ -38,6 +38,7 @@ import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.network.ContentRefresher;
 import bit.xchangecrypt.client.ui.fragments.*;
 import bit.xchangecrypt.client.util.ConnectionHelper;
+import bit.xchangecrypt.client.util.DialogHelper;
 import bit.xchangecrypt.client.util.HttpsTrustHelper;
 import bit.xchangecrypt.client.util.MicrosoftIdentityHelper;
 import com.android.volley.Request;
@@ -65,15 +66,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     public static int asyncTaskId = 0;
 
-    private BroadcastReceiver accountOrdersHistory;
-    private BroadcastReceiver depthDataReceiver;
-    private BroadcastReceiver accountOrderHistoryReceiver;
     private BroadcastReceiver sendOfferReceiver;
     private BroadcastReceiver removeOfferReceiver;
     private BroadcastReceiver authorizationReceiver;
-    private BroadcastReceiver accountBalanceReceiver;
-    private BroadcastReceiver instrumentsReceiver;
-    private BroadcastReceiver executionsReceiver;
 
     private TextView toolbarTitle;
 
@@ -82,6 +77,20 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     // Fragment switch target for async tasks
     private Integer fragmentIdSwitchTarget;
+
+    public void loginDialog() {
+        DialogHelper.confirmationDialog(
+            this,
+            "Používateľ je offline",
+            "Chcete sa prihlásiť?",
+            new Runnable() {
+                @Override
+                public void run() {
+                    getContentRefresher().switchFragment(FRAGMENT_LOGIN);
+                }
+            }
+        );
+    }
 
     public ContentRefresher getContentRefresher() {
         return ContentRefresher.getInstance(this);
@@ -110,7 +119,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         // Initial data
         //createDumbData();
         // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
-        getContentProvider().setCurrentCurrencyPair("QBC_BTC");
+//        getContentProvider().setCurrentCurrencyPair("ETH_BTC");
 
         // Initialize the MSAL App context
         if (activeDirectoryApp == null) {
@@ -295,7 +304,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         }
         Log.d(TAG, message);
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-        switchToFragmentAndClear(FRAGMENT_LOGIN, null);
+        getContentRefresher().switchFragment(FRAGMENT_LOGIN);
         getContentProvider().setUserAndLoadCache(null);
     }
 
@@ -466,9 +475,17 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                         getContentRefresher().switchFragment(FRAGMENT_EXCHANGE);
                         break;
                     case R.id.wallet_item:
+                        if (getContentProvider().getUser() == null) {
+                            loginDialog();
+                            return true;
+                        }
                         getContentRefresher().switchFragment(FRAGMENT_WALLET);
                         break;
                     case R.id.settings_item:
+                        if (getContentProvider().getUser() == null) {
+                            loginDialog();
+                            return true;
+                        }
                         getContentRefresher().switchFragment(FRAGMENT_SETTINGS);
                         break;
                 }
@@ -500,6 +517,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     @Override
     protected void onResume() {
         super.onResume();
+        getContentRefresher().startRefresher();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
@@ -572,6 +591,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     @Override
     protected void onPause() {
         super.onPause();
+        getContentRefresher().pauseRefresher();
     }
 
     @Override
@@ -588,12 +608,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         unregisterReceiver(removeOfferReceiver);
         unregisterReceiver(sendOfferReceiver);
         unregisterReceiver(authorizationReceiver);
-        unregisterReceiver(accountOrderHistoryReceiver);
-        unregisterReceiver(depthDataReceiver);
-        unregisterReceiver(accountOrdersHistory);
-        unregisterReceiver(accountBalanceReceiver);
-        unregisterReceiver(executionsReceiver);
-        unregisterReceiver(instrumentsReceiver);
     }
 
     @Override

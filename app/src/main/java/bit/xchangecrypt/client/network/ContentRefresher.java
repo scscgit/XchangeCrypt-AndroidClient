@@ -1,5 +1,6 @@
 package bit.xchangecrypt.client.network;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import bit.xchangecrypt.client.core.ContentProvider;
@@ -12,6 +13,7 @@ import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.ui.MainActivity;
+import bit.xchangecrypt.client.util.DialogHelper;
 import com.annimon.stream.Stream;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.auth.ApiKeyAuth;
@@ -55,7 +57,8 @@ public class ContentRefresher {
         if (instance == null) {
             instance = new ContentRefresher().withContext(context);
             instance.tradingApiHelper = new TradingApiHelper(context);
-            instance.startRefresher();
+            // Refresher is started by onResume
+            //instance.startRefresher();
         }
         return instance;
     }
@@ -76,7 +79,7 @@ public class ContentRefresher {
     public void setUser(User user) {
         loaded = false;
         loaded = getContentProvider().setUserAndLoadCache(user);
-        if (switchFragmentTarget == null) {
+        if (switchFragmentTarget == null || switchFragmentTarget == FRAGMENT_LOGIN) {
             switchFragmentTarget = FRAGMENT_EXCHANGE;
         }
         switchFragment(switchFragmentTarget);
@@ -85,6 +88,9 @@ public class ContentRefresher {
     public synchronized void switchFragment(int fragmentId) {
         context.showProgressDialog("Načítavam dáta zmenárne");
         switchFragmentTarget = fragmentId;
+        // Trigger an immediate refresh
+        pauseRefresher();
+        startRefresher();
         // The refresher now started to work, but we also try to immediately load the fragment using cached data
         trySwitchFragment(fragmentId);
     }
@@ -124,8 +130,8 @@ public class ContentRefresher {
                                 this::loadMarketDepth,
                                 this::loadAccountOrders,
                                 this::loadAccountOrdersHistory,
+                                this::loadBalances,
                                 this::loadAccountExecutions,
-                                this::loadBalances
                             };
                         } else {
                             loaders = new Runnable[]{
@@ -137,7 +143,8 @@ public class ContentRefresher {
                     case FRAGMENT_WALLET:
                         if (getContentProvider().getUser() != null) {
                             loaders = new Runnable[]{
-                                this::loadBalances
+                                this::loadBalances,
+                                this::loadAccountExecutions,
                             };
                         } else {
                             loaders = new Runnable[]{
@@ -145,6 +152,10 @@ public class ContentRefresher {
                         }
                         break;
                     case FRAGMENT_SETTINGS:
+                        loaders = new Runnable[]{
+                        };
+                        break;
+                    case FRAGMENT_LOGIN:
                         loaders = new Runnable[]{
                         };
                         break;
@@ -175,9 +186,15 @@ public class ContentRefresher {
                     // Display progress
                     context.setProgressDialogPostfix(" (" + (i + 2) + "/" + threads.size() + ")");
                 }
+                // Finished progress
+                context.hideProgressDialog();
                 if (uncaughtException[0] != null) {
                     throw uncaughtException[0];
                 }
+            } catch (InterruptedException e) {
+                // If we interrupted the loader e.g. by a fragment switch, then it's okay and we can ignore the run
+                Log.d(TAG, "Old run has been interrupted");
+                return;
             } catch (Throwable e) {
                 e.printStackTrace();
                 Log.e(TAG, "Refresher thread has failed, this run is skipped");
@@ -220,15 +237,19 @@ public class ContentRefresher {
 
                 // Settings
                 || switchTargetFragment == FRAGMENT_SETTINGS
+                // Login
+                || switchTargetFragment == FRAGMENT_LOGIN
         ) {
+            // Data is loaded, so hide the dialog that could have been displayed before fragment switch
+            this.context.hideProgressDialog();
+
             if (currentFragment == null || currentFragment != switchTargetFragment) {
                 // Full fragment switch
-                this.context.hideProgressDialog();
+                Log.i(TAG, "Full fragment switch to fragment id " + switchTargetFragment);
                 this.context.switchToFragmentAndClear(switchTargetFragment, null);
                 this.currentFragment = switchTargetFragment;
             } else {
                 // Only re-load the data in a current fragment
-                //this.context.hideProgressDialog();
                 context.runOnUiThread(() -> {
                     ((FragmentSwitcherInterface)
                         this.context
@@ -381,8 +402,8 @@ public class ContentRefresher {
         List<Order> orderHistory = new ArrayList<>();
         for (io.swagger.client.model.Order orderResponse : orders) {
             orderHistory.add(new Order(
-                orderResponse.getLimitPrice().doubleValue(),
-                orderResponse.getStopPrice().doubleValue(),
+                orderResponse.getLimitPrice() == null ? null : orderResponse.getLimitPrice().doubleValue(),
+                orderResponse.getStopPrice() == null ? null : orderResponse.getStopPrice().doubleValue(),
                 orderResponse.getInstrument().split("_")[0],
                 orderResponse.getQty().doubleValue(),
                 orderResponse.getInstrument().split("_")[1],
@@ -423,13 +444,51 @@ public class ContentRefresher {
 
     public void sendTradingOffer(final Order offer) {
         Log.d(TAG, "sendTradingOffer called");
+        // We pause the refresher so that it doesn't display a conflicting progress dialog
+        pauseRefresher();
         context.showProgressDialog("Vytváram ponuku");
-        tradingApiHelper.sendTradingOffer(offer);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    tradingApiHelper.sendTradingOffer(offer);
+                } catch (TradingException e) {
+                    e.printStackTrace();
+                    DialogHelper.alertDialog(context, "Chyba", "Pokus o vytvorenie ponuky skončil s chybou: " + e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                startRefresher();
+                context.hideProgressDialog();
+            }
+        }.execute();
     }
 
     public void deleteTradingOffer(final Order offer) {
         Log.d(TAG, "deleteTradingOffer called");
+        // We pause the refresher so that it doesn't display a conflicting progress dialog
+        pauseRefresher();
         context.showProgressDialog("Odstraňujem ponuku");
-        tradingApiHelper.deleteTradingOffer(offer);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    tradingApiHelper.deleteTradingOffer(offer);
+                } catch (TradingException e) {
+                    e.printStackTrace();
+                    DialogHelper.alertDialog(context, "Chyba", "Pokus o odstránenie ponuky skončil s chybou: " + e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                startRefresher();
+                context.hideProgressDialog();
+            }
+        }.execute();
     }
 }
