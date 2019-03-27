@@ -6,6 +6,7 @@ import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.ui.MainActivity;
 import io.swagger.client.ApiException;
+import io.swagger.client.api.TradingPanelBrokerDataBridgeApi;
 import io.swagger.client.api.TradingPanelOrdersBridgeApi;
 import io.swagger.client.api.UserBridgeApi;
 import io.swagger.client.model.*;
@@ -37,7 +38,8 @@ public class TradingApiHelper {
     );
 
     // API helper context
-    private TradingPanelOrdersBridgeApi tradingApi;
+    private TradingPanelBrokerDataBridgeApi tradingBrokerApi;
+    private TradingPanelOrdersBridgeApi tradingOrdersApi;
     private UserBridgeApi userApi;
     private MainActivity mainActivity;
     private int apiDomainIndex;
@@ -60,9 +62,15 @@ public class TradingApiHelper {
         this.mainActivity = mainActivity;
     }
 
-    public void createTradingApi() {
-        if (tradingApi == null) {
-            this.tradingApi = new TradingPanelOrdersBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
+    public void createTradingBrokerApi() {
+        if (tradingBrokerApi == null) {
+            this.tradingBrokerApi = new TradingPanelBrokerDataBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
+        }
+    }
+
+    public void createTradingOrdersApi() {
+        if (tradingOrdersApi == null) {
+            this.tradingOrdersApi = new TradingPanelOrdersBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
         }
     }
 
@@ -89,11 +97,11 @@ public class TradingApiHelper {
     }
 
     public List<Instrument> instruments(final User user) {
-        createTradingApi();
+        createTradingOrdersApi();
         InlineResponse20011 inlineResponse20011 = null;
         try {
             // By default, offline user uses accountId "0"
-            inlineResponse20011 = tradingApi.accountsAccountIdInstrumentsGet(user == null ? "0" : user.getAccountId());
+            inlineResponse20011 = tradingOrdersApi.accountsAccountIdInstrumentsGet(user == null ? "0" : user.getAccountId());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
             throw new TradingException("Cannot get trading data per account " + (user == null ? "0" : user.getAccountId()), e);
@@ -109,11 +117,57 @@ public class TradingApiHelper {
         }
     }
 
+    public Depth marketDepthForPair(final String pair) throws TradingException {
+        createTradingOrdersApi();
+        InlineResponse20013 inlineResponse20013 = null;
+        try {
+            inlineResponse20013 = tradingOrdersApi.depthGet(pair);
+        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+            e.printStackTrace();
+            throw new TradingException("Cannot get trading data", e);
+        }
+        if (inlineResponse20013 != null) {
+            if (inlineResponse20013.getS() == InlineResponse20013.SEnum.ok) {
+                return inlineResponse20013.getD();
+            } else {
+                throw new TradingException("return " + inlineResponse20013.getErrmsg());
+            }
+        } else {
+            throw new TradingException("execution");
+        }
+    }
+
+    public BarsArrays historyBars(final String pair, final String resolution, Long from, Long to, Integer countback) {
+        createTradingBrokerApi();
+        BarsArrays response = null;
+        try {
+            response = tradingBrokerApi.historyGet(
+                pair,
+                resolution,
+                from == null ? null : (double) from,
+                to == null ? null : (double) to,
+                countback == null ? null : (double) countback
+            );
+        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+            e.printStackTrace();
+            throw new TradingException("Cannot get trading data", e);
+        }
+        if (response != null) {
+            if (response.getS() == BarsArrays.SEnum.ok) {
+                return response;
+            } else {
+                throw new TradingException("return " + response.getErrmsg());
+            }
+        } else {
+            throw new TradingException("execution");
+        }
+    }
+
     public List<Execution> accountExecutions(final User user, final String pair, final int maxCount) {
-        createTradingApi();
+        createTradingOrdersApi();
         InlineResponse20010 inlineResponse20010 = null;
         try {
-            inlineResponse20010 = tradingApi.accountsAccountIdExecutionsGet(user.getAccountId(), pair, BigDecimal.valueOf(maxCount).intValue());
+            inlineResponse20010 = tradingOrdersApi.accountsAccountIdExecutionsGet(user.getAccountId(), pair, BigDecimal.valueOf(maxCount).intValue());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
             throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
@@ -130,10 +184,10 @@ public class TradingApiHelper {
     }
 
     public List<io.swagger.client.model.Order> accountOrders(final User user) {
-        createTradingApi();
+        createTradingOrdersApi();
         InlineResponse2004 inlineResponse2004 = null;
         try {
-            inlineResponse2004 = tradingApi.accountsAccountIdOrdersGet(user.getAccountId());
+            inlineResponse2004 = tradingOrdersApi.accountsAccountIdOrdersGet(user.getAccountId());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
             throw new TradingException("Cannot get trading data per account " + user.getAccountId(), e);
@@ -149,28 +203,8 @@ public class TradingApiHelper {
         }
     }
 
-    public Depth marketDepthForPair(final String pair) throws TradingException {
-        createTradingApi();
-        InlineResponse20013 inlineResponse20013 = null;
-        try {
-            inlineResponse20013 = tradingApi.depthGet(pair);
-        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
-            e.printStackTrace();
-            throw new TradingException("Cannot get trading data", e);
-        }
-        if (inlineResponse20013 != null) {
-            if (inlineResponse20013.getS() == InlineResponse20013.SEnum.ok) {
-                return inlineResponse20013.getD();
-            } else {
-                throw new TradingException("return " + inlineResponse20013.getErrmsg());
-            }
-        } else {
-            throw new TradingException("execution");
-        }
-    }
-
     public void sendTradingOffer(final Order offer) {
-        createTradingApi();
+        createTradingOrdersApi();
         BigDecimal limitPrice = null;
         BigDecimal stopPrice = null;
         switch (offer.getType()) {
@@ -198,7 +232,7 @@ public class TradingApiHelper {
             takeProfit = BigDecimal.valueOf(offer.getTakeProfit());
         }
         try {
-            response = tradingApi.accountsAccountIdOrdersPost(
+            response = tradingOrdersApi.accountsAccountIdOrdersPost(
                 mainActivity.getContentProvider().getUser().getAccountId(),
                 offer.getBaseCurrency() + "_" + offer.getQuoteCurrency(),
                 BigDecimal.valueOf(offer.getBaseCurrencyAmount()).doubleValue(),
@@ -228,13 +262,13 @@ public class TradingApiHelper {
         }
     }
 
-    public void deleteTradingOffer(final Order offer) {
-        createTradingApi();
+    public void deleteTradingOffer(final String orderId) {
+        createTradingOrdersApi();
         InlineResponse2007 response = null;
         try {
-            response = tradingApi.accountsAccountIdOrdersOrderIdDelete(
+            response = tradingOrdersApi.accountsAccountIdOrdersOrderIdDelete(
                 mainActivity.getContentProvider().getUser().getAccountId(),
-                offer.getOrderId()
+                orderId
             );
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
@@ -250,10 +284,10 @@ public class TradingApiHelper {
     }
 
     public List<io.swagger.client.model.Order> accountOrdersHistory(final User user, final int count) {
-        createTradingApi();
+        createTradingOrdersApi();
         InlineResponse2004 response = null;
         try {
-            response = tradingApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count).doubleValue());
+            response = tradingOrdersApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count).doubleValue());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
             throw new TradingException("Cannot get trading order history for account " + user.getAccountId(), e);
@@ -270,11 +304,11 @@ public class TradingApiHelper {
     }
 
     public AuthorizationResponse authorize(final User user) {
-        createTradingApi();
+        createTradingOrdersApi();
         mainActivity.showProgressDialog("Prebieha overenie identity");
         InlineResponse200 response = null;
         try {
-            response = tradingApi.authorizePost(user.getLogin(), user.getPassword());
+            response = tradingOrdersApi.authorizePost(user.getLogin(), user.getPassword());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
             throw new TradingException("Cannot authorize user " + user.getLogin() + " with id " + user.getAccountId(), e);

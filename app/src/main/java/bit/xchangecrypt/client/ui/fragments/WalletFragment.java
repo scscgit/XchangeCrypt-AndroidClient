@@ -112,7 +112,7 @@ public class WalletFragment extends BaseFragment {
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                            Toast.makeText(getContext(), "End", Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(), "End", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

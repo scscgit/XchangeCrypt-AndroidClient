@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,9 +25,19 @@ import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
 import bit.xchangecrypt.client.util.CoinHelper;
+import bit.xchangecrypt.client.util.DateFormatter;
 import bit.xchangecrypt.client.util.DialogHelper;
+import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import io.swagger.client.model.BarsArrays;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,9 +49,10 @@ public class ExchangeFragment extends BaseFragment {
     private TextView secondCurrencyText;
     private ImageView secondCurrencyLogo;
 
-    private TextView ballanceText;
+    private TextView balanceText;
 
-    private ListView listViewOrders;
+    private ListView ordersList;
+    private CandleStickChart chart;
 
     private EditText amountEdit;
     private TextView amountCoin;
@@ -56,8 +69,15 @@ public class ExchangeFragment extends BaseFragment {
     private Button buttonBuy;
     private Button buttonSell;
 
-    private Button marketOrders;
-    private Button userOrders;
+    private Button marketOrdersButton;
+    private Button userOrdersButton;
+    private Button graphButton;
+
+    private LinearLayout orderListDescriptionText;
+    private LinearLayout orderListDescriptionResolution;
+    private Button resolutionMonth;
+    private Button resolutionDay;
+    private Button resolutionHour;
 
     private Button buttonMarketOrder;
     private Button buttonLimitOrder;
@@ -91,6 +111,7 @@ public class ExchangeFragment extends BaseFragment {
 
     private ViewGroup header;
     private boolean myOrders = false;
+    private boolean displayGraph = false;
 
     private enum ExchangeFragmentState {
         DEFAULT, ADVANCED_ORDER_PLACEMENT, EXPANDED_ORDERS_LIST
@@ -128,8 +149,20 @@ public class ExchangeFragment extends BaseFragment {
         firstCurrencyLogo = rootView.findViewById(R.id.first_coin_logo_image);
         secondCurrencyText = rootView.findViewById(R.id.second_coin_logo_text);
         secondCurrencyLogo = rootView.findViewById(R.id.second_coin_logo_image);
-        ballanceText = rootView.findViewById(R.id.exchange_coin_balance_value);
-        listViewOrders = rootView.findViewById(R.id.exchange_orders_list);
+        balanceText = rootView.findViewById(R.id.exchange_coin_balance_value);
+        ordersList = rootView.findViewById(R.id.exchange_orders_list);
+
+        chart = rootView.findViewById(R.id.exchange_chart);
+        chart.setBackgroundColor(Color.WHITE);
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setLabelRotationAngle(-45);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setAvoidFirstLastClipping(true);
+
         amountEdit = rootView.findViewById(R.id.exchange_amount_edit);
         amountCoin = rootView.findViewById(R.id.exchange_amount_coin_text);
 
@@ -153,8 +186,15 @@ public class ExchangeFragment extends BaseFragment {
         buttonBuy = rootView.findViewById(R.id.exchange_button_switch_buy);
         buttonSell = rootView.findViewById(R.id.exchange_button_switch_sell);
 
-        marketOrders = rootView.findViewById(R.id.exchange_orders_button_market);
-        userOrders = rootView.findViewById(R.id.exchange_orders_button_my);
+        marketOrdersButton = rootView.findViewById(R.id.exchange_orders_button_market);
+        userOrdersButton = rootView.findViewById(R.id.exchange_orders_button_my);
+        graphButton = rootView.findViewById(R.id.exchange_orders_button_graph);
+
+        orderListDescriptionText = rootView.findViewById(R.id.exchange_order_list_description_text);
+        orderListDescriptionResolution = rootView.findViewById(R.id.exchange_order_list_description_resolution);
+        resolutionMonth = rootView.findViewById(R.id.exchange_resolution_1M);
+        resolutionDay = rootView.findViewById(R.id.exchange_resolution_1D);
+        resolutionHour = rootView.findViewById(R.id.exchange_resolution_1H);
 
         imageUp = rootView.findViewById(R.id.exchange_state_arrow_up);
         imageDown = rootView.findViewById(R.id.exchange_state_arrow_down);
@@ -193,7 +233,7 @@ public class ExchangeFragment extends BaseFragment {
         // Initialize generated values and displayed orders
         updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
 
-        listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ordersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (position == 0) {
@@ -227,14 +267,14 @@ public class ExchangeFragment extends BaseFragment {
 
                 if (lastKeyHeight != keypadHeight || lastScreenHeight != screenHeight) {
                     if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                        setFrameSizeWhenKeybordShown(true);
+                        setFrameSizeWhenKeyboardShown(true);
                         imageUp.setVisibility(View.GONE);
                         imageDown.setVisibility(View.GONE);
                     } else {
                         if (fragmentState == ExchangeFragmentState.ADVANCED_ORDER_PLACEMENT) {
                             setSecondFrameExpanded(true);
                         } else {
-                            setFrameSizeWhenKeybordShown(false);
+                            setFrameSizeWhenKeyboardShown(false);
                         }
                         imageUp.setVisibility(View.VISIBLE);
                         imageDown.setVisibility(View.VISIBLE);
@@ -244,6 +284,7 @@ public class ExchangeFragment extends BaseFragment {
                 lastScreenHeight = screenHeight;
             }
         });
+
         coinPairLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,14 +320,14 @@ public class ExchangeFragment extends BaseFragment {
             }
         });
 
-        marketOrders.setOnClickListener(new View.OnClickListener() {
+        marketOrdersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMarketDepthOrders();
             }
         });
 
-        userOrders.setOnClickListener(new View.OnClickListener() {
+        userOrdersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getContentProvider().getUser() == null) {
@@ -296,7 +337,43 @@ public class ExchangeFragment extends BaseFragment {
                 showUserOrders();
             }
         });
-        //updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair().toString());
+
+        graphButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGraph();
+            }
+        });
+
+        resolutionDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resolutionDay.setBackgroundColor(getResources().getColor(R.color.blue));
+                getContentProvider().setGraphResolution("1D");
+                getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
+                // Wait for refresher
+            }
+        });
+
+        resolutionHour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resolutionHour.setBackgroundColor(getResources().getColor(R.color.blue));
+                getContentProvider().setGraphResolution("1H");
+                getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
+                // Wait for refresher
+            }
+        });
+
+        resolutionMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resolutionMonth.setBackgroundColor(getResources().getColor(R.color.blue));
+                getContentProvider().setGraphResolution("1M");
+                getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
+                // Wait for refresher
+            }
+        });
 
         imageUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -498,12 +575,12 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void createOrdersHeader(boolean userOrders) {
-        listViewOrders.removeHeaderView(header);
+        ordersList.removeHeaderView(header);
         header = (ViewGroup) getLayoutInflater().inflate(
             userOrders
                 ? R.layout.item_order_user_header
                 : R.layout.item_order_depth_header,
-            listViewOrders,
+            ordersList,
             false
         );
         String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
@@ -512,7 +589,7 @@ public class ExchangeFragment extends BaseFragment {
         TextView ordersHeaderQuoteCurrency = header.findViewById(R.id.listview_orders_header_coin2);
         ordersHeaderQuoteCurrency.setText(currencies[1]);
         try {
-            listViewOrders.addHeaderView(header);
+            ordersList.addHeaderView(header);
         } catch (Exception e) {
             if (!this.headerAlreadyCrashed) {
                 this.headerAlreadyCrashed = true;
@@ -645,7 +722,9 @@ public class ExchangeFragment extends BaseFragment {
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.orange));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.gray));
         showCoinBalance();
-        if (myOrders) {
+        if (displayGraph) {
+            showGraph();
+        } else if (myOrders) {
             showUserOrders();
         } else {
             showMarketDepthOrders();
@@ -663,7 +742,9 @@ public class ExchangeFragment extends BaseFragment {
         buttonBuy.setBackgroundColor(getResources().getColor(R.color.gray));
         buttonSell.setBackgroundColor(getResources().getColor(R.color.orange));
         showCoinBalance();
-        if (myOrders) {
+        if (displayGraph) {
+            showGraph();
+        } else if (myOrders) {
             showUserOrders();
         } else {
             showMarketDepthOrders();
@@ -679,30 +760,105 @@ public class ExchangeFragment extends BaseFragment {
         String[] currencies = getContentProvider().getCurrentCurrencyPair().split("_");
         Coin coin = getContentProvider().getCoinBalanceByName(currencies[orderSide == OrderSide.SELL ? 0 : 1]);
         if (coin == null) {
-            ballanceText.setText("");
+            balanceText.setText("");
         } else {
-            ballanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
+            balanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
         }
     }
 
     private List<Order> currentUserOrders = null;
 
     private void showMarketDepthOrders() {
+        this.ordersList.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        this.chart.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+        marketOrdersButton.setBackgroundColor(getResources().getColor(R.color.orange));
+        userOrdersButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        graphButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        orderListDescriptionText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+
         List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
-        marketOrders.setBackgroundColor(getResources().getColor(R.color.orange));
-        userOrders.setBackgroundColor(getResources().getColor(R.color.gray));
+        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
+
         createOrdersHeader(false);
+        displayGraph = false;
         myOrders = false;
     }
 
-    public void showUserOrders() {
+    private void showUserOrders() {
+        this.ordersList.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        this.chart.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+        marketOrdersButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        userOrdersButton.setBackgroundColor(getResources().getColor(R.color.orange));
+        graphButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        orderListDescriptionText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+
         this.currentUserOrders = getContentProvider().getAccountOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
-        listViewOrders.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
-        marketOrders.setBackgroundColor(getResources().getColor(R.color.gray));
-        userOrders.setBackgroundColor(getResources().getColor(R.color.orange));
+        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
+
         createOrdersHeader(true);
+        displayGraph = false;
         myOrders = true;
+    }
+
+    private void showGraph() {
+        this.ordersList.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+        this.chart.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        marketOrdersButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        userOrdersButton.setBackgroundColor(getResources().getColor(R.color.gray));
+        graphButton.setBackgroundColor(getResources().getColor(R.color.orange));
+        orderListDescriptionText.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        resolutionMonth.setBackgroundColor(getResources().getColor(
+            getContentProvider().getGraphResolution().equals("1M") ? R.color.orange : R.color.gray
+        ));
+        resolutionHour.setBackgroundColor(getResources().getColor(
+            getContentProvider().getGraphResolution().equals("1H") ? R.color.orange : R.color.gray
+        ));
+        resolutionDay.setBackgroundColor(getResources().getColor(
+            getContentProvider().getGraphResolution().equals("1D") ? R.color.orange : R.color.gray
+        ));
+
+        BarsArrays bars = getContentProvider().getHistoryBars(getContentProvider().getCurrentCurrencyPair());
+        ArrayList<CandleEntry> values = new ArrayList<>();
+        for (int index = 0; index < bars.getT().size(); index++) {
+            values.add(new CandleEntry(
+                // Datetime is accessed using x axis value formatter
+                index,
+                bars.getH().get(index).floatValue(),
+                bars.getL().get(index).floatValue(),
+                bars.getO().get(index).floatValue(),
+                bars.getC().get(index).floatValue(),
+                getResources().getDrawable(R.drawable.up_arrow)
+            ));
+        }
+        chart.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float index) {
+                return DateFormatter.getStringFromDate(
+                    new Date((long) bars.getT().get((int) index).floatValue()),
+                    DateFormatter.FORMAT_DD_MM_YYYY_HH_MM
+                );
+            }
+        });
+        CandleDataSet set = new CandleDataSet(values, "Data Set");
+        set.setDrawIcons(false);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(80, 80, 80));
+        set.setShadowColor(Color.DKGRAY);
+        set.setShadowWidth(3f);
+        set.setDecreasingColor(Color.RED);
+        set.setDecreasingPaintStyle(Paint.Style.FILL);
+        set.setIncreasingColor(Color.rgb(122, 242, 84));
+        set.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
+        set.setNeutralColor(Color.BLUE);
+        chart.setData(new CandleData(set));
+        chart.invalidate();
+
+        displayGraph = true;
+        myOrders = false;
     }
 
     private void setLogo(String coin, ImageView logo) {
@@ -828,7 +984,7 @@ public class ExchangeFragment extends BaseFragment {
         secondFrameAdvancedLinearLayout.setLayoutParams(param4);
     }
 
-    public void setFrameSizeWhenKeybordShown(boolean isExpanded) {
+    public void setFrameSizeWhenKeyboardShown(boolean isExpanded) {
         LinearLayout.LayoutParams param1;
         LinearLayout.LayoutParams param2;
         LinearLayout.LayoutParams param3;

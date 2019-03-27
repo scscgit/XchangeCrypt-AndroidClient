@@ -18,12 +18,10 @@ import bit.xchangecrypt.client.util.DialogHelper;
 import com.annimon.stream.Stream;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.auth.ApiKeyAuth;
-import io.swagger.client.model.Depth;
-import io.swagger.client.model.Execution;
-import io.swagger.client.model.Instrument;
-import io.swagger.client.model.WalletDetails;
+import io.swagger.client.model.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -103,14 +101,16 @@ public class ContentRefresher {
         return this.executor.scheduleWithFixedDelay(runnable, 0, DELAY_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
-    public void startRefresher() {
+    public ContentRefresher startRefresher() {
         if (this.periodicTask == null || this.periodicTask.isCancelled()) {
             this.periodicTask = runPeriodically(instance::reloadContent);
         }
+        return this;
     }
 
-    public void pauseRefresher() {
+    public ContentRefresher pauseRefresher() {
         this.periodicTask.cancel(true);
+        return this;
     }
 
     private void reloadContent() {
@@ -131,6 +131,7 @@ public class ContentRefresher {
                             loaders = new Runnable[]{
                                 this::loadInstruments,
                                 this::loadMarketDepth,
+                                this::loadHistoryBars,
                                 this::loadAccountOrders,
                                 this::loadAccountOrdersHistory,
                                 this::loadAccountExecutions,
@@ -140,6 +141,7 @@ public class ContentRefresher {
                             loaders = new Runnable[]{
                                 this::loadInstruments,
                                 this::loadMarketDepth,
+                                this::loadHistoryBars,
                             };
                         }
                         break;
@@ -331,6 +333,49 @@ public class ContentRefresher {
         getContentProvider().setMarketDepthOrders(pair, orders);
     }
 
+    private void loadHistoryBars() {
+        Log.d(TAG, "loadHistoryBars called");
+        final String pair = getContentProvider().getCurrentCurrencyPair();
+        BarsArrays historyBars;
+        try {
+            // API 26 alternative example
+            //LocalDateTime.now().minusWeeks(1).toEpochSecond(ZoneOffset.UTC),
+            Calendar from = Calendar.getInstance();
+            from.add(Calendar.WEEK_OF_YEAR, -1);
+            historyBars = tradingApiHelper.historyBars(
+                pair,
+                "1D",
+                from.getTimeInMillis(),
+                Calendar.getInstance().getTimeInMillis(),
+                null
+            );
+        } catch (TradingException e) {
+            context.runOnUiThread(() -> {
+                Toast.makeText(context, "Chyba pri čítaní histórie: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+            throw new TradingException("Loading History Bars for pair " + pair + " received error: " + e.getMessage());
+        }
+        if (historyBars == null
+            || historyBars.getO() == null
+            || historyBars.getH() == null
+            || historyBars.getL() == null
+            || historyBars.getC() == null
+            || historyBars.getV() == null
+            || historyBars.getT() == null) {
+            throw new TradingException("Loading History Bar for pair " + pair + " received null data");
+        }
+        int referenceSize = historyBars.getT().size();
+        if (historyBars.getO().size() != referenceSize
+            || historyBars.getH().size() != referenceSize
+            || historyBars.getL().size() != referenceSize
+            || historyBars.getC().size() != referenceSize
+            || historyBars.getV().size() != referenceSize
+            || historyBars.getT().size() != referenceSize) {
+            throw new TradingException("Loading History Bar for pair " + pair + " received uneven list sizes");
+        }
+        getContentProvider().setHistoryBars(pair, historyBars);
+    }
+
     private void loadAccountOrders() {
         Log.d(TAG, "loadAccountOrders called");
         List<Order> offers = new ArrayList<>();
@@ -512,7 +557,7 @@ public class ContentRefresher {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void deleteTradingOffer(final Order offer) {
+    public void deleteTradingOffer(final String orderId) {
         Log.d(TAG, "deleteTradingOffer called");
         // We pause the refresher so that it doesn't display a conflicting progress dialog
         pauseRefresher();
@@ -521,7 +566,7 @@ public class ContentRefresher {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    tradingApiHelper.deleteTradingOffer(offer);
+                    tradingApiHelper.deleteTradingOffer(orderId);
                 } catch (TradingException e) {
                     e.printStackTrace();
                     DialogHelper.alertDialog(context, "Chyba", "Pokus o odstránenie ponuky skončil s chybou: " + e.getMessage());

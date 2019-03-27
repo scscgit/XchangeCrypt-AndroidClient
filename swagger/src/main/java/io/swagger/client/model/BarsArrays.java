@@ -16,13 +16,14 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Bars data.
  **/
 @ApiModel(description = "Bars data.")
-public class BarsArrays {
+public class BarsArrays implements Serializable {
 
   public enum SEnum {
     ok, error, no_data,

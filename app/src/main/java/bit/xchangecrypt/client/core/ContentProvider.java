@@ -8,6 +8,7 @@ import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.util.InternalStorage;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
+import io.swagger.client.model.BarsArrays;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class ContentProvider {
     private final String CURRENT_ORDER_SIDE_TAG = "CurrentOrderSide";
     private final String INSTRUMENTS_TAG = "Instruments";
     private final String MARKET_DEPTH_TAG = "MarketDepth";
+    private final String HISTORY_BARS_TAG = "HistoryBars";
 
     // Account-specific cache tag prefixes
     private final String ACCOUNT_ORDERS_TAG = "AccountOrders_";
@@ -71,6 +73,10 @@ public class ContentProvider {
     // Metadata describing how fresh the content provider's content is
     private HashMap<ContentCacheType, Date> lastUpdates = new HashMap<>();
     private HashMap<String, Date> lastUpdatesOfMarketDepth = new HashMap<>();
+    private HashMap<String, BarsArrays> historyBarsMap = new HashMap<>();
+
+    // Locally relevant display data
+    private String graphResolution = "1D";
 
     private ContentProvider() {
     }
@@ -126,6 +132,14 @@ public class ContentProvider {
                 for (String currencyPair : marketDepthMap.keySet()) {
                     generateSortedMarketDepthOrdersAndMarketPrices(currencyPair);
                 }
+            } else {
+                fullyLoaded = false;
+            }
+
+            HashMap<String, BarsArrays> cachedHistoryBars = (HashMap<String, BarsArrays>)
+                InternalStorage.readObject(context, HISTORY_BARS_TAG);
+            if (cachedHistoryBars != null) {
+                historyBarsMap = cachedHistoryBars;
             } else {
                 fullyLoaded = false;
             }
@@ -235,6 +249,10 @@ public class ContentProvider {
 
     public void saveDepthOrders() {
         InternalStorage.writeObject(context, MARKET_DEPTH_TAG, marketDepthMap);
+    }
+
+    public void saveHistoryBars() {
+        InternalStorage.writeObject(context, HISTORY_BARS_TAG, historyBarsMap);
     }
 
     public void saveAccountOrders() {
@@ -362,6 +380,17 @@ public class ContentProvider {
         Log.d(TAG, String.format("Generated sorted market depth orders and market prices for pair %s.", currencyPair));
     }
 
+    public BarsArrays getHistoryBars(String pair) {
+        return historyBarsMap.get(pair);
+    }
+
+    public void setHistoryBars(String pair, BarsArrays historyBars) {
+        this.historyBarsMap.put(pair, historyBars);
+        saveHistoryBars();
+        // NOTE: history bars don't need a last update time, because this is implicit in the getT() value
+        Log.d(TAG, String.format("Set %d history bars for pair %s", historyBars.getT().size(), pair));
+    }
+
     public List<Order> getAccountOrders(String currencyPair, OrderSide side) {
         String[] currencies = currencyPair.split("_");
         return Stream.of(this.accountOrders)
@@ -442,6 +471,14 @@ public class ContentProvider {
         return null;
     }
 
+    public void setGraphResolution(String resolution) {
+        this.graphResolution = resolution;
+    }
+
+    public String getGraphResolution() {
+        return graphResolution;
+    }
+
     public User getUser() {
         return user;
     }
@@ -458,7 +495,8 @@ public class ContentProvider {
     public boolean isPublicExchangeLoaded() {
         return currentCurrencyPair != null
             && instruments != null
-            && marketDepthMap.get(currentCurrencyPair) != null;
+            && marketDepthMap.get(currentCurrencyPair) != null
+            && historyBarsMap.get(currentCurrencyPair) != null;
     }
 
     public boolean isWalletLoaded() {

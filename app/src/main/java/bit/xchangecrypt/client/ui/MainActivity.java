@@ -22,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import bit.xchangecrypt.client.BuildConfig;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.Constants;
@@ -64,19 +63,12 @@ import java.util.*;
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static int asyncTaskId = 0;
-
-    private BroadcastReceiver sendOfferReceiver;
-    private BroadcastReceiver removeOfferReceiver;
     private BroadcastReceiver authorizationReceiver;
 
     private TextView toolbarTitle;
 
     // Azure AD MSAL context variables
     private PublicClientApplication activeDirectoryApp;
-
-    // Fragment switch target for async tasks
-    private Integer fragmentIdSwitchTarget;
 
     public void loginDialog() {
         DialogHelper.confirmationDialog(
@@ -86,6 +78,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             new Runnable() {
                 @Override
                 public void run() {
+                    // Make sure Exchange is the selected item after returning after logging in
+                    bottomNavigationView.setSelectedItemId(R.id.home_item);
+
                     getContentRefresher().switchFragment(FRAGMENT_LOGIN);
                 }
             }
@@ -302,8 +297,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 message = String.format("Signed Out for %d users", accountsCount);
                 break;
         }
-        Log.d(TAG, message);
-        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+        Log.i(TAG, message);
         getContentRefresher().switchFragment(FRAGMENT_LOGIN);
         getContentProvider().setUserAndLoadCache(null);
     }
@@ -523,52 +517,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
-        if (sendOfferReceiver == null) {
-            sendOfferReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    int taskID = intent.getExtras().getInt("taskId");
-                    String error = intent.getExtras().getString("error");
-                    if (error != null) {
-                        Toast.makeText(context, "Chyba pri posielaní ponuky.", Toast.LENGTH_SHORT).show();
-                    }
-//                    tradingApiHelper.deleteFromPendingTask(taskID);
-//                    if (tradingApiHelper.noPendingTask()) {
-//                        hideProgressDialog();
-//                    }
-                }
-            };
-        }
-        registerReceiver(sendOfferReceiver, new IntentFilter("order_send"));
-
-        if (removeOfferReceiver == null) {
-            removeOfferReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    int taskID = intent.getExtras().getInt("taskId");
-                    String error = intent.getExtras().getString("error");
-                    if (error == null) {
-                        String orderId = intent.getExtras().getString("orderId");
-                        getContentProvider().removeAccountOrderById(orderId);
-                        // Refresh the fragment's user orders
-                        for (Fragment fragment :
-                            getSupportFragmentManager().getFragments()) {
-                            if (fragment instanceof ExchangeFragment) {
-                                ((ExchangeFragment) fragment).showUserOrders();
-                            }
-                        }
-                    } else {
-                        Toast.makeText(context, "Chyba pri odstraňovaní ponuky.", Toast.LENGTH_SHORT).show();
-                    }
-//                    tradingApiHelper.deleteFromPendingTask(taskID);
-//                    if (tradingApiHelper.noPendingTask()) {
-//                        hideProgressDialog();
-//                    }
-                }
-            };
-        }
-        registerReceiver(removeOfferReceiver, new IntentFilter("order_delete"));
-
         if (authorizationReceiver == null) {
             authorizationReceiver = new BroadcastReceiver() {
                 @Override
@@ -605,8 +553,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().destroy();
         super.onDestroy();
         unregisterReceiver(networkStateReceiver);
-        unregisterReceiver(removeOfferReceiver);
-        unregisterReceiver(sendOfferReceiver);
         unregisterReceiver(authorizationReceiver);
     }
 
@@ -728,7 +674,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     public void deleteOrder(Order order) {
         if (isOnline()) {
-            getContentRefresher().deleteTradingOffer(order);
+            getContentRefresher().deleteTradingOffer(order.getOrderId());
         } else {
             Toast.makeText(this, "Nie ste pripojený na internet", Toast.LENGTH_LONG).show();
         }

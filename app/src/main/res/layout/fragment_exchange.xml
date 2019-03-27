@@ -575,20 +575,63 @@
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="25dp"
+                    <LinearLayout
+                        android:id="@+id/exchange_order_list_description_text"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:src="@drawable/order_icon" />
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="Prehľad ponúk na trhu"
-                        android:textSize="15sp" />
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:src="@drawable/order_icon" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Prehľad ponúk na trhu"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/exchange_order_list_description_resolution"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/exchange_resolution_1M"
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray"
+                            android:text="Mesiac"
+                            android:textSize="@dimen/item_text_size" />
+
+                        <Button
+                            android:id="@+id/exchange_resolution_1D"
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray"
+                            android:text="Deň"
+                            android:textSize="@dimen/item_text_size" />
+
+                        <Button
+                            android:id="@+id/exchange_resolution_1H"
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray"
+                            android:text="Hodina"
+                            android:textSize="@dimen/item_text_size" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -630,6 +673,11 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <com.github.mikephil.charting.charts.CandleStickChart
+                    android:id="@+id/exchange_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp" />
 
                 <ListView
                     android:id="@+id/exchange_orders_list"

@@ -37,6 +37,11 @@ android {
     }
 }
 
+repositories {
+    // com.github.PhilJay:MPAndroidChart:v3.1.0
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -45,8 +50,11 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     implementation 'com.android.volley:volley:1.1.1'
 
+    // Charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
     // AndroidX
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
     implementation 'com.google.android.material:material:1.1.0-alpha03'
 
     // Open issue: Cannot compile with AndroidX and Instant Run
