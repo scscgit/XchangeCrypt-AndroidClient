@@ -490,7 +490,7 @@ public class ContentRefresher {
         Log.d(TAG, "loadBalances called");
         List<WalletDetails> walletDetailsAccounts;
         try {
-            walletDetailsAccounts = tradingApiHelper.accountBalance();
+            walletDetailsAccounts = tradingApiHelper.accountBalance(getContentProvider().getUser());
         } catch (TradingException e) {
             if (handleAuthenticationExpiration(e)) {
                 return;
@@ -516,14 +516,16 @@ public class ContentRefresher {
             if (continueOffline) {
                 return true;
             }
-            DialogHelper.confirmationDialog(
-                context,
-                "Overenie používateľa vypršalo",
-                "Je potrebné prihlásiť sa znovu",
-                () -> switchFragment(FRAGMENT_LOGIN),
-                () -> continueOffline = true,
-                "Prihlásiť sa",
-                "Pokračovať offline"
+            context.runOnUiThread(() ->
+                DialogHelper.confirmationDialog(
+                    context,
+                    "Overenie používateľa vypršalo",
+                    "Je potrebné prihlásiť sa znovu",
+                    () -> switchFragment(FRAGMENT_LOGIN),
+                    () -> continueOffline = true,
+                    "Prihlásiť sa",
+                    "Pokračovať offline"
+                )
             );
             return true;
         }
@@ -570,6 +572,32 @@ public class ContentRefresher {
                 } catch (TradingException e) {
                     e.printStackTrace();
                     DialogHelper.alertDialog(context, "Chyba", "Pokus o odstránenie ponuky skončil s chybou: " + e.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                startRefresher();
+                context.hideProgressDialog();
+            }
+        }.execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public void generateWallet(final String coinSymbol) {
+        Log.d(TAG, "generateWallet called");
+        // We pause the refresher so that it doesn't display a conflicting progress dialog
+        pauseRefresher();
+        context.showProgressDialog("Generujem peňaženku");
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    tradingApiHelper.generateWallet(coinSymbol);
+                } catch (TradingException e) {
+                    e.printStackTrace();
+                    DialogHelper.alertDialog(context, "Chyba", "Pokus o generovanie peňaženky skončil s chybou: " + e.getMessage());
                 }
                 return null;
             }

@@ -35,7 +35,7 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
 
     protected abstract void setViewContents();
 
-    protected MainActivity getMainActivity() {
+    public MainActivity getMainActivity() {
         return (MainActivity) context;
     }
 

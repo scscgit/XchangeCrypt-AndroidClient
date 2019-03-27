@@ -100,7 +100,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
         }
       }
       throw ex;
@@ -170,18 +170,23 @@ public class UserBridgeApi {
   /**
    * Receives details of a single specific wallet of the authorized user.
    *
-   * @param accountId The account identifier. A unique symbol identification of a coin
+   * @param accountId  The account identifier.
+   * @param coinSymbol A unique symbol identification of a coin.
    * @return WalletDetails
    */
-  public WalletDetails wallet(String accountId) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public WalletDetails wallet(String accountId, String coinSymbol) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
     Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
       throw new ApiException(400, "Missing the required parameter 'accountId' when calling wallet");
     }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      throw new ApiException(400, "Missing the required parameter 'coinSymbol' when calling wallet");
+    }
 
     // create path and map variables
-    String path = "/accounts/{accountId}/wallet".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -219,7 +224,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
         }
       }
       throw ex;
@@ -231,20 +236,25 @@ public class UserBridgeApi {
   /**
    * Receives details of a single specific wallet of the authorized user.
    *
-   * @param accountId The account identifier. A unique symbol identification of a coin
+   * @param accountId  The account identifier.
+   * @param coinSymbol A unique symbol identification of a coin.
    */
-  public void wallet(String accountId, final Response.Listener<WalletDetails> responseListener, final Response.ErrorListener errorListener) {
+  public void wallet(String accountId, String coinSymbol, final Response.Listener<WalletDetails> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
       errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling wallet",
         new ApiException(400, "Missing the required parameter 'accountId' when calling wallet")));
-      return;
+    }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'coinSymbol' when calling wallet",
+        new ApiException(400, "Missing the required parameter 'coinSymbol' when calling wallet")));
     }
 
     // create path and map variables
-    String path = "/accounts/{accountId}/wallet".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -297,28 +307,169 @@ public class UserBridgeApi {
   /**
    * Requests a coin withdrawal from a specific wallet of the authorized user.
    *
-   * @param accountId          The account identifier. A unique symbol identification of a coin
+   * @param accountId  The account identifier.
+   * @param coinSymbol A unique symbol identification of a coin.
+   * @return String
+   */
+  public String walletGenerate(String accountId, String coinSymbol) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+    Object postBody = null;
+    // verify the required parameter 'accountId' is set
+    if (accountId == null) {
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling walletGenerate");
+    }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      throw new ApiException(400, "Missing the required parameter 'coinSymbol' when calling walletGenerate");
+    }
+
+    // create path and map variables
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}/generate".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
+
+    // query params
+    List<Pair> queryParams = new ArrayList<Pair>();
+    // header params
+    Map<String, String> headerParams = new HashMap<String, String>();
+    // form params
+    Map<String, String> formParams = new HashMap<String, String>();
+    String[] contentTypes = {
+    };
+    String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+    if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+    } else {
+      // normal form params
+    }
+
+    String[] authNames = new String[]{"Bearer"};
+
+    try {
+      String localVarResponse = apiInvoker.invokeAPI(basePath, path, "PUT", queryParams, postBody, headerParams, formParams, contentType, authNames);
+      if (localVarResponse != null) {
+        return (String) ApiInvoker.deserialize(localVarResponse, "", String.class);
+      } else {
+        return null;
+      }
+    } catch (ApiException ex) {
+      throw ex;
+    } catch (InterruptedException ex) {
+      throw ex;
+    } catch (ExecutionException ex) {
+      if (ex.getCause() instanceof VolleyError) {
+        VolleyError volleyError = (VolleyError) ex.getCause();
+        if (volleyError.networkResponse != null) {
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+        }
+      }
+      throw ex;
+    } catch (TimeoutException ex) {
+      throw ex;
+    }
+  }
+
+  /**
+   * Requests a coin withdrawal from a specific wallet of the authorized user.
+   *
+   * @param accountId The account identifier.   * @param coinSymbol A unique symbol identification of a coin.
+   */
+  public void walletGenerate(String accountId, String coinSymbol, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+    Object postBody = null;
+
+    // verify the required parameter 'accountId' is set
+    if (accountId == null) {
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling walletGenerate",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling walletGenerate")));
+    }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'coinSymbol' when calling walletGenerate",
+        new ApiException(400, "Missing the required parameter 'coinSymbol' when calling walletGenerate")));
+    }
+
+    // create path and map variables
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}/generate".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
+
+    // query params
+    List<Pair> queryParams = new ArrayList<Pair>();
+    // header params
+    Map<String, String> headerParams = new HashMap<String, String>();
+    // form params
+    Map<String, String> formParams = new HashMap<String, String>();
+
+
+    String[] contentTypes = {
+
+    };
+    String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+    if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+
+
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+    } else {
+      // normal form params
+    }
+
+    String[] authNames = new String[]{"Bearer"};
+
+    try {
+      apiInvoker.invokeAPI(basePath, path, "PUT", queryParams, postBody, headerParams, formParams, contentType, authNames,
+        new Response.Listener<String>() {
+          @Override
+          public void onResponse(String localVarResponse) {
+            try {
+              responseListener.onResponse((String) ApiInvoker.deserialize(localVarResponse, "", String.class));
+            } catch (ApiException exception) {
+              errorListener.onErrorResponse(new VolleyError(exception));
+            }
+          }
+        }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            errorListener.onErrorResponse(error);
+          }
+        });
+    } catch (ApiException ex) {
+      errorListener.onErrorResponse(new VolleyError(ex));
+    }
+  }
+
+  /**
+   * Requests a coin withdrawal from a specific wallet of the authorized user.
+   *
+   * @param accountId          The account identifier.
+   * @param coinSymbol         A unique symbol identification of a coin.
    * @param recipientPublicKey Recipient address of a wallet for coins to be sent to
    * @param withdrawalAmount   Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
    * @return map Map<String, String>
    */
-  public Map<String, String> wallet_1(String accountId, String recipientPublicKey, Double withdrawalAmount) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public Map<String, String> walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
     Object postBody = withdrawalAmount;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      throw new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1");
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling walletWithdraw");
+    }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      throw new ApiException(400, "Missing the required parameter 'coinSymbol' when calling walletWithdraw");
     }
     // verify the required parameter 'recipientPublicKey' is set
     if (recipientPublicKey == null) {
-      throw new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1");
+      throw new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling walletWithdraw");
     }
     // verify the required parameter 'withdrawalAmount' is set
     if (withdrawalAmount == null) {
-      throw new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1");
+      throw new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling walletWithdraw");
     }
 
     // create path and map variables
-    String path = "/accounts/{accountId}/withdraw".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}/withdraw".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -364,7 +515,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
         }
       }
       throw ex;
@@ -376,32 +527,37 @@ public class UserBridgeApi {
   /**
    * Requests a coin withdrawal from a specific wallet of the authorized user.
    *
-   * @param accountId The account identifier. A unique symbol identification of a coin   * @param recipientPublicKey Recipient address of a wallet for coins to be sent to   * @param withdrawalAmount Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
+   * @param accountId          The account identifier.
+   * @param coinSymbol         A unique symbol identification of a coin.
+   * @param recipientPublicKey Recipient address of a wallet for coins to be sent to
+   * @param withdrawalAmount   Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
    */
-  public void wallet_1(String accountId, String recipientPublicKey, Double withdrawalAmount, final Response.Listener<Map<String, String>> responseListener, final Response.ErrorListener errorListener) {
+  public void walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount, final Response.Listener<Map<String, String>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = withdrawalAmount;
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
-      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'accountId' when calling wallet_1")));
-      return;
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling walletWithdraw",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling walletWithdraw")));
+    }
+    // verify the required parameter 'coinSymbol' is set
+    if (coinSymbol == null) {
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'coinSymbol' when calling walletWithdraw",
+        new ApiException(400, "Missing the required parameter 'coinSymbol' when calling walletWithdraw")));
     }
     // verify the required parameter 'recipientPublicKey' is set
     if (recipientPublicKey == null) {
-      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'recipientPublicKey' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling wallet_1")));
-      return;
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'recipientPublicKey' when calling walletWithdraw",
+        new ApiException(400, "Missing the required parameter 'recipientPublicKey' when calling walletWithdraw")));
     }
     // verify the required parameter 'withdrawalAmount' is set
     if (withdrawalAmount == null) {
-      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'withdrawalAmount' when calling wallet_1",
-        new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling wallet_1")));
-      return;
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'withdrawalAmount' when calling walletWithdraw",
+        new ApiException(400, "Missing the required parameter 'withdrawalAmount' when calling walletWithdraw")));
     }
 
     // create path and map variables
-    String path = "/accounts/{accountId}/withdraw".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
+    String path = "/accounts/{accountId}/wallets/{coinSymbol}/withdraw".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString())).replaceAll("\\{" + "coinSymbol" + "\\}", apiInvoker.escapeString(coinSymbol.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -452,15 +608,20 @@ public class UserBridgeApi {
   }
 
   /**
-   * Receives details of all wallets of the authorized user.
+   * Receives details of all wallets of the authorized user.  &lt;param name&#x3D;\&quot;accountId\&quot;&gt;The account identifier.&lt;/param&gt;
    *
+   * @param accountId
    * @return List<WalletDetails>
    */
-  public List<WalletDetails> wallets() throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<WalletDetails> wallets(String accountId) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
     Object postBody = null;
+    // verify the required parameter 'accountId' is set
+    if (accountId == null) {
+      throw new ApiException(400, "Missing the required parameter 'accountId' when calling wallets");
+    }
 
     // create path and map variables
-    String path = "/wallets";
+    String path = "/accounts/{accountId}/wallets".replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -498,7 +659,7 @@ public class UserBridgeApi {
       if (ex.getCause() instanceof VolleyError) {
         VolleyError volleyError = (VolleyError) ex.getCause();
         if (volleyError.networkResponse != null) {
-          throw new ApiException(volleyError.networkResponse.statusCode, volleyError);
+          throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
         }
       }
       throw ex;
@@ -508,14 +669,21 @@ public class UserBridgeApi {
   }
 
   /**
-   * Receives details of all wallets of the authorized user.
+   * Receives details of all wallets of the authorized user.  &lt;param name&#x3D;\&quot;accountId\&quot;&gt;The account identifier.&lt;/param&gt;
+   *
+   * @param accountId
    */
-  public void wallets(final Response.Listener<List<WalletDetails>> responseListener, final Response.ErrorListener errorListener) {
+  public void wallets(String accountId, final Response.Listener<List<WalletDetails>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
+    // verify the required parameter 'accountId' is set
+    if (accountId == null) {
+      errorListener.onErrorResponse(new VolleyError("Missing the required parameter 'accountId' when calling wallets",
+        new ApiException(400, "Missing the required parameter 'accountId' when calling wallets")));
+    }
 
     // create path and map variables
-    String path = "/wallets".replaceAll("\\{format\\}", "json");
+    String path = "/accounts/{accountId}/wallets".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "accountId" + "\\}", apiInvoker.escapeString(accountId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();

@@ -762,7 +762,7 @@ public class ExchangeFragment extends BaseFragment {
         if (coin == null) {
             balanceText.setText("");
         } else {
-            balanceText.setText(String.format("%.8f", coin.getAmount()) + " " + coin.getSymbolName());
+            balanceText.setText(String.format("%.8f", coin.getAmount()).replaceAll("0+$", "0") + " " + coin.getSymbolName());
         }
     }
 

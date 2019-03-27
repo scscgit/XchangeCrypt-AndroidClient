@@ -82,7 +82,7 @@ public class WalletFragment extends BaseFragment {
             datetextView.setText("Naposledy aktualizované" + "\n" + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         }
         List<Coin> coinList = getContentProvider().getCoinsBalance();
-        balanceListView.setAdapter(new WalletListViewAdapter(getContext(), coinList));
+        balanceListView.setAdapter(new WalletListViewAdapter(this, coinList));
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);

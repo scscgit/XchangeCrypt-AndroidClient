@@ -112,9 +112,10 @@ Class | Method | HTTP request | Description
 *TradingTerminalIntegrationApi* | [**marksGet**](docs/TradingTerminalIntegrationApi.md#marksGet) | **GET** /trading/marks | 
 *TradingTerminalIntegrationApi* | [**timescaleMarksGet**](docs/TradingTerminalIntegrationApi.md#timescaleMarksGet) | **GET** /trading/timescale_marks | 
 *UserBridgeApi* | [**profile**](docs/UserBridgeApi.md#profile) | **GET** /user/profile | Receives all profile details related to an account of the authorized user.
-*UserBridgeApi* | [**wallet**](docs/UserBridgeApi.md#wallet) | **GET** /user/accounts/{accountId}/wallet | Receives details of a single specific wallet of the authorized user.
-*UserBridgeApi* | [**wallet_0**](docs/UserBridgeApi.md#wallet_0) | **POST** /user/accounts/{accountId}/withdraw | Requests a coin withdrawal from a specific wallet of the authorized user.
-*UserBridgeApi* | [**wallets**](docs/UserBridgeApi.md#wallets) | **GET** /user/wallets | Receives details of all wallets of the authorized user.
+*UserBridgeApi* | [**wallet**](docs/UserBridgeApi.md#wallet) | **GET** /user/accounts/{accountId}/wallets/{coinSymbol} | Receives details of a single specific wallet of the authorized user.
+*UserBridgeApi* | [**walletGenerate**](docs/UserBridgeApi.md#walletGenerate) | **PUT** /user/accounts/{accountId}/wallets/{coinSymbol}/generate | Requests a coin withdrawal from a specific wallet of the authorized user.
+*UserBridgeApi* | [**walletWithdraw**](docs/UserBridgeApi.md#walletWithdraw) | **POST** /user/accounts/{accountId}/wallets/{coinSymbol}/withdraw | Requests a coin withdrawal from a specific wallet of the authorized user.
+*UserBridgeApi* | [**wallets**](docs/UserBridgeApi.md#wallets) | **GET** /user/accounts/{accountId}/wallets | Receives details of all wallets of the authorized user.  &lt;param name&#x3D;\&quot;accountId\&quot;&gt;The account identifier.&lt;/param&gt;
 
 
 ## Documentation for Models

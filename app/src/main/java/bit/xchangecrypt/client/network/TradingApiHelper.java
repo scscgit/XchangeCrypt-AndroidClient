@@ -80,14 +80,14 @@ public class TradingApiHelper {
         }
     }
 
-    public List<WalletDetails> accountBalance() {
+    public List<WalletDetails> accountBalance(final User user) {
         createUserApi();
         List<WalletDetails> accountWalletResponse = null;
         try {
-            accountWalletResponse = userApi.wallets();
+            accountWalletResponse = userApi.wallets(user.getAccountId());
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
-            throw new TradingException("Cannot get user balance data");
+            throw new TradingException("Cannot get user balance data", e);
         }
         if (accountWalletResponse != null) {
             return accountWalletResponse;
@@ -203,6 +203,26 @@ public class TradingApiHelper {
         }
     }
 
+    public List<io.swagger.client.model.Order> accountOrdersHistory(final User user, final int count) {
+        createTradingOrdersApi();
+        InlineResponse2004 response = null;
+        try {
+            response = tradingOrdersApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count).doubleValue());
+        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+            e.printStackTrace();
+            throw new TradingException("Cannot get trading order history for account " + user.getAccountId(), e);
+        }
+        if (response != null) {
+            if (response.getS() == InlineResponse2004.SEnum.ok) {
+                return response.getD();
+            } else {
+                throw new TradingException("return " + response.getErrmsg());
+            }
+        } else {
+            throw new TradingException("execution");
+        }
+    }
+
     public void sendTradingOffer(final Order offer) {
         createTradingOrdersApi();
         BigDecimal limitPrice = null;
@@ -283,23 +303,20 @@ public class TradingApiHelper {
         }
     }
 
-    public List<io.swagger.client.model.Order> accountOrdersHistory(final User user, final int count) {
-        createTradingOrdersApi();
-        InlineResponse2004 response = null;
+    public void generateWallet(final String coinSymbol) {
+        createUserApi();
+        String errorResponse = null;
         try {
-            response = tradingOrdersApi.accountsAccountIdOrdersHistoryGet(user.getAccountId(), new BigDecimal(count).doubleValue());
+            errorResponse = userApi.walletGenerate(
+                mainActivity.getContentProvider().getUser().getAccountId(),
+                coinSymbol
+            );
         } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
             e.printStackTrace();
-            throw new TradingException("Cannot get trading order history for account " + user.getAccountId(), e);
+            throw new TradingException("Cannot generate wallet", e);
         }
-        if (response != null) {
-            if (response.getS() == InlineResponse2004.SEnum.ok) {
-                return response.getD();
-            } else {
-                throw new TradingException("return " + response.getErrmsg());
-            }
-        } else {
-            throw new TradingException("execution");
+        if (errorResponse != null) {
+            throw new TradingException("return " + errorResponse);
         }
     }
 
