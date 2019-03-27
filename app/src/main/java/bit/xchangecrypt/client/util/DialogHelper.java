@@ -9,18 +9,27 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 public class DialogHelper {
     public static void confirmationDialog(final Context context, String title, String message, final Runnable action) {
+        confirmationDialog(context, title, message, action, null, null, null);
+    }
+
+    public static void confirmationDialog(final Context context, String title, String message, final Runnable yesAction, final Runnable noAction, CharSequence yesButton, CharSequence noButton) {
         new AlertDialog.Builder(context)
             .setTitle(title)
             .setMessage(message)
             .setIcon(android.R.drawable.ic_dialog_dialer)
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            .setPositiveButton(yesButton == null ? context.getString(android.R.string.yes) : yesButton, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     if (whichButton == BUTTON_POSITIVE) {
-                        action.run();
+                        yesAction.run();
                     }
                 }
             })
-            .setNegativeButton(android.R.string.no, null)
+            .setNegativeButton(noButton == null ? context.getString(android.R.string.no) : noButton, noAction == null ? null : new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    noAction.run();
+                }
+            })
             .show();
     }
 

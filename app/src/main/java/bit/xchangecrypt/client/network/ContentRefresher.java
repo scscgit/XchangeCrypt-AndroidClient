@@ -1,5 +1,6 @@
 package bit.xchangecrypt.client.network;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class ContentRefresher {
     private int accountOrdersHistoryCount = 30;
     private int accountExecutionsCount = 30;
     private ScheduledFuture<?> periodicTask;
+    private boolean continueOffline;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -77,6 +79,7 @@ public class ContentRefresher {
     }
 
     public void setUser(User user) {
+        continueOffline = false;
         loaded = false;
         loaded = getContentProvider().setUserAndLoadCache(user);
         if (switchFragmentTarget == null || switchFragmentTarget == FRAGMENT_LOGIN) {
@@ -130,8 +133,8 @@ public class ContentRefresher {
                                 this::loadMarketDepth,
                                 this::loadAccountOrders,
                                 this::loadAccountOrdersHistory,
-                                this::loadBalances,
                                 this::loadAccountExecutions,
+                                this::loadBalances,
                             };
                         } else {
                             loaders = new Runnable[]{
@@ -143,8 +146,8 @@ public class ContentRefresher {
                     case FRAGMENT_WALLET:
                         if (getContentProvider().getUser() != null) {
                             loaders = new Runnable[]{
-                                this::loadBalances,
                                 this::loadAccountExecutions,
+                                this::loadBalances,
                             };
                         } else {
                             loaders = new Runnable[]{
@@ -267,28 +270,6 @@ public class ContentRefresher {
         }
     }
 
-    private void loadBalances() {
-        Log.d(TAG, "loadBalances called");
-        List<WalletDetails> walletDetailsAccounts;
-        try {
-            walletDetailsAccounts = tradingApiHelper.accountBalance();
-        } catch (TradingException e) {
-            context.runOnUiThread(() -> {
-                Toast.makeText(context, "Chyba pri čítani zostatkov.", Toast.LENGTH_SHORT).show();
-            });
-            throw new TradingException("Loading Balance received error: " + e.getMessage());
-        }
-        List<Coin> coins = new ArrayList<>();
-        for (WalletDetails walletDetails : walletDetailsAccounts) {
-            coins.add(new Coin(
-                walletDetails.getCoinSymbol(),
-                walletDetails.getWalletPublicKey(),
-                walletDetails.getBalance()
-            ));
-        }
-        getContentProvider().setCoinsBalance(coins);
-    }
-
     private void loadInstruments() {
         Log.d(TAG, "loadInstruments called");
         List<Instrument> instruments;
@@ -353,7 +334,19 @@ public class ContentRefresher {
     private void loadAccountOrders() {
         Log.d(TAG, "loadAccountOrders called");
         List<Order> offers = new ArrayList<>();
-        for (io.swagger.client.model.Order order : tradingApiHelper.accountOrders(getContentProvider().getUser())) {
+        List<io.swagger.client.model.Order> ordersResponse;
+        try {
+            ordersResponse = tradingApiHelper.accountOrders(getContentProvider().getUser());
+        } catch (TradingException e) {
+            if (handleAuthenticationExpiration(e)) {
+                return;
+            }
+            context.runOnUiThread(() -> {
+                Toast.makeText(context, "Chyba pri ziskavaní vlastných ponúk.", Toast.LENGTH_SHORT).show();
+            });
+            throw new TradingException("Account Orders received error: " + e.getMessage());
+        }
+        for (io.swagger.client.model.Order order : ordersResponse) {
             double price = 0;
             if (order.getType() == io.swagger.client.model.Order.TypeEnum.market) {
                 // continue;
@@ -394,10 +387,13 @@ public class ContentRefresher {
         try {
             orders = tradingApiHelper.accountOrdersHistory(getContentProvider().getUser(), accountOrdersHistoryCount);
         } catch (TradingException e) {
+            if (handleAuthenticationExpiration(e)) {
+                return;
+            }
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní histórie ponúk.", Toast.LENGTH_SHORT).show();
             });
-            throw new TradingException("Account Order History received error: " + e.getMessage());
+            throw new TradingException("Account Orders History received error: " + e.getMessage());
         }
         List<Order> orderHistory = new ArrayList<>();
         for (io.swagger.client.model.Order orderResponse : orders) {
@@ -421,10 +417,13 @@ public class ContentRefresher {
         try {
             executions = tradingApiHelper.accountExecutions(getContentProvider().getUser(), pair, accountExecutionsCount);
         } catch (TradingException e) {
+            if (handleAuthenticationExpiration(e)) {
+                return;
+            }
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní histórie transakcií.", Toast.LENGTH_SHORT).show();
             });
-            throw new TradingException("Loading Executions received error: " + e.getMessage());
+            throw new TradingException("Account Executions received error: " + e.getMessage());
         }
         List<MyTransaction> transactions = new ArrayList<>();
         if (executions != null) {
@@ -442,6 +441,51 @@ public class ContentRefresher {
         getContentProvider().setAccountTransactionHistory(pair, transactions);
     }
 
+    private void loadBalances() {
+        Log.d(TAG, "loadBalances called");
+        List<WalletDetails> walletDetailsAccounts;
+        try {
+            walletDetailsAccounts = tradingApiHelper.accountBalance();
+        } catch (TradingException e) {
+            if (handleAuthenticationExpiration(e)) {
+                return;
+            }
+            context.runOnUiThread(() -> {
+                Toast.makeText(context, "Chyba pri čítani zostatkov mien.", Toast.LENGTH_SHORT).show();
+            });
+            throw new TradingException("Loading Balance received error: " + e.getMessage());
+        }
+        List<Coin> coins = new ArrayList<>();
+        for (WalletDetails walletDetails : walletDetailsAccounts) {
+            coins.add(new Coin(
+                walletDetails.getCoinSymbol(),
+                walletDetails.getWalletPublicKey(),
+                walletDetails.getBalance()
+            ));
+        }
+        getContentProvider().setCoinsBalance(coins);
+    }
+
+    private boolean handleAuthenticationExpiration(TradingException e) {
+        if ("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getCause().getMessage())) {
+            if (continueOffline) {
+                return true;
+            }
+            DialogHelper.confirmationDialog(
+                context,
+                "Overenie používateľa vypršalo",
+                "Je potrebné prihlásiť sa znovu",
+                () -> switchFragment(FRAGMENT_LOGIN),
+                () -> continueOffline = true,
+                "Prihlásiť sa",
+                "Pokračovať offline"
+            );
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressLint("StaticFieldLeak")
     public void sendTradingOffer(final Order offer) {
         Log.d(TAG, "sendTradingOffer called");
         // We pause the refresher so that it doesn't display a conflicting progress dialog
@@ -467,6 +511,7 @@ public class ContentRefresher {
         }.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void deleteTradingOffer(final Order offer) {
         Log.d(TAG, "deleteTradingOffer called");
         // We pause the refresher so that it doesn't display a conflicting progress dialog

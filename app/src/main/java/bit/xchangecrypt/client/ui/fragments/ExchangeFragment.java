@@ -357,11 +357,15 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
-                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-                    double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
-                    double sum = amount * price + fee;
-                    sumEdit.setText(String.format("%.8f", sum));
+                    try {
+                        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+                        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+                        double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
+                        double sum = amount * price + fee;
+                        sumEdit.setText(String.format("%.8f", sum));
+                    } catch (NumberFormatException e) {
+                        sumEdit.setText("Chybná hodnota");
+                    }
                 }
             }
 
@@ -378,11 +382,15 @@ public class ExchangeFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
-                    double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-                    double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
-                    double sum = amount * price + fee;
-                    sumEdit.setText(String.format("%.8f", sum));
+                    try {
+                        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+                        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+                        double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
+                        double sum = amount * price + fee;
+                        sumEdit.setText(String.format("%.8f", sum));
+                    } catch (NumberFormatException e) {
+                        sumEdit.setText("Chybná hodnota");
+                    }
                 }
             }
 
@@ -516,8 +524,10 @@ public class ExchangeFragment extends BaseFragment {
     private void sendMarketOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+        Double amount = parseAmountEdit();
+        if (amount == null) {
+            return;
+        }
         Order order = new Order(null, null,
             pair[0],
             amount,
@@ -531,7 +541,11 @@ public class ExchangeFragment extends BaseFragment {
     private void sendLimitOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+        Double price = parsePriceEdit();
+        if (price == null) {
+            return;
+        }
+
         double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
         Double stopLoss = null;
         if (stopCheckbox.isChecked()) {
@@ -568,8 +582,11 @@ public class ExchangeFragment extends BaseFragment {
     private void sendStopOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+        Double price = parsePriceEdit();
+        Double amount = parseAmountEdit();
+        if (price == null || amount == null) {
+            return;
+        }
 
         Double stopLoss = null;
         if (stopCheckbox.isChecked()) {
@@ -601,6 +618,25 @@ public class ExchangeFragment extends BaseFragment {
             OrderType.STOP
         );
         getMainActivity().sendOrder(order);
+    }
+
+
+    private Double parseAmountEdit() {
+        try {
+            return Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+        } catch (NumberFormatException e) {
+            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu množstva");
+            return null;
+        }
+    }
+
+    private Double parsePriceEdit() {
+        try {
+            return Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+        } catch (NumberFormatException e) {
+            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu ceny");
+            return null;
+        }
     }
 
     public void switchToBuyMode(boolean forceResetPrice) {
