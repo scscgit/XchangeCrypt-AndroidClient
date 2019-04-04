@@ -1,6 +1,7 @@
 package bit.xchangecrypt.client.network;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class ContentRefresher {
     private int accountExecutionsCount = 30;
     private ScheduledFuture<?> periodicTask;
     private boolean continueOffline;
+    private AlertDialog authenticationExpirationDialog;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -516,8 +518,12 @@ public class ContentRefresher {
             if (continueOffline) {
                 return true;
             }
-            context.runOnUiThread(() ->
-                DialogHelper.confirmationDialog(
+            context.runOnUiThread(() -> {
+                if (ContentRefresher.this.authenticationExpirationDialog != null
+                    && ContentRefresher.this.authenticationExpirationDialog.isShowing()) {
+                    return;
+                }
+                ContentRefresher.this.authenticationExpirationDialog = DialogHelper.confirmationDialog(
                     context,
                     "Overenie používateľa vypršalo",
                     "Je potrebné prihlásiť sa znovu",
@@ -525,8 +531,8 @@ public class ContentRefresher {
                     () -> continueOffline = true,
                     "Prihlásiť sa",
                     "Pokračovať offline"
-                )
-            );
+                );
+            });
             return true;
         }
         return false;

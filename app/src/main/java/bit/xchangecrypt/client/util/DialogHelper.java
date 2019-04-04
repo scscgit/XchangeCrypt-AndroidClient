@@ -12,8 +12,8 @@ public class DialogHelper {
         confirmationDialog(context, title, message, action, null, null, null);
     }
 
-    public static void confirmationDialog(final Context context, String title, String message, final Runnable yesAction, final Runnable noAction, CharSequence yesButton, CharSequence noButton) {
-        new AlertDialog.Builder(context)
+    public static AlertDialog confirmationDialog(final Context context, String title, String message, final Runnable yesAction, final Runnable noAction, CharSequence yesButton, CharSequence noButton) {
+        return new AlertDialog.Builder(context)
             .setTitle(title)
             .setMessage(message)
             .setIcon(android.R.drawable.ic_dialog_dialer)

@@ -315,7 +315,7 @@ public class TradingApiHelper {
             e.printStackTrace();
             throw new TradingException("Cannot generate wallet", e);
         }
-        if (errorResponse != null) {
+        if (errorResponse != null && !"".equals(errorResponse)) {
             throw new TradingException("return " + errorResponse);
         }
     }
