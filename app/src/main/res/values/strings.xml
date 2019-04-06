@@ -9,5 +9,11 @@
     <!-- Drawer -->
     <string name="drawer_open">Otvoriť menu</string>
     <string name="drawer_close">Zatvoriť menu</string>
-    <string name="order_delete">Naozaj chcete odstrániť vašu ponuku?</string>
+
+    <!-- Confirmations -->
+    <string name="order_delete_buy">Chcete odstrániť vašu ponuku na nákup %s %s?</string>
+    <string name="order_delete_sell">Chcete odstrániť vašu ponuku na predaj %s %s?</string>
+    <string name="limit_buy">Prajete si nakúpiť %s %s pri cene %s a zaplatit tak %s %s?</string>
+    <string name="limit_sell">Prajete si predať %s %s pri cene %s a získať tak %s %s?</string>
+
 </resources>

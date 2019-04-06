@@ -404,8 +404,7 @@
                     android:id="@+id/exchange_button_limit"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/item_background_gray"
-                    android:enabled="false"
+                    android:background="@drawable/item_background_orange"
                     android:gravity="center"
                     android:text="Limit" />
 

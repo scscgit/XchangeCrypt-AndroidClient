@@ -73,7 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void showDialogWithAction(int message, final DialogOkClickListener listener, boolean showNegativeButton) {
+    public void showDialogWithAction(String message, final DialogOkClickListener listener, boolean showNegativeButton) {
         if (alertDialog != null && alertDialog.isShowing()) {
             return;
         }

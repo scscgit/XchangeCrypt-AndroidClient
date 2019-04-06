@@ -68,7 +68,7 @@ public class WalletFragment extends BaseFragment {
         balanceListView.setClickable(false);
         balanceListView.setScrollContainer(false);
 
-        adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountTransactionHistory(getContentProvider().getCurrentCurrencyPair()), getContext());
+        adapter = new WalletRecyclerViewAdapter(getContentProvider().getAccountTransactionHistory(getContentProvider().getCurrentCurrencyPair()), this);
     }
 
     private boolean loading = true;

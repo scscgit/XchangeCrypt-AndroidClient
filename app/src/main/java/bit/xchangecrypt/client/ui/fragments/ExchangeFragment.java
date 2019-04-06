@@ -83,11 +83,11 @@ public class ExchangeFragment extends BaseFragment {
     private Button buttonLimitOrder;
     private Button buttonStopOrder;
 
-    private CheckBox stopCheckbox;
-    private CheckBox profitCheckbox;
+    private CheckBox stopLossCheckbox;
+    private CheckBox takeProfitCheckbox;
 
-    private EditText stopEditText;
-    private EditText profitEditText;
+    private EditText stopLossEditText;
+    private EditText takeProfitEditText;
 
     private LinearLayout firstFrameLinearLayout;
     private LinearLayout secondFrameLinearLayout;
@@ -112,6 +112,7 @@ public class ExchangeFragment extends BaseFragment {
     private ViewGroup header;
     private boolean myOrders = false;
     private boolean displayGraph = false;
+    private List<Order> marketDepthForPairAndSide;
 
     private enum ExchangeFragmentState {
         DEFAULT, ADVANCED_ORDER_PLACEMENT, EXPANDED_ORDERS_LIST
@@ -204,11 +205,11 @@ public class ExchangeFragment extends BaseFragment {
         buttonLimitOrder = rootView.findViewById(R.id.exchange_button_limit);
         buttonStopOrder = rootView.findViewById(R.id.exchange_button_stop);
 
-        stopCheckbox = rootView.findViewById(R.id.exchange_stoploss_checkbox);
-        profitCheckbox = rootView.findViewById(R.id.exchange_takeprofit_checkbox);
+        stopLossCheckbox = rootView.findViewById(R.id.exchange_stoploss_checkbox);
+        takeProfitCheckbox = rootView.findViewById(R.id.exchange_takeprofit_checkbox);
 
-        stopEditText = rootView.findViewById(R.id.exchange_stoploss_edit);
-        profitEditText = rootView.findViewById(R.id.exchange_takeprofit_edit);
+        stopLossEditText = rootView.findViewById(R.id.exchange_stoploss_edit);
+        takeProfitEditText = rootView.findViewById(R.id.exchange_takeprofit_edit);
     }
 
     @Override
@@ -240,16 +241,27 @@ public class ExchangeFragment extends BaseFragment {
                     // Clicked on a header, ignored
                     return;
                 }
+                // Crashed header causes a need to offset all rows by negative one
+                int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
                 if (myOrders) {
-                    DialogOkClickListener dialogOkClickListener = new DialogOkClickListener() {
-                        @Override
-                        public void onPositiveButtonClicked(Context context) {
-                            // Crashed header causes a need to offset all rows by negative one
-                            int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
-                            getMainActivity().deleteOrder(currentUserOrders.get(position + offset));
-                        }
-                    };
-                    getMainActivity().showDialogWithAction(R.string.order_delete, dialogOkClickListener, true);
+                    Order deleteOrder = currentUserOrders.get(position + offset);
+                    getMainActivity().showDialogWithAction(
+                        getString(
+                            deleteOrder.getSide() == OrderSide.BUY ? R.string.order_delete_buy : R.string.order_delete_sell,
+                            formatNumber(deleteOrder.getBaseCurrencyAmount()),
+                            deleteOrder.getBaseCurrency()
+                        ),
+                        new DialogOkClickListener() {
+                            @Override
+                            public void onPositiveButtonClicked(Context context) {
+                                getMainActivity().deleteOrder(deleteOrder);
+                            }
+                        },
+                        true);
+                } else {
+                    priceEdit.setText(
+                        formatNumber(marketDepthForPairAndSide.get(position + offset).getLimitPrice())
+                    );
                 }
             }
         });
@@ -345,6 +357,16 @@ public class ExchangeFragment extends BaseFragment {
             }
         });
 
+        resolutionMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resolutionMonth.setBackgroundColor(getResources().getColor(R.color.blue));
+                getContentProvider().setGraphResolution("1M");
+                getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
+                // Wait for refresher
+            }
+        });
+
         resolutionDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -360,16 +382,6 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 resolutionHour.setBackgroundColor(getResources().getColor(R.color.blue));
                 getContentProvider().setGraphResolution("1H");
-                getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
-                // Wait for refresher
-            }
-        });
-
-        resolutionMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resolutionMonth.setBackgroundColor(getResources().getColor(R.color.blue));
-                getContentProvider().setGraphResolution("1M");
                 getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
                 // Wait for refresher
             }
@@ -419,15 +431,15 @@ public class ExchangeFragment extends BaseFragment {
                     this.alreadyChanged = true;
                     // Unlocks the price for edit until a user restarts the Fragment
                     priceEdit.setTextColor(feeEdit.getCurrentTextColor());
-                    stopCheckbox.setEnabled(true);
-                    profitCheckbox.setEnabled(true);
+                    stopLossCheckbox.setEnabled(true);
+                    takeProfitCheckbox.setEnabled(true);
                     buttonLimitOrder.setEnabled(true);
                     buttonLimitOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     buttonStopOrder.setEnabled(true);
                     buttonStopOrder.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_background_orange));
                     // Initializes the stop and profit targets @ current price for easier edit
-                    profitEditText.setText(priceEdit.getText().toString());
-                    stopEditText.setText(priceEdit.getText().toString());
+                    takeProfitEditText.setText(priceEdit.getText().toString());
+                    stopLossEditText.setText(priceEdit.getText().toString());
                 }
             }
 
@@ -435,11 +447,11 @@ public class ExchangeFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
                     try {
-                        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
-                        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-                        double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
+                        double amount = parseValue(amountEdit);
+                        double price = parseValue(priceEdit);
+                        double fee = parseValue(feeEdit);
                         double sum = amount * price + fee;
-                        sumEdit.setText(String.format("%.8f", sum));
+                        sumEdit.setText(formatNumber(sum));
                     } catch (NumberFormatException e) {
                         sumEdit.setText("Chybná hodnota");
                     }
@@ -460,11 +472,11 @@ public class ExchangeFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
                     try {
-                        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
-                        double price = Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
-                        double fee = Double.parseDouble(feeEdit.getText().toString().replace(",", "."));
+                        double amount = parseValue(amountEdit);
+                        double price = parseValue(priceEdit);
+                        double fee = parseValue(feeEdit);
                         double sum = amount * price + fee;
-                        sumEdit.setText(String.format("%.8f", sum));
+                        sumEdit.setText(formatNumber(sum));
                     } catch (NumberFormatException e) {
                         sumEdit.setText("Chybná hodnota");
                     }
@@ -476,24 +488,24 @@ public class ExchangeFragment extends BaseFragment {
             }
         });
 
-        stopCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        stopLossCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    stopEditText.setEnabled(true);
+                    stopLossEditText.setEnabled(true);
                 } else {
-                    stopEditText.setEnabled(false);
+                    stopLossEditText.setEnabled(false);
                 }
             }
         });
 
-        profitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        takeProfitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    profitEditText.setEnabled(true);
+                    takeProfitEditText.setEnabled(true);
                 } else {
-                    profitEditText.setEnabled(false);
+                    takeProfitEditText.setEnabled(false);
                 }
             }
         });
@@ -531,10 +543,26 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
                 if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
+                    Double amount = parseAmountSafe();
+                    if (amount == null) {
+                        return;
+                    }
+                    Double price = parsePriceSafe();
+                    if (price == null) {
+                        return;
+                    }
+                    double sum = parseSumSafe();
                     DialogHelper.confirmationDialog(
                         getContext(),
                         "Limit ponuka",
-                        "Potvrďte prosím vytvorenie limit ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
+                        getString(
+                            orderSide == OrderSide.BUY ? R.string.limit_buy : R.string.limit_sell,
+                            formatNumber(amount),
+                            getContentProvider().getCurrentCurrencyPair().split("_")[0],
+                            formatNumber(price),
+                            formatNumber(sum),
+                            getContentProvider().getCurrentCurrencyPair().split("_")[1]
+                        ),
                         new Runnable() {
                             @Override
                             public void run() {
@@ -601,7 +629,7 @@ public class ExchangeFragment extends BaseFragment {
     private void sendMarketOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        Double amount = parseAmountEdit();
+        Double amount = parseAmountSafe();
         if (amount == null) {
             return;
         }
@@ -618,25 +646,33 @@ public class ExchangeFragment extends BaseFragment {
     private void sendLimitOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        Double price = parsePriceEdit();
+        Double price = parsePriceSafe();
         if (price == null) {
             return;
         }
-
-        double amount = Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+        Double amount = parseAmountSafe();
+        if (amount == null) {
+            return;
+        }
         Double stopLoss = null;
-        if (stopCheckbox.isChecked()) {
-            if (stopEditText.getText().toString().trim().length() > 0) {
-                stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+        if (stopLossCheckbox.isChecked()) {
+            if (stopLossEditText.getText().toString().trim().length() > 0) {
+                stopLoss = parseStopLossSafe();
+                if (stopLoss == null) {
+                    return;
+                }
             } else {
                 Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
         Double takeProfit = null;
-        if (profitCheckbox.isChecked()) {
-            if (profitEditText.getText().toString().trim().length() > 0) {
-                takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+        if (takeProfitCheckbox.isChecked()) {
+            if (takeProfitEditText.getText().toString().trim().length() > 0) {
+                takeProfit = parseTakeProfitSafe();
+                if (takeProfit == null) {
+                    return;
+                }
             } else {
                 Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
                 return;
@@ -648,7 +684,7 @@ public class ExchangeFragment extends BaseFragment {
             stopLoss,
             takeProfit,
             pair[0],
-            Double.parseDouble(amountEdit.getText().toString().replace(",", ".")),
+            amount,
             pair[1],
             orderSide,
             OrderType.LIMIT
@@ -659,25 +695,34 @@ public class ExchangeFragment extends BaseFragment {
     private void sendStopOrder() {
         String pairs = getContentProvider().getCurrentCurrencyPair();
         String[] pair = pairs.split("_");
-        Double price = parsePriceEdit();
-        Double amount = parseAmountEdit();
-        if (price == null || amount == null) {
+        Double price = parsePriceSafe();
+        if (price == null) {
+            return;
+        }
+        Double amount = parseAmountSafe();
+        if (amount == null) {
             return;
         }
 
         Double stopLoss = null;
-        if (stopCheckbox.isChecked()) {
-            if (stopEditText.getText().toString().trim().length() > 0) {
-                stopLoss = Double.parseDouble(stopEditText.getText().toString().replace(",", "."));
+        if (stopLossCheckbox.isChecked()) {
+            if (stopLossEditText.getText().toString().trim().length() > 0) {
+                stopLoss = parseStopLossSafe();
+                if (stopLoss == null) {
+                    return;
+                }
             } else {
                 Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
         Double takeProfit = null;
-        if (profitCheckbox.isChecked()) {
-            if (profitEditText.getText().toString().trim().length() > 0) {
-                takeProfit = Double.parseDouble(profitEditText.getText().toString().replace(",", "."));
+        if (takeProfitCheckbox.isChecked()) {
+            if (takeProfitEditText.getText().toString().trim().length() > 0) {
+                takeProfit = parseTakeProfitSafe();
+                if (takeProfit == null) {
+                    return;
+                }
             } else {
                 Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
                 return;
@@ -697,23 +742,59 @@ public class ExchangeFragment extends BaseFragment {
         getMainActivity().sendOrder(order);
     }
 
-
-    private Double parseAmountEdit() {
+    private Double parseAmountSafe() {
         try {
-            return Double.parseDouble(amountEdit.getText().toString().replace(",", "."));
+            return parseValue(amountEdit);
         } catch (NumberFormatException e) {
             DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu množstva");
             return null;
         }
     }
 
-    private Double parsePriceEdit() {
+    private Double parsePriceSafe() {
         try {
-            return Double.parseDouble(priceEdit.getText().toString().replace(",", "."));
+            return parseValue(priceEdit);
         } catch (NumberFormatException e) {
             DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu ceny");
             return null;
         }
+    }
+
+    private Double parseSumSafe() {
+        try {
+            return parseValue(sumEdit);
+        } catch (NumberFormatException e) {
+            // Tell the user where the error occurred
+            if (null == parseAmountSafe()) {
+                return null;
+            }
+            if (null == parsePriceSafe()) {
+                return null;
+            }
+            return null;
+        }
+    }
+
+    private Double parseStopLossSafe() {
+        try {
+            return parseValue(stopLossEditText);
+        } catch (NumberFormatException e) {
+            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu stop loss");
+            return null;
+        }
+    }
+
+    private Double parseTakeProfitSafe() {
+        try {
+            return parseValue(takeProfitEditText);
+        } catch (NumberFormatException e) {
+            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu take profit");
+            return null;
+        }
+    }
+
+    private double parseValue(EditText editText) {
+        return Double.parseDouble(editText.getText().toString().replace(",", "."));
     }
 
     public void switchToBuyMode(boolean forceResetPrice) {
@@ -732,7 +813,7 @@ public class ExchangeFragment extends BaseFragment {
 
         // Only edit the price as long as it's an initialization
         if (forceResetPrice || priceEdit.getText().toString().equals("")) {
-            priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+            priceEdit.setText(formatNumber(getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
         }
     }
 
@@ -752,7 +833,7 @@ public class ExchangeFragment extends BaseFragment {
 
         // Only edit the price as long as it's an initialization
         if (forceResetPrice || priceEdit.getText().toString().equals("")) {
-            priceEdit.setText(String.format("%.8f", getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
+            priceEdit.setText(formatNumber(getContentProvider().getMarketPrice(getContentProvider().getCurrentCurrencyPair(), orderSide)));
         }
     }
 
@@ -762,7 +843,7 @@ public class ExchangeFragment extends BaseFragment {
         if (coin == null) {
             balanceText.setText("");
         } else {
-            balanceText.setText(String.format("%.8f", coin.getAmount()).replaceAll("0+$", "0") + " " + coin.getSymbolName());
+            balanceText.setText(formatNumber(coin.getAmount()) + " " + coin.getSymbolName());
         }
     }
 
@@ -777,7 +858,7 @@ public class ExchangeFragment extends BaseFragment {
         orderListDescriptionText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
-        List<Order> marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
+        marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
         ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
 
         createOrdersHeader(false);

@@ -44,7 +44,7 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
 
         logo.setImageDrawable((CoinHelper.getDrawableForCoin(getContext(), coin.getSymbolName())));
         coinTitle.setText(coin.getSymbolName());
-        coinAmount.setText(String.format("%.8f", coin.getAmount()).replaceAll("0+$", "0") + " " + coin.getSymbolName());
+        coinAmount.setText(walletFragment.formatNumber(coin.getAmount()) + " " + coin.getSymbolName());
         coinPublicKey.setText(coin.getPublicKey());
         coinPublicKey.setOnClickListener(new View.OnClickListener() {
             @Override

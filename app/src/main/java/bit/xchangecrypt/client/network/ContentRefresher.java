@@ -346,7 +346,7 @@ public class ContentRefresher {
             from.add(Calendar.WEEK_OF_YEAR, -1);
             historyBars = tradingApiHelper.historyBars(
                 pair,
-                "1D",
+                getContentProvider().getGraphResolution(),
                 from.getTimeInMillis(),
                 Calendar.getInstance().getTimeInMillis(),
                 null

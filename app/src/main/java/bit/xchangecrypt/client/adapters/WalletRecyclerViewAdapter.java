@@ -1,6 +1,5 @@
 package bit.xchangecrypt.client.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.MyTransaction;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
+import bit.xchangecrypt.client.ui.fragments.WalletFragment;
 import bit.xchangecrypt.client.util.CoinHelper;
 import bit.xchangecrypt.client.util.DateFormatter;
 
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecyclerViewAdapter.MyViewHolder> {
     private List<MyTransaction> transactions;
-    private Context context;
+    private WalletFragment context;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title, price, amount, date;
@@ -37,7 +37,7 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         }
     }
 
-    public WalletRecyclerViewAdapter(@NonNull List<MyTransaction> transactions, Context context) {
+    public WalletRecyclerViewAdapter(@NonNull List<MyTransaction> transactions, WalletFragment context) {
         this.transactions = transactions;
         this.context = context;
     }
@@ -60,13 +60,13 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
         }
         builder.append(transaction.getBaseCurrency()).append("/").append(transaction.getQuoteCurrency());
         holder.title.setText(builder.toString());
-        holder.price.setText(String.format("%.6f", transaction.getPrice()));
-        holder.amount.setText(String.format("%.6f", transaction.getAmount()));
+        holder.price.setText(context.formatNumber(transaction.getPrice()));
+        holder.amount.setText(context.formatNumber(transaction.getAmount()));
         holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         if (transaction.getSide() == OrderSide.BUY) {
-            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context, transaction.getQuoteCurrency()));
+            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context.getContext(), transaction.getQuoteCurrency()));
         } else {
-            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context, transaction.getBaseCurrency()));
+            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context.getContext(), transaction.getBaseCurrency()));
         }
     }
 

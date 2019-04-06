@@ -98,7 +98,7 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
         getMainActivity().showDialogWindow(message);
     }
 
-    public void showDialogWithAction(int message, final DialogOkClickListener listener, boolean showNegativeButton) {
+    public void showDialogWithAction(String message, final DialogOkClickListener listener, boolean showNegativeButton) {
         getMainActivity().showDialogWithAction(message, listener, showNegativeButton);
     }
 
@@ -190,5 +190,9 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
 
     public void toggleDrawerButtonArrow() {
         getMainActivity().toggleDrawerButtonArrow();
+    }
+
+    public String formatNumber(double number) {
+        return String.format("%.8f", number).replaceAll("0+$", "0");
     }
 }
