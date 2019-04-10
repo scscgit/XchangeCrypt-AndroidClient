@@ -46,6 +46,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.auth0.android.jwt.DecodeException;
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.microsoft.identity.client.*;
@@ -132,7 +134,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 com.microsoft.identity.client.Logger.getInstance().setExternalLogger(new ILoggerCallback() {
                     @Override
                     public void log(String tag, com.microsoft.identity.client.Logger.LogLevel logLevel, String message, boolean containsPII) {
-                        Log.d(tag, "MSAL_LOG: " + message);
+                        //Log.d(tag, "MSAL_LOG: " + message);
                     }
                 });
             } catch (IllegalStateException e) {
@@ -242,8 +244,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             Log.d(TAG, "Authentication Access Token: " + accessToken);
         }
         getContentRefresher().getApiAuthentication().setApiKeyPrefix("Bearer");
-        getContentRefresher().getApiAuthentication().setApiKey(idToken);
-        callActiveDirectoryToPrepareUser(accessToken);
+        getContentRefresher().getApiAuthentication().setApiKey(accessToken);
+        //callActiveDirectoryToPrepareUser(accessToken);
+        decodeIdTokenToPrepareUser(accessToken);
 
         //TODO: Refactor exchange so that it can start launching even without fake user
 //        getContentProvider().setUserAndLoadCache(new User(
@@ -255,6 +258,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 //
 //        // Start authenticated activity
 //        getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
+    }
+
+    private void decodeIdTokenToPrepareUser(String idToken) {
+        try {
+            JWT jwt = new JWT(idToken);
+            getContentRefresher().setUser(new User(
+                jwt.getClaim("sub").asString(),
+                "",
+                jwt.getClaim("emails").asArray(String.class)[0],
+                jwt.getClaim("given_name").asString()
+            ));
+            Log.d(TAG, "Active Directory successfully configured user");
+        } catch (DecodeException e) {
+            Toast.makeText(MainActivity.this,
+                getString(R.string.login_failed_verification), Toast.LENGTH_LONG
+            ).show();
+            Log.e(TAG, "DecodeException" + e.getClass().getSimpleName() + " during ActiveDirectory user property configuration: " + e.getMessage());
+            activeDirectorySignOutClearCache();
+        }
     }
 
     private void activeDirectoryOnSignInError(MsalException exception) {
@@ -298,8 +320,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 break;
         }
         Log.i(TAG, message);
-        getContentRefresher().switchFragment(FRAGMENT_LOGIN);
         getContentProvider().setUserAndLoadCache(null);
+        getContentRefresher().switchFragment(FRAGMENT_LOGIN);
     }
 
     /**
@@ -330,9 +352,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                     } catch (JSONException e) {
                         hideProgressDialog();
                         Toast.makeText(MainActivity.this,
-                            "Failed to verify your identity, signing off", Toast.LENGTH_LONG
+                            getString(R.string.login_failed_verification), Toast.LENGTH_LONG
                         ).show();
-                        Log.d(TAG, "JSONException during ActiveDirectory user property configuration: " + e.toString());
+                        Log.e(TAG, "JSONException" + e.getClass().getSimpleName() + " during ActiveDirectory user property configuration: " + e.getMessage());
                         activeDirectorySignOutClearCache();
                     }
                 }
@@ -340,7 +362,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError e) {
-                    Log.d(TAG, "VolleyError during ActiveDirectory user property configuration: " + e.toString());
+                    hideProgressDialog();
+                    Toast.makeText(MainActivity.this,
+                        getString(R.string.login_failed_verification), Toast.LENGTH_LONG
+                    ).show();
+                    Log.e(TAG, "VolleyError " + e.getClass().getSimpleName() + " during ActiveDirectory API call: " + e.getMessage());
                     activeDirectorySignOutClearCache();
                 }
             }

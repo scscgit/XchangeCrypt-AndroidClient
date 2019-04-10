@@ -193,6 +193,6 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public String formatNumber(double number) {
-        return String.format("%.8f", number).replaceAll("0+$", "0");
+        return String.format("%.8f", number).replaceAll("0+$", "0").replaceAll("([^.])0$", "$1");
     }
 }

@@ -527,7 +527,11 @@ public class ContentRefresher {
                     context,
                     "Overenie používateľa vypršalo",
                     "Je potrebné prihlásiť sa znovu",
-                    () -> switchFragment(FRAGMENT_LOGIN),
+                    () -> {
+                        // Stop trying again
+                        pauseRefresher();
+                        switchFragment(FRAGMENT_LOGIN);
+                    },
                     () -> continueOffline = true,
                     "Prihlásiť sa",
                     "Pokračovať offline"

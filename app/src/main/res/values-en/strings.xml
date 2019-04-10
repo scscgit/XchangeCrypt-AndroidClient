@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">XchangeCrypt</string>
+    <string name="login_failed_verification">Failed to verify your identity, signing off</string>
+    <string name="ok_btn">OK</string>
+    <string name="positive_btn">Yes</string>
+    <string name="negative_btn">No</string>
+    <string name="drawer_open">Open menu</string>
+    <string name="drawer_close">Close menu</string>
+    <string name="order_delete_buy">Do you want to remove your buy offer of %s %s?</string>
+    <string name="order_delete_sell">Do you want to remove your sell offer of %s %s?</string>
+    <string name="limit_buy">Do you want to buy %s %s at a price of %s and pay %s %s for that?</string>
+    <string name="limit_sell">Do you want to sell %s %s at a price of %s and receive %s %s for that?</string>
+</resources>

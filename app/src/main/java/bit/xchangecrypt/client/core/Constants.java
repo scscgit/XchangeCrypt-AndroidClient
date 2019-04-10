@@ -19,23 +19,25 @@ public interface Constants {
 //    String EDIT_PROFILE_POLICY = "B2C_1_edit_profile";
 
     // Azure AD B2C authority details
-//    String AUTHORITY = "https://login.microsoftonline.com/tfp/%s/%s";
-//    String TENANT = "XchangeCryptTest.onmicrosoft.com";
-//    String SISU_POLICY = "b2c_1_signupsignin";
+    String AUTHORITY = "https://XchangeCryptTest.b2clogin.com/tfp/%s/%s";
+    String TENANT = "XchangeCryptTest.onmicrosoft.com";
+    String SISU_POLICY = "B2C_1_signupsignin";
 //    String EDIT_PROFILE_POLICY = "b2c_1_edit_profile";
 
     // Azure AD B2C app configuration
-//    String CLIENT_ID = "aeb4f22f-00af-4b54-bf7b-5652684a2f03";
-//    String SCOPES = "openid https://XchangeCryptTest.onmicrosoft.com/testapi/user_impersonation";
+    String CLIENT_ID = "aeb4f22f-00af-4b54-bf7b-5652684a2f03";
+    String SCOPES = "openid https://XchangeCryptTest.onmicrosoft.com/testapi/user_impersonation";
+
+    String API_URL = "userinfo API is not supported";
 
     // Azure AD Free authority details
-    String AUTHORITY = "https://login.microsoftonline.com/XchangeCryptTestAD.onmicrosoft.com";
-    String TENANT = "XchangeCryptTestAD.onmicrosoft.com";
-    String SISU_POLICY = "TODO";
+//    String AUTHORITY = "https://login.microsoftonline.com/XchangeCryptTestAD.onmicrosoft.com";
+//    String TENANT = "XchangeCryptTestAD.onmicrosoft.com";
+//    String SISU_POLICY = "TODO";
 
     // Azure AD Free app configuration
-    String CLIENT_ID = "08bba3c7-46db-4d84-99c9-af5c00d617e5";
-    String SCOPES = "User.Read";
+//    String CLIENT_ID = "08bba3c7-46db-4d84-99c9-af5c00d617e5";
+//    String SCOPES = "User.Read";
 
-    String API_URL = "https://graph.microsoft.com/oidc/userinfo";
+//    String API_URL = "https://graph.microsoft.com/oidc/userinfo";
 }

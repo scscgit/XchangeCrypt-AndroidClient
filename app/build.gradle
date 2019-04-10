@@ -50,6 +50,9 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     implementation 'com.android.volley:volley:1.1.1'
 
+    // JWT decoding
+    implementation 'com.auth0.android:jwtdecode:1.2.0'
+
     // Charts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 

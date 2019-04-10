@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">XchangeCrypt</string>
 
+    <!-- Login -->
+    <string name="login_failed_verification">Nepodarilo sa overiť vašu identitu, boli ste odhlásený</string>
+
     <!-- Dialog -->
     <string name="ok_btn">OK</string>
     <string name="positive_btn">Áno</string>
