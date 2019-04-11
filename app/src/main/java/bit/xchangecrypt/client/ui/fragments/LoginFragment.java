@@ -48,6 +48,7 @@ public class LoginFragment extends BaseFragment {
         offlineButton = (Button) rootView.findViewById(R.id.button_offline);
 //        emailEditText = (EditText) rootView.findViewById(R.id.edit_text_email);
 //        passwordEditText = (EditText) rootView.findViewById(R.id.edit_text_password);
+        getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
     @Override

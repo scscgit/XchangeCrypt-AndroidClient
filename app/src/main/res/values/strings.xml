@@ -19,4 +19,8 @@
     <string name="limit_buy">Prajete si nakúpiť %s %s pri cene %s a zaplatit tak %s %s?</string>
     <string name="limit_sell">Prajete si predať %s %s pri cene %s a získať tak %s %s?</string>
 
+    <!-- Other -->
+    <string name="help">Pomoc</string>
+    <string name="wallet_last_updated">Naposledy aktualizované</string>
+
 </resources>

@@ -24,9 +24,12 @@ import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 import bit.xchangecrypt.client.listeners.DialogOkClickListener;
+import bit.xchangecrypt.client.util.ApplicationStorage;
 import bit.xchangecrypt.client.util.CoinHelper;
 import bit.xchangecrypt.client.util.DateFormatter;
 import bit.xchangecrypt.client.util.DialogHelper;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -66,6 +69,7 @@ public class ExchangeFragment extends BaseFragment {
     private EditText sumEdit;
     private TextView sumCoin;
 
+    private View sideSwitch;
     private Button buttonBuy;
     private Button buttonSell;
 
@@ -113,6 +117,7 @@ public class ExchangeFragment extends BaseFragment {
     private boolean myOrders = false;
     private boolean displayGraph = false;
     private List<Order> marketDepthForPairAndSide;
+    private TapTargetSequence tutorialSequence;
 
     private enum ExchangeFragmentState {
         DEFAULT, ADVANCED_ORDER_PLACEMENT, EXPANDED_ORDERS_LIST
@@ -142,6 +147,10 @@ public class ExchangeFragment extends BaseFragment {
         showActionBar();
         setToolbarTitle("Zmenáreň");
         getMainActivity().changeBottomNavigationVisibility(View.VISIBLE);
+        getMainActivity().getHelpButton().setVisibility(View.VISIBLE);
+        getMainActivity().getHelpButton().setOnClickListener(
+            listener -> startTutorial()
+        );
     }
 
     @Override
@@ -184,6 +193,7 @@ public class ExchangeFragment extends BaseFragment {
         secondFrameAdvancedLinearLayout = rootView.findViewById(R.id.exchange_order_advanced);
         coinPairLinearLayout = rootView.findViewById(R.id.linearLayout_coin_pair_select);
 
+        sideSwitch = rootView.findViewById(R.id.exchange_side_switch);
         buttonBuy = rootView.findViewById(R.id.exchange_button_switch_buy);
         buttonSell = rootView.findViewById(R.id.exchange_button_switch_sell);
 
@@ -222,6 +232,54 @@ public class ExchangeFragment extends BaseFragment {
             this.orderSide = OrderSide.BUY;
         }
         setViewContents();
+
+        if (!ApplicationStorage.getInstance(getContext()).loadBoolean("TutorialFinished")) {
+            startTutorial();
+        }
+    }
+
+    private void startTutorial() {
+        if (tutorialSequence != null) {
+            // Previous run is still active, e.g. after activity pause
+            return;
+        }
+        tutorialSequence = new TapTargetSequence(getMainActivity())
+            .targets(
+                tap(getMainActivity().getHelpButton(), "Návod", "Vitajte v zmenárni XchangeCrypt.\n\nUkážeme vám stručný návod ako obsluhovať túto aplikáciu.\n\nPomocníka môžete ukončiť kliknutím mimo vyznačenú plochu a kedykoľvek ho môžete z pravého horného rohu spustiť znovu."),
+                tap(firstCurrencyText, "Menový pár", "Prvou voľbou je výber menového páru k obchodovaniu. Ľavá strana označuje hlavnú menu, ktorú nakupujete alebo predávate."),
+                tap(secondCurrencyText, "Menový pár", "Na pravej strane je kótovaná mena, voči ktorej uzatvárate obchod. Pri nákupe ňou platíte, pri predaji ju získate."),
+                tap(sideSwitch, "Nákup a predaj", "Voľbu medzi nákupom a predajom meníte v tejto časti obrazovky."),
+                tap(amountEdit, "Množstvo", "Prvým parametrom obchodu je množstvo, koľko jednotiek hlavnej meny si prajete vymeniť.").transparentTarget(false).targetRadius(40),
+                tap(priceEdit, "Cena", "Následne si zvolíte jednotkovú cenu, za ktorú si prajete uskutočniť výmenu. Predvolene je ňou tá najvýhodnejšia cena.").transparentTarget(false).targetRadius(40),
+                tap(sumEdit, "Spolu", "Tu môžete skontrolovať výslednú cenu.").transparentTarget(false).targetRadius(40),
+                tap(imageDown, "Ďalšie možnosti", "Parametre pre neskoršie vytvorenie podmienených ponúk sú skryté pod tlačidlom šípky. Opačnou šípkou môžete zväčšiť spodný obsah."),
+                tap(buttonMarketOrder, "Market ponuka", "Ak si prajete jednoducho prijať najvýhodnejšiu ponuku trhu bez ohľadu na jej cenu, zvoľte možnosť Market."),
+                tap(buttonLimitOrder, "Limit ponuka", "Ak si prajete vytvoriť vlastnú ponuku použitím akejkoľvek ceny, zvoľte možnosť Limit."),
+                tap(buttonStopOrder, "Stop ponuka", "Vytvorenie ponuky, ktorá pred vykonaním počká na zhoršenie ceny, umožňuje možnosť Stop."),
+                tap(marketOrdersButton, "Ponuky trhu", "Dostupné ponuky opačnej strany, než ktorú ste zvolili, sú viditeľné po zvolení možnosti Trhu."),
+                tap(userOrdersButton, "Vlastné ponuky", "Vaše vlastné ponuky sa zobrazia po zvolení možnosti Moje."),
+                tap(graphButton, "Graf", "Graf zobrazujúci históriu vývoja cien je taktiež dostupný pod touto voľbou.")
+            ).listener(new TapTargetSequence.Listener() {
+                @Override
+                public void onSequenceFinish() {
+                    tutorialSequence = null;
+                    ApplicationStorage.getInstance(getContext()).saveValue("TutorialFinished", true);
+                }
+
+                @Override
+                public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                }
+
+                @Override
+                public void onSequenceCanceled(TapTarget lastTarget) {
+                    onSequenceFinish();
+                }
+            });
+        tutorialSequence.start();
+    }
+
+    private TapTarget tap(View view, String title, String description) {
+        return TapTarget.forView(view, title, description).outerCircleAlpha(0.9f).tintTarget(false);
     }
 
     @Override

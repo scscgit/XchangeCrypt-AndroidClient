@@ -52,6 +52,7 @@ public class SplashFragment extends BaseFragment {
     @Override
     protected void setActionBar() {
         getMainActivity().hideActionBarImmediately();
+        getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
     @Override

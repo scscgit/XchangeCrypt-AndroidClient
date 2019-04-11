@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -68,6 +69,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private BroadcastReceiver authorizationReceiver;
 
     private TextView toolbarTitle;
+    private ImageButton helpButton;
 
     // Azure AD MSAL context variables
     private PublicClientApplication activeDirectoryApp;
@@ -97,6 +99,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         return ContentProvider.getInstance(this);
     }
 
+    public ImageButton getHelpButton() {
+        if (helpButton == null) {
+            helpButton = findViewById(R.id.help_button);
+        }
+        return helpButton;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,12 +120,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         createNetworkReceiver();
         getFragmentsManager().clearAndInit(this, true);
         switchToFragmentAndClear(FRAGMENT_SPLASH, null);
-        //tradingApiHelper = new TradingApiHelper(this);
-
-        // Initial data
-        //createDumbData();
-        // TODO: receive a list of currency pairs, or load it from cache, before picking a default!
-//        getContentProvider().setCurrentCurrencyPair("ETH_BTC");
 
         // Initialize the MSAL App context
         if (activeDirectoryApp == null) {
@@ -145,6 +148,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // null intent has been observed to happen request prematurely during browser loading on low Android API auth
         if (requestCode == AuthorizationStrategy.BROWSER_FLOW && data == null) {
             Toast.makeText(this,
@@ -247,17 +251,6 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentRefresher().getApiAuthentication().setApiKey(accessToken);
         //callActiveDirectoryToPrepareUser(accessToken);
         decodeIdTokenToPrepareUser(accessToken);
-
-        //TODO: Refactor exchange so that it can start launching even without fake user
-//        getContentProvider().setUserAndLoadCache(new User(
-//            "1",
-//            "fakeLogin",
-//            "fake@user",
-//            "mockName mMockSurname"
-//        ));
-//
-//        // Start authenticated activity
-//        getDataBeforeSwitch(FRAGMENT_EXCHANGE, null);
     }
 
     private void decodeIdTokenToPrepareUser(String idToken) {

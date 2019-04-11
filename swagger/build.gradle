@@ -7,7 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.android.tools.build:gradle:3.3.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }
 }
@@ -45,7 +45,7 @@ android {
 
 dependencies {
     implementation "io.swagger:swagger-annotations:1.5.0"
-    implementation "com.google.code.gson:gson:2.8.4"
+    implementation "com.google.code.gson:gson:2.8.5"
     implementation "org.apache.httpcomponents:httpcore:4.4.9"
     // httpmime above 4.3.6 crashes during API call error handling:
     // java.lang.NoSuchFieldError: org.apache.http.message.BasicHeaderValueFormatter.INSTANCE
@@ -53,7 +53,7 @@ dependencies {
     implementation "org.apache.httpcomponents:httpmime:4.3.6"
     implementation "com.android.volley:volley:1.1.1"
     testImplementation "junit:junit:4.12"
-    testImplementation "org.robolectric:robolectric:3.0"
+    testImplementation "org.robolectric:robolectric:3.1.2"
     testImplementation "net.jodah:concurrentunit:0.4.2"
 }
 

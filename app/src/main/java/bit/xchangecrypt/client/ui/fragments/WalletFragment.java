@@ -56,6 +56,7 @@ public class WalletFragment extends BaseFragment {
     @Override
     protected void setActionBar() {
         setToolbarTitle("Peňaženka");
+        getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class WalletFragment extends BaseFragment {
     protected void setViewContents() {
         Date date = getContentProvider().getLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY);
         if (date != null) {
-            datetextView.setText("Naposledy aktualizované" + "\n" + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
+            datetextView.setText(getString(R.string.wallet_last_updated) + "\n" + DateFormatter.getStringFromDate(date, DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
         }
         List<Coin> coinList = getContentProvider().getCoinsBalance();
         balanceListView.setAdapter(new WalletListViewAdapter(this, coinList));

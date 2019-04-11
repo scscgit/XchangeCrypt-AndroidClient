@@ -43,6 +43,7 @@ public class SettingFragment extends BaseFragment {
     @Override
     protected void setActionBar() {
         setToolbarTitle("Nastavenia");
+        getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
     @Override
