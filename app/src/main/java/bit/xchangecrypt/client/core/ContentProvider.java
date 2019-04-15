@@ -11,10 +11,7 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import io.swagger.client.model.BarsArrays;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by V3502484 on 16. 9. 2016.
@@ -328,7 +325,7 @@ public class ContentProvider {
     }
 
     public List<String> getInstruments() {
-        return instruments;
+        return instruments == null ? new ArrayList<>() : instruments;
     }
 
     public void setInstruments(List<String> instruments) {
@@ -462,7 +459,7 @@ public class ContentProvider {
                 Stream.of(accountTransactionHistory)
                     .filter(newTransaction ->
                         Stream.of(knownTransactions)
-                            .anyMatch(knownTransaction -> knownTransaction.getDate().equals(newTransaction.getDate()))
+                            .noneMatch(knownTransaction -> knownTransaction.getDate().equals(newTransaction.getDate()))
                     ).sortBy(MyTransaction::getDate)
                     .forEach(this::createNotification);
             }

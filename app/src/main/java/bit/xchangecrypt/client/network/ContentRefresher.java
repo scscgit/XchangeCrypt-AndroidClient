@@ -71,6 +71,7 @@ public class ContentRefresher {
 
     private ContentRefresher withContext(MainActivity context) {
         if (this.context != context) {
+            Log.w(TAG, "Regenerating ContentRefresher's and TradingApiHelper's MainActivity reference");
             this.tradingApiHelper = new TradingApiHelper(context);
             this.context = context;
         }

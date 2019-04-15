@@ -67,21 +67,15 @@ public class TradingApiHelper {
     }
 
     public void createTradingBrokerApi() {
-        if (tradingBrokerApi == null) {
-            this.tradingBrokerApi = new TradingPanelBrokerDataBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
-        }
+        this.tradingBrokerApi = new TradingPanelBrokerDataBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
     }
 
     public void createTradingOrdersApi() {
-        if (tradingOrdersApi == null) {
-            this.tradingOrdersApi = new TradingPanelOrdersBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
-        }
+        this.tradingOrdersApi = new TradingPanelOrdersBridgeApi(API_TRADING_DOMAINS.get(apiDomainIndex));
     }
 
     public void createUserApi() {
-        if (userApi == null) {
-            this.userApi = new UserBridgeApi(API_USER_DOMAINS.get(apiDomainIndex));
-        }
+        this.userApi = new UserBridgeApi(API_USER_DOMAINS.get(apiDomainIndex));
     }
 
     public List<WalletDetails> accountBalance(final User user) {

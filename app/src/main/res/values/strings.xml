@@ -41,7 +41,7 @@
     <string name="market_buy">Prajete si okamžite nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
     <string name="market_sell">Prajete si okamžite predať %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
     <string name="limit_buy">Prajete si nakúpiť %s %s pri cene %s a zaplatit tak %s %s?</string>
-    <string name="limit_sell">Prajete si nakúpiť %s %s pri cene %s a získať tak %s %s?</string>
+    <string name="limit_sell">Prajete si predať %s %s pri cene %s a získať tak %s %s?</string>
     <string name="stop_buy">Prajete si nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena stúpne nad %s?</string>
     <string name="stop_sell">Prajete si predať %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena klesne pod %s?</string>
 
