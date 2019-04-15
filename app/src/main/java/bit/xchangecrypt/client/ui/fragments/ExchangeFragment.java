@@ -145,7 +145,7 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     protected void setActionBar() {
         showActionBar();
-        setToolbarTitle("Zmenáreň");
+        setToolbarTitle(getString(R.string.exchange));
         getMainActivity().changeBottomNavigationVisibility(View.VISIBLE);
         getMainActivity().getHelpButton().setVisibility(View.VISIBLE);
         getMainActivity().getHelpButton().setOnClickListener(
@@ -249,9 +249,9 @@ public class ExchangeFragment extends BaseFragment {
                 tap(firstCurrencyText, "Menový pár", "Prvou voľbou je výber menového páru k obchodovaniu. Ľavá strana označuje hlavnú menu, ktorú nakupujete alebo predávate."),
                 tap(secondCurrencyText, "Menový pár", "Na pravej strane je kótovaná mena, voči ktorej uzatvárate obchod. Pri nákupe ňou platíte, pri predaji ju získate."),
                 tap(sideSwitch, "Nákup a predaj", "Voľbu medzi nákupom a predajom meníte v tejto časti obrazovky."),
-                tap(amountEdit, "Množstvo", "Prvým parametrom obchodu je množstvo, koľko jednotiek hlavnej meny si prajete vymeniť.").transparentTarget(false).targetRadius(40),
-                tap(priceEdit, "Cena", "Následne si zvolíte jednotkovú cenu, za ktorú si prajete uskutočniť výmenu. Predvolene je ňou tá najvýhodnejšia cena.").transparentTarget(false).targetRadius(40),
-                tap(sumEdit, "Spolu", "Tu môžete skontrolovať výslednú cenu.").transparentTarget(false).targetRadius(40),
+                tap(amountEdit, "Množstvo", "Prvým parametrom obchodu je množstvo, koľko jednotiek hlavnej meny si prajete vymeniť.").transparentTarget(false).targetRadius(50),
+                tap(priceEdit, "Cena", "Následne si zvolíte jednotkovú cenu, za ktorú si prajete uskutočniť výmenu. Predvolene je ňou tá najvýhodnejšia cena.").transparentTarget(false).targetRadius(50),
+                tap(sumEdit, "Spolu", "Tu môžete skontrolovať výslednú cenu.").transparentTarget(false).targetRadius(50),
                 tap(imageDown, "Ďalšie možnosti", "Parametre pre neskoršie vytvorenie podmienených ponúk sú skryté pod tlačidlom šípky. Opačnou šípkou môžete zväčšiť spodný obsah."),
                 tap(buttonMarketOrder, "Market ponuka", "Ak si prajete jednoducho prijať najvýhodnejšiu ponuku trhu bez ohľadu na jej cenu, zvoľte možnosť Market."),
                 tap(buttonLimitOrder, "Limit ponuka", "Ak si prajete vytvoriť vlastnú ponuku použitím akejkoľvek ceny, zvoľte možnosť Limit."),
@@ -511,7 +511,7 @@ public class ExchangeFragment extends BaseFragment {
                         double sum = amount * price + fee;
                         sumEdit.setText(formatNumber(sum));
                     } catch (NumberFormatException e) {
-                        sumEdit.setText("Chybná hodnota");
+                        sumEdit.setText(getString(R.string.invalid_value));
                     }
                 }
             }
@@ -536,7 +536,7 @@ public class ExchangeFragment extends BaseFragment {
                         double sum = amount * price + fee;
                         sumEdit.setText(formatNumber(sum));
                     } catch (NumberFormatException e) {
-                        sumEdit.setText("Chybná hodnota");
+                        sumEdit.setText(getString(R.string.invalid_value));
                     }
                 }
             }
@@ -575,21 +575,21 @@ public class ExchangeFragment extends BaseFragment {
                     getMainActivity().loginDialog();
                     return;
                 }
-                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    DialogHelper.confirmationDialog(
-                        getContext(),
-                        "Market ponuka",
-                        "Potvrďte prosím " + (orderSide == OrderSide.BUY ? "nákup" : "predaj") + " za aktuálnu ponuku trhu",
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sendMarketOrder();
-                            }
-                        }
-                    );
-                } else {
-                    Toast.makeText(getContext(), "Musíte zadať množstvo", Toast.LENGTH_SHORT).show();
+                Double amount = parseAmountSafe();
+                if (amount == null) {
+                    return;
                 }
+                DialogHelper.confirmationDialog(
+                    getContext(),
+                    getString(R.string.market_order),
+                    getString(
+                        orderSide == OrderSide.BUY ? R.string.market_buy : R.string.market_sell,
+                        formatNumber(amount),
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0]
+                    ),
+                    () -> sendMarketOrder()
+                );
             }
         });
 
@@ -600,37 +600,28 @@ public class ExchangeFragment extends BaseFragment {
                     getMainActivity().loginDialog();
                     return;
                 }
-                if (amountEdit.getText().toString().trim().length() > 0 && priceEdit.getText().toString().trim().length() > 0) {
-                    Double amount = parseAmountSafe();
-                    if (amount == null) {
-                        return;
-                    }
-                    Double price = parsePriceSafe();
-                    if (price == null) {
-                        return;
-                    }
-                    double sum = parseSumSafe();
-                    DialogHelper.confirmationDialog(
-                        getContext(),
-                        "Limit ponuka",
-                        getString(
-                            orderSide == OrderSide.BUY ? R.string.limit_buy : R.string.limit_sell,
-                            formatNumber(amount),
-                            getContentProvider().getCurrentCurrencyPair().split("_")[0],
-                            formatNumber(price),
-                            formatNumber(sum),
-                            getContentProvider().getCurrentCurrencyPair().split("_")[1]
-                        ),
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sendLimitOrder();
-                            }
-                        }
-                    );
-                } else {
-                    Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
+                Double amount = parseAmountSafe();
+                if (amount == null) {
+                    return;
                 }
+                Double price = parsePriceSafe();
+                if (price == null) {
+                    return;
+                }
+                double sum = parseSumSafe();
+                DialogHelper.confirmationDialog(
+                    getContext(),
+                    getString(R.string.limit_order),
+                    getString(
+                        orderSide == OrderSide.BUY ? R.string.limit_buy : R.string.limit_sell,
+                        formatNumber(amount),
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
+                        formatNumber(price),
+                        formatNumber(sum),
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0]
+                    ),
+                    () -> sendLimitOrder()
+                );
             }
         });
 
@@ -641,21 +632,26 @@ public class ExchangeFragment extends BaseFragment {
                     getMainActivity().loginDialog();
                     return;
                 }
-                if (amountEdit.getText().toString().trim().length() > 0) {
-                    DialogHelper.confirmationDialog(
-                        getContext(),
-                        "Stop ponuka",
-                        "Potvrďte prosím vytvorenie stop ponuky na " + (orderSide == OrderSide.BUY ? "nákup" : "predaj"),
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sendStopOrder();
-                            }
-                        }
-                    );
-                } else {
-                    Toast.makeText(getContext(), "Musíte zadať množstvo a cenu", Toast.LENGTH_SHORT).show();
+                Double amount = parseAmountSafe();
+                if (amount == null) {
+                    return;
                 }
+                Double price = parsePriceSafe();
+                if (price == null) {
+                    return;
+                }
+                DialogHelper.confirmationDialog(
+                    getContext(),
+                    getString(R.string.stop_order),
+                    getString(
+                        orderSide == OrderSide.BUY ? R.string.stop_buy : R.string.stop_sell,
+                        formatNumber(amount),
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0],
+                        formatNumber(price)
+                    ),
+                    () -> sendStopOrder()
+                );
             }
         });
     }
@@ -720,7 +716,7 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
             } else {
-                Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.missing_stop_loss), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -732,7 +728,7 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
             } else {
-                Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.missing_take_profit), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -770,7 +766,7 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
             } else {
-                Toast.makeText(getContext(), "Zadajte hodnotu pre stop loss.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.missing_stop_loss), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -782,7 +778,7 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
             } else {
-                Toast.makeText(getContext(), "Zadajte hodnotu pre take profit.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.missing_take_profit), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -801,19 +797,27 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private Double parseAmountSafe() {
+        if (amountEdit.getText().toString().trim().length() <= 0) {
+            Toast.makeText(getContext(), getString(R.string.missing_amount), Toast.LENGTH_LONG).show();
+            return null;
+        }
         try {
             return parseValue(amountEdit);
         } catch (NumberFormatException e) {
-            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu množstva");
+            DialogHelper.alertDialog(getMainActivity(), getString(R.string.invalid_value), getString(R.string.please_fix_amount));
             return null;
         }
     }
 
     private Double parsePriceSafe() {
+        if (priceEdit.getText().toString().trim().length() <= 0) {
+            Toast.makeText(getContext(), getString(R.string.missing_price), Toast.LENGTH_LONG).show();
+            return null;
+        }
         try {
             return parseValue(priceEdit);
         } catch (NumberFormatException e) {
-            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu ceny");
+            DialogHelper.alertDialog(getMainActivity(), getString(R.string.invalid_value), getString(R.string.please_fix_price));
             return null;
         }
     }
@@ -837,7 +841,7 @@ public class ExchangeFragment extends BaseFragment {
         try {
             return parseValue(stopLossEditText);
         } catch (NumberFormatException e) {
-            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu stop loss");
+            DialogHelper.alertDialog(getMainActivity(), getString(R.string.invalid_value), getString(R.string.please_fix_stop_loss));
             return null;
         }
     }
@@ -846,7 +850,7 @@ public class ExchangeFragment extends BaseFragment {
         try {
             return parseValue(takeProfitEditText);
         } catch (NumberFormatException e) {
-            DialogHelper.alertDialog(getMainActivity(), "Chybná hodnota", "Prosím opravte zadanú hodnotu take profit");
+            DialogHelper.alertDialog(getMainActivity(), getString(R.string.invalid_value), getString(R.string.please_fix_take_profit));
             return null;
         }
     }

@@ -17,7 +17,7 @@ public class SettingFragment extends BaseFragment {
     private TextView nameTextView;
     private TextView surnameTextView;
     private TextView emailTextView;
-    private ToggleButton notificationTogleButton;
+    private ToggleButton notificationToggleButton;
     private Button signOutButton;
     private Button passwordChangeButton;
 
@@ -42,7 +42,7 @@ public class SettingFragment extends BaseFragment {
 
     @Override
     protected void setActionBar() {
-        setToolbarTitle("Nastavenia");
+        setToolbarTitle(getString(R.string.settings));
         getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
@@ -51,24 +51,24 @@ public class SettingFragment extends BaseFragment {
         nameTextView = rootView.findViewById(R.id.name_text);
         surnameTextView = rootView.findViewById(R.id.surname_text);
         emailTextView = rootView.findViewById(R.id.email_text);
-        notificationTogleButton = rootView.findViewById(R.id.notification_toogle);
+        notificationToggleButton = rootView.findViewById(R.id.notification_toogle);
         signOutButton = rootView.findViewById(R.id.button_sign_out);
         passwordChangeButton = rootView.findViewById(R.id.button_password_change);
     }
 
     @Override
     protected void setViewContents() {
-        notificationTogleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        notificationToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                //TODO zapinanie notifikacii
+                getContentProvider().setNotifications(isChecked);
             }
         });
         String name[] = getContentProvider().getUser().getRealName().split(" ", 1);
         nameTextView.setText(name[0]);
         surnameTextView.setText(name.length > 1 ? name[1] : "");
         emailTextView.setText(getContentProvider().getUser().getEmailAddress());
-        notificationTogleButton.setChecked(false);
+        notificationToggleButton.setChecked(getContentProvider().isNotifications());
         passwordChangeButton.setEnabled(false);
 
         signOutButton.setOnClickListener(new View.OnClickListener() {

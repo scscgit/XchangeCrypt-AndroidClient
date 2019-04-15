@@ -55,7 +55,7 @@ public class WalletFragment extends BaseFragment {
 
     @Override
     protected void setActionBar() {
-        setToolbarTitle("Peňaženka");
+        setToolbarTitle(getString(R.string.wallet));
         getMainActivity().getHelpButton().setVisibility(View.INVISIBLE);
     }
 
@@ -113,7 +113,7 @@ public class WalletFragment extends BaseFragment {
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                            Toast.makeText(getContext(), "End", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Debug: end", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

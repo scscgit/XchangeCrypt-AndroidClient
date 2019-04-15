@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Cena"
+                    android:text="@string/wallet_tx_price"
                     android:textSize="@dimen/item_text_size" />
 
                 <!-- Place text -->
@@ -103,7 +103,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Množstvo"
+                    android:text="@string/wallet_tx_amount"
                     android:textSize="@dimen/item_text_size" />
 
                 <!-- Amount text -->
@@ -134,7 +134,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Čas"
+                    android:text="@string/wallet_tx_time"
                     android:textSize="@dimen/item_text_size" />
 
                 <!-- Date text -->

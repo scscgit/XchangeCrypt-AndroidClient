@@ -52,22 +52,17 @@ public class WalletRecyclerViewAdapter extends RecyclerView.Adapter<WalletRecycl
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyTransaction transaction = transactions.get(position);
-        StringBuilder builder = new StringBuilder();
-        if (transaction.getSide() == OrderSide.SELL) {
-            builder.append("Predaj ");
-        } else {
-            builder.append("Nákup ");
-        }
-        builder.append(transaction.getBaseCurrency()).append("/").append(transaction.getQuoteCurrency());
-        holder.title.setText(builder.toString());
-        holder.price.setText(context.formatNumber(transaction.getPrice()));
-        holder.amount.setText(context.formatNumber(transaction.getAmount()));
+        holder.title.setText(context.getString(
+            transaction.getSide() == OrderSide.SELL ? R.string.wallet_tx_sold : R.string.wallet_tx_bought,
+            transaction.getBaseCurrency() + "/" + transaction.getQuoteCurrency()
+        ));
+        holder.price.setText(String.format("%s / %s", context.formatNumber(transaction.getPrice()), transaction.getQuoteCurrency()));
+        holder.amount.setText(String.format("%s %s", context.formatNumber(transaction.getAmount()), transaction.getBaseCurrency()));
         holder.date.setText(DateFormatter.getStringFromDate(transaction.getDate(), DateFormatter.FORMAT_DD_MM_YYYY_HH_MM_SS));
-        if (transaction.getSide() == OrderSide.BUY) {
-            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context.getContext(), transaction.getQuoteCurrency()));
-        } else {
-            holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(context.getContext(), transaction.getBaseCurrency()));
-        }
+        holder.logo.setImageDrawable(CoinHelper.getDrawableForCoin(
+            context.getContext(),
+            transaction.getSide() == OrderSide.SELL ? transaction.getQuoteCurrency() : transaction.getBaseCurrency()
+        ));
     }
 
     @Override

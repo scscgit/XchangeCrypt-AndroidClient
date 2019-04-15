@@ -56,6 +56,9 @@ public class LoginFragment extends BaseFragment {
         googleSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getMainActivity().isProgressDialog()) {
+                    return;
+                }
                 getMainActivity().onClickedActiveDirectorySignIn();
                 //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
@@ -78,6 +81,9 @@ public class LoginFragment extends BaseFragment {
         offlineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getMainActivity().isProgressDialog()) {
+                    return;
+                }
                 getMainActivity().getContentRefresher().setUser(null);
             }
         });

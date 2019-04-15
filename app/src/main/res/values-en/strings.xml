@@ -11,4 +11,5 @@
     <!--<string name="order_delete_sell">Do you want to remove your sell offer of %s %s?</string>-->
     <!--<string name="limit_buy">Do you want to buy %s %s at a price of %s and pay %s %s for that?</string>-->
     <!--<string name="limit_sell">Do you want to sell %s %s at a price of %s and receive %s %s for that?</string>-->
+    <!--<string name="refresher_debug_trading_api_connection_failed">Connection with %s failed, trying next domain</string>-->
 </resources>

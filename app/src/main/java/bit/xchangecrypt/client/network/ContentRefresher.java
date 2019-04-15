@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.core.ContentProvider;
 import bit.xchangecrypt.client.datamodel.Coin;
 import bit.xchangecrypt.client.datamodel.MyTransaction;
@@ -50,6 +51,7 @@ public class ContentRefresher {
     private ScheduledFuture<?> periodicTask;
     private boolean continueOffline;
     private AlertDialog authenticationExpirationDialog;
+    private boolean notificationsOnly;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -57,16 +59,21 @@ public class ContentRefresher {
 
     public static ContentRefresher getInstance(MainActivity context) {
         if (instance == null) {
-            instance = new ContentRefresher().withContext(context);
-            instance.tradingApiHelper = new TradingApiHelper(context);
-            // Refresher is started by onResume
-            //instance.startRefresher();
+            instance = new ContentRefresher();
         }
-        return instance;
+        return instance.withContext(context);
+    }
+
+    public static void destroy() {
+        instance.pauseRefresher();
+        instance = null;
     }
 
     private ContentRefresher withContext(MainActivity context) {
-        this.context = context;
+        if (this.context != context) {
+            this.tradingApiHelper = new TradingApiHelper(context);
+            this.context = context;
+        }
         return this;
     }
 
@@ -89,7 +96,7 @@ public class ContentRefresher {
     }
 
     public synchronized void switchFragment(int fragmentId) {
-        context.showProgressDialog("Načítavam dáta zmenárne");
+        context.showProgressDialog(context.getString(R.string.exchange_loading));
         switchFragmentTarget = fragmentId;
         // Trigger an immediate refresh
         pauseRefresher();
@@ -104,6 +111,7 @@ public class ContentRefresher {
     }
 
     public ContentRefresher startRefresher() {
+        notificationsOnly = false;
         if (this.periodicTask == null || this.periodicTask.isCancelled()) {
             this.periodicTask = runPeriodically(instance::reloadContent);
         }
@@ -113,6 +121,10 @@ public class ContentRefresher {
     public ContentRefresher pauseRefresher() {
         this.periodicTask.cancel(true);
         return this;
+    }
+
+    public void pauseExceptNotifications() {
+        notificationsOnly = true;
     }
 
     private void reloadContent() {
@@ -169,6 +181,13 @@ public class ContentRefresher {
                     default:
                         throw new IllegalArgumentException("switchFragmentTarget");
                 }
+                if (notificationsOnly) {
+                    if (getContentProvider().getUser() != null) {
+                        loaders = new Runnable[]{
+                            this::loadAccountExecutions,
+                        };
+                    }
+                }
             }
 
             // Run loaders in threads
@@ -206,7 +225,17 @@ public class ContentRefresher {
                 e.printStackTrace();
                 Log.e(TAG, "Refresher thread has failed, this run is skipped");
                 // TODO: replace by a more conservative approach
-                tradingApiHelper.tryNextDomain();
+                pauseRefresher();
+                // This thread has been interrupted, so we have to sleep in a new thread
+                new Thread(() -> {
+                    tradingApiHelper.tryNextDomain();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    startRefresher();
+                }).start();
                 return;
             }
 
@@ -218,8 +247,7 @@ public class ContentRefresher {
                 // Check the success and switch to the target fragment
                 boolean switched = trySwitchFragment(switchFragmentTarget);
             }
-        } catch (
-            Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "Unexpected fatal error within content refresher, exiting.");
             System.exit(1);

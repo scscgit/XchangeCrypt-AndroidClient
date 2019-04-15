@@ -1,6 +1,8 @@
 package bit.xchangecrypt.client.network;
 
+import android.util.Log;
 import android.widget.Toast;
+import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.User;
 import bit.xchangecrypt.client.exceptions.TradingException;
@@ -22,19 +24,19 @@ import java.util.concurrent.TimeoutException;
  */
 public class TradingApiHelper {
     public static List<String> API_TRADING_DOMAINS = Arrays.asList(
+        "https://convergenceservice-xchangecrypt.azurewebsites.net/api/v1/trading",
         "https://192.168.0.20/api/v1/trading",
 //        "https://192.168.0.20:8000/api/v1/trading",
         "https://192.168.8.101/api/v1/trading"
 //        "https://rest-demo.tradingview.com/tradingview/v1",
-//        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/trading"
     );
 
     public static List<String> API_USER_DOMAINS = Arrays.asList(
+        "https://convergenceservice-xchangecrypt.azurewebsites.net/api/v1/user",
         "https://192.168.0.20/api/v1/user",
 //        "https://192.168.0.20:8000/api/v1/user",
         "https://192.168.8.101/api/v1/user"
 //        "https://rest-demo.tradingview.com/tradingview/v1/fake-invalid-api",
-//        "https://xchangecrypttest-convergencebackend.azurewebsites.net/api/v1/user"
     );
 
     // API helper context
@@ -47,8 +49,9 @@ public class TradingApiHelper {
     public void tryNextDomain() {
         mainActivity.runOnUiThread(() -> {
             Toast.makeText(mainActivity,
-                "Connection to trading API " + API_TRADING_DOMAINS.get(apiDomainIndex) + " failed, trying next domain",
-                Toast.LENGTH_SHORT).show();
+                mainActivity.getString(R.string.refresher_debug_trading_api_connection_failed, API_TRADING_DOMAINS.get(apiDomainIndex)),
+                Toast.LENGTH_LONG
+            ).show();
         });
 
         if (apiDomainIndex + 1 >= API_TRADING_DOMAINS.size()) {
@@ -56,6 +59,7 @@ public class TradingApiHelper {
         } else {
             apiDomainIndex++;
         }
+        Log.e(TradingApiHelper.class.getSimpleName(), "Switched trading API to " + API_TRADING_DOMAINS.get(apiDomainIndex));
     }
 
     public TradingApiHelper(MainActivity mainActivity) {

@@ -7,15 +7,19 @@ import bit.xchangecrypt.client.R;
 
 public class CoinHelper {
     public static Drawable getDrawableForCoin(Context context, String coinSymbol) {
+        return ContextCompat.getDrawable(context, getResourceIdCoin(coinSymbol));
+    }
+
+    public static int getResourceIdCoin(String coinSymbol) {
         switch (coinSymbol) {
             case "BTC":
-                return ContextCompat.getDrawable(context, R.drawable.coin_btc);
+                return R.drawable.coin_btc;
             case "ETH":
-                return ContextCompat.getDrawable(context, R.drawable.coin_eth);
+                return R.drawable.coin_eth;
             case "LTC":
-                return ContextCompat.getDrawable(context, R.drawable.coin_ltc);
+                return R.drawable.coin_ltc;
             default:
-                return ContextCompat.getDrawable(context, R.drawable.coin_default);
+                return R.drawable.coin_default;
         }
     }
 }

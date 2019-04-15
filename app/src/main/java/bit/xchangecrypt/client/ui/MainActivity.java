@@ -2,6 +2,9 @@ package bit.xchangecrypt.client.ui;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import bit.xchangecrypt.client.BuildConfig;
 import bit.xchangecrypt.client.R;
@@ -37,10 +42,7 @@ import bit.xchangecrypt.client.listeners.ConnectionListener;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.network.ContentRefresher;
 import bit.xchangecrypt.client.ui.fragments.*;
-import bit.xchangecrypt.client.util.ConnectionHelper;
-import bit.xchangecrypt.client.util.DialogHelper;
-import bit.xchangecrypt.client.util.HttpsTrustHelper;
-import bit.xchangecrypt.client.util.MicrosoftIdentityHelper;
+import bit.xchangecrypt.client.util.*;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -65,6 +67,7 @@ import java.util.*;
 
 public class MainActivity extends BaseActivity implements FragmentSwitcherInterface, Constants {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String CHANNEL_ID = "1";
 
     private BroadcastReceiver authorizationReceiver;
 
@@ -73,12 +76,13 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     // Azure AD MSAL context variables
     private PublicClientApplication activeDirectoryApp;
+    private int notificationId;
 
     public void loginDialog() {
         DialogHelper.confirmationDialog(
             this,
-            "Používateľ je offline",
-            "Chcete sa prihlásiť?",
+            getString(R.string.user_is_offline),
+            getString(R.string.question_login),
             new Runnable() {
                 @Override
                 public void run() {
@@ -112,6 +116,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         setContentView(R.layout.activity_main);
         setToolbarAndDrawer(savedInstanceState);
         setBottomNavigationView();
+        createNotificationChannel();
 
         if (BuildConfig.DEBUG) {
             HttpsTrustHelper.allowAllSSL();
@@ -164,6 +169,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
      * Pass UserInfo response data to AuthenticatedActivity
      */
     public void onClickedActiveDirectorySignIn() {
+        showProgressDialog(getString(R.string.authentication_attempting));
         // Attempt to get a user and acquireTokenSilently
         // If this fails we will do an interactive request
         Log.d(TAG, "onClickedActiveDirectorySignIn");
@@ -255,6 +261,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     private void decodeIdTokenToPrepareUser(String idToken) {
         try {
+            // No need for hideProgressDialog(), as we switch fragment
             JWT jwt = new JWT(idToken);
             getContentRefresher().setUser(new User(
                 jwt.getClaim("sub").asString(),
@@ -273,10 +280,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void activeDirectoryOnSignInError(MsalException exception) {
+        hideProgressDialog();
         Toast.makeText(
             MainActivity.this,
-            "Authentication failed: " + exception.getMessage(),
-            Toast.LENGTH_SHORT
+            getString(R.string.authentication_failed, exception.getMessage()),
+            Toast.LENGTH_LONG
         ).show();
         if (exception instanceof MsalClientException) {
             // Exception inside MSAL, more info inside MsalError.java
@@ -288,12 +296,14 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     private void activeDirectoryOnSignInCancel() {
+        hideProgressDialog();
         // User canceled the authentication
         Log.d(TAG, "User canceled login");
-        Toast.makeText(MainActivity.this, "Login canceled", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.login_canceled), Toast.LENGTH_SHORT).show();
     }
 
     public void activeDirectorySignOutClearCache() {
+        // No need for hideProgressDialog(), as we switch fragment to login
         Log.d(TAG, "AD signing out/clearing app cache");
         List<IAccount> accounts = activeDirectoryApp.getAccounts();
         int accountsCount = accounts.size();
@@ -323,7 +333,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
      */
     private void callActiveDirectoryToPrepareUser(final String bearerToken) {
         Log.d(TAG, "Starting volley request to Active Directory API");
-        showProgressDialog("Prebieha overenie identity");
+        showProgressDialog(getString(R.string.dialog_verifying_identity));
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.GET,
@@ -558,7 +568,11 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     @Override
     protected void onPause() {
         super.onPause();
-        getContentRefresher().pauseRefresher();
+        if (getContentProvider().isNotifications()) {
+            getContentRefresher().pauseExceptNotifications();
+        } else {
+            getContentRefresher().pauseRefresher();
+        }
     }
 
     @Override
@@ -569,8 +583,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
 
     @Override
     protected void onDestroy() {
-        getContentProvider().destroy();
         super.onDestroy();
+        getContentProvider().destroy();
+        // Content refresher needs to be destroyed in order to reset currentFragment to login
+        ContentRefresher.destroy();
         unregisterReceiver(networkStateReceiver);
         unregisterReceiver(authorizationReceiver);
     }
@@ -687,7 +703,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         if (isOnline()) {
             getContentRefresher().sendTradingOffer(order);
         } else {
-            Toast.makeText(this, "Nie ste pripojený na internet", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -695,7 +711,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         if (isOnline()) {
             getContentRefresher().deleteTradingOffer(order.getOrderId());
         } else {
-            Toast.makeText(this, "Nie ste pripojený na internet", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -826,6 +842,44 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
                 }
             }
         };
+    }
+
+    public static String formatNumber(double number) {
+        return String.format("%.8f", number).replaceAll("0+$", "0").replaceAll("([^.])0$", "$1");
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = "";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void createNotification(String coinSymbol, String title, String text) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(CoinHelper.getResourceIdCoin(coinSymbol))
+            .setContentTitle(title)
+            .setContentText(text)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        // notificationId is a unique int for each notification
+        notificationManager.notify(notificationId++, builder.build());
     }
 
     @Override

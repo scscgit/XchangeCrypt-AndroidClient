@@ -76,7 +76,7 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
     }
 
     public ContentProvider getContentProvider() {
-        return ContentProvider.getInstance(getContext());
+        return ContentProvider.getInstance(getMainActivity());
     }
 
     public void getDataBeforeSwitch(int fragmentID, Bundle args, boolean force) {
@@ -192,7 +192,7 @@ public abstract class BaseFragment extends Fragment implements FragmentSwitcherI
         getMainActivity().toggleDrawerButtonArrow();
     }
 
-    public String formatNumber(double number) {
-        return String.format("%.8f", number).replaceAll("0+$", "0").replaceAll("([^.])0$", "$1");
+    public static String formatNumber(double number) {
+        return MainActivity.formatNumber(number);
     }
 }

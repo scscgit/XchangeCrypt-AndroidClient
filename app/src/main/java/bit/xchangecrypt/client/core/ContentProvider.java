@@ -1,10 +1,11 @@
 package bit.xchangecrypt.client.core;
 
-import android.content.Context;
 import android.util.Log;
+import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.*;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.exceptions.TradingException;
+import bit.xchangecrypt.client.ui.MainActivity;
 import bit.xchangecrypt.client.util.InternalStorage;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -35,6 +36,7 @@ public class ContentProvider {
     private final String ACCOUNT_ORDER_HISTORY_TAG = "AccountOrderHistory_";
     private final String ACCOUNT_TRANSACTION_HISTORY_TAG = "AccountTransactionHistory_";
     private final String COINS_BALANCE_TAG = "CoinsBalance_";
+    private final String NOTIFICATIONS_TAG = "Notifications_";
 
     // Cache freshness meta-data tags
     private final String LAST_UPDATES_TAG = "LastUpdates";
@@ -44,7 +46,7 @@ public class ContentProvider {
     private int cacheExpireAfterMs = 30_000;
 
     // Android-specific references
-    private Context context;
+    private MainActivity context;
 
     // Current content description
     private String currentCurrencyPair;
@@ -77,18 +79,19 @@ public class ContentProvider {
 
     // Locally relevant display data
     private String graphResolution = "1D";
+    private boolean notifications;
 
     private ContentProvider() {
     }
 
-    public static ContentProvider getInstance(Context context) {
+    public static ContentProvider getInstance(MainActivity context) {
         if (instance == null) {
             instance = new ContentProvider();
         }
         return instance.withContext(context);
     }
 
-    private ContentProvider withContext(Context context) {
+    private ContentProvider withContext(MainActivity context) {
         this.context = context;
         return this;
     }
@@ -209,6 +212,12 @@ public class ContentProvider {
             } else {
                 fullyLoaded = false;
             }
+
+            // Notifications don't break fully loaded state
+            Boolean notifications = (Boolean) InternalStorage.readObject(context, NOTIFICATIONS_TAG + user.getUserId());
+            if (notifications != null) {
+                this.notifications = notifications;
+            }
         } catch (Exception e) {
             fullyLoaded = false;
             e.printStackTrace();
@@ -269,6 +278,10 @@ public class ContentProvider {
 
     public void saveCoinsBalance() {
         InternalStorage.writeObject(context, COINS_BALANCE_TAG + user.getUserId(), coinsBalance);
+    }
+
+    public void saveNotifications() {
+        InternalStorage.writeObject(context, NOTIFICATIONS_TAG + user.getUserId(), notifications);
     }
 
     public void saveLastUpdates() {
@@ -441,12 +454,46 @@ public class ContentProvider {
     }
 
     public void setAccountTransactionHistory(String currencyPair, List<MyTransaction> accountTransactionHistory) {
+        // Notify of any new transactions
+        if (isNotifications()) {
+            if (accountTransactionHistoryMap.containsKey(currencyPair)) {
+                List<MyTransaction> knownTransactions = accountTransactionHistoryMap.get(currencyPair);
+                // Remove known transactions
+                Stream.of(accountTransactionHistory)
+                    .filter(newTransaction ->
+                        Stream.of(knownTransactions)
+                            .anyMatch(knownTransaction -> knownTransaction.getDate().equals(newTransaction.getDate()))
+                    ).sortBy(MyTransaction::getDate)
+                    .forEach(this::createNotification);
+            }
+        }
+
         accountTransactionHistory = Stream.of(accountTransactionHistory)
             .sortBy(MyTransaction::getDate)
             .collect(Collectors.toList());
         accountTransactionHistoryMap.put(currencyPair, accountTransactionHistory);
         saveAccountTransactionHistory();
         setLastUpdateTime(ContentCacheType.ACCOUNT_TRANSACTION_HISTORY, new Date());
+    }
+
+    private void createNotification(MyTransaction transaction) {
+        Log.i(TAG, String.format("Notifying of a %s/%s %s transaction", transaction.getBaseCurrency(), transaction.getQuoteCurrency(), transaction.getSide() == OrderSide.BUY ? "buy" : "sell"));
+        context.createNotification(
+            transaction.getQuoteCurrency(),
+            context.getString(
+                transaction.getSide() == OrderSide.BUY ? R.string.wallet_tx_bought : R.string.wallet_tx_sold,
+                transaction.getBaseCurrency() + "/" + transaction.getQuoteCurrency()
+            ),
+            context.getString(
+                transaction.getSide() == OrderSide.BUY ? R.string.notification_tx_bought : R.string.notification_tx_sold,
+                MainActivity.formatNumber(transaction.getAmount()),
+                transaction.getBaseCurrency(),
+                MainActivity.formatNumber(transaction.getPrice()),
+                transaction.getQuoteCurrency(),
+                MainActivity.formatNumber(transaction.getAmount() * transaction.getPrice()),
+                transaction.getQuoteCurrency()
+            )
+        );
     }
 
     public List<Coin> getCoinsBalance() {
@@ -550,5 +597,14 @@ public class ContentProvider {
             Log.d(TAG, "Balance cache has expired");
         }
         return historyCached && balanceCached;
+    }
+
+    public void setNotifications(boolean isChecked) {
+        notifications = isChecked;
+        saveNotifications();
+    }
+
+    public boolean isNotifications() {
+        return notifications;
     }
 }

@@ -3,24 +3,70 @@
 
     <!-- Login -->
     <string name="login_failed_verification">Nepodarilo sa overiť vašu identitu, boli ste odhlásený</string>
+    <string name="login_canceled">Prihlásenie bolo zrušené</string>
+    <string name="authentication_attempting">Prebieha pokus o prihlásenie</string>
+    <string name="authentication_failed">Prihlásenie zlyhalo: %s</string>
+    <string name="user_is_offline">Používateľ je offline</string>
+    <string name="question_login">Chcete sa prihlásiť?</string>
 
     <!-- Dialog -->
     <string name="ok_btn">OK</string>
     <string name="positive_btn">Áno</string>
     <string name="negative_btn">Nie</string>
+    <string name="dialog_verifying_identity">Prebieha overenie identity</string>
 
     <!-- Drawer -->
     <string name="drawer_open">Otvoriť menu</string>
     <string name="drawer_close">Zatvoriť menu</string>
 
+    <!-- Exchange -->
+    <string name="exchange">Zmenáreň</string>
+    <string name="exchange_loading">Načítavam dáta zmenárne</string>
+    <string name="market_order">Market ponuka</string>
+    <string name="limit_order">Limit ponuka</string>
+    <string name="stop_order">Stop ponuka</string>
+    <string name="missing_amount">Musíte zadať množstvo</string>
+    <string name="missing_price">Musíte zadať cenu</string>
+    <string name="missing_stop_loss">Zadajte hodnotu pre stop loss</string>
+    <string name="missing_take_profit">Zadajte hodnotu pre take profit</string>
+    <string name="invalid_value">Chybná hodnota</string>
+    <string name="please_fix_amount">Prosím opravte zadanú hodnotu množstva</string>
+    <string name="please_fix_price">Prosím opravte zadanú hodnotu ceny</string>
+    <string name="please_fix_stop_loss">Prosím opravte zadanú hodnotu stop loss</string>
+    <string name="please_fix_take_profit">Prosím opravte zadanú hodnotu take profit</string>
+
     <!-- Confirmations -->
     <string name="order_delete_buy">Chcete odstrániť vašu ponuku na nákup %s %s?</string>
     <string name="order_delete_sell">Chcete odstrániť vašu ponuku na predaj %s %s?</string>
+    <string name="market_buy">Prajete si okamžite nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
+    <string name="market_sell">Prajete si okamžite predať %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
     <string name="limit_buy">Prajete si nakúpiť %s %s pri cene %s a zaplatit tak %s %s?</string>
-    <string name="limit_sell">Prajete si predať %s %s pri cene %s a získať tak %s %s?</string>
+    <string name="limit_sell">Prajete si nakúpiť %s %s pri cene %s a získať tak %s %s?</string>
+    <string name="stop_buy">Prajete si nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena stúpne nad %s?</string>
+    <string name="stop_sell">Prajete si predať %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena klesne pod %s?</string>
+
+    <!-- Wallet -->
+    <string name="wallet">Peňaženka</string>
+    <string name="wallet_balance">Finančný zostatok</string>
+    <string name="wallet_tx_history">História transakcií</string>
+    <string name="wallet_tx_bought">Nákup %s</string>
+    <string name="wallet_tx_sold">Predaj %s</string>
+    <string name="notification_tx_bought">Nakúpených %s %s pri cene %s/%s, zaplatených %s %s</string>
+    <string name="notification_tx_sold">Predaných %s %s pri cene %s/%s, získaných %s %s</string>
+    <string name="wallet_tx_price">Cena</string>
+    <string name="wallet_tx_amount">Množstvo</string>
+    <string name="wallet_tx_time">Čas</string>
+
+    <!-- Settings -->
+    <string name="settings">Nastavenia</string>
+
+    <!-- Server status -->
+    <string name="wallet_last_updated">Naposledy aktualizované</string>
+    <string name="refresher_debug_trading_api_connection_failed">Spojenie so serverom %s zlyhalo, nasleduje pokus použitím inej domény</string>
+    <string name="no_internet_connection">Nie ste pripojený na internet</string>
 
     <!-- Other -->
+    <string name="channel_name">Aktualizácie ponúk</string>
     <string name="help">Pomoc</string>
-    <string name="wallet_last_updated">Naposledy aktualizované</string>
 
 </resources>

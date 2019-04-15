@@ -132,6 +132,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         getFragmentsManager().showTopFragmentInMainBS();
     }
 
+    public boolean isProgressDialog() {
+        return progress != null;
+    }
+
     public void showProgressDialog(String message) {
         runOnUiThread(() -> {
             synchronized (this.dialogLock) {
@@ -140,7 +144,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (progress != null) {
                     progress.setMessage(message);
                 } else {
-                    progress = ProgressDialog.show(this, null, message, true);
+                    progress = ProgressDialog.show(BaseActivity.this, null, message, true);
                 }
             }
         });
