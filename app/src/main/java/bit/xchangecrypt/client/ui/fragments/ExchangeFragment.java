@@ -47,6 +47,7 @@ import java.util.List;
  * Created by V3502505 on 20/09/2016.
  */
 public class ExchangeFragment extends BaseFragment {
+    private static String TAG = ExchangeFragment.class.getSimpleName();
     private TextView firstCurrencyText;
     private ImageView firstCurrencyLogo;
     private TextView secondCurrencyText;
@@ -365,7 +366,7 @@ public class ExchangeFragment extends BaseFragment {
                 }
                 CharSequence[] cs = list2.toArray(new CharSequence[list2.size()]);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Vyberte menový pár")
+                builder.setTitle(getString(R.string.exchange_select_currency_pair))
                     .setItems(cs, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             updateOnCurrencyPairChange(list2.get(which).replace("/", "_"), false);
@@ -579,7 +580,7 @@ public class ExchangeFragment extends BaseFragment {
                 if (amount == null) {
                     return;
                 }
-                DialogHelper.confirmationDialog(
+                DialogHelper.yesNoConfirmationDialog(
                     getContext(),
                     getString(R.string.market_order),
                     getString(
@@ -609,7 +610,7 @@ public class ExchangeFragment extends BaseFragment {
                     return;
                 }
                 double sum = parseSumSafe();
-                DialogHelper.confirmationDialog(
+                DialogHelper.yesNoConfirmationDialog(
                     getContext(),
                     getString(R.string.limit_order),
                     getString(
@@ -640,7 +641,7 @@ public class ExchangeFragment extends BaseFragment {
                 if (price == null) {
                     return;
                 }
-                DialogHelper.confirmationDialog(
+                DialogHelper.yesNoConfirmationDialog(
                     getContext(),
                     getString(R.string.stop_order),
                     getString(
@@ -855,7 +856,7 @@ public class ExchangeFragment extends BaseFragment {
         }
     }
 
-    private double parseValue(EditText editText) {
+    public static double parseValue(EditText editText) {
         return Double.parseDouble(editText.getText().toString().replace(",", "."));
     }
 
@@ -946,6 +947,9 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private void showGraph() {
+        displayGraph = true;
+        myOrders = false;
+
         this.ordersList.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
         this.chart.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         marketOrdersButton.setBackgroundColor(getResources().getColor(R.color.gray));
@@ -965,6 +969,10 @@ public class ExchangeFragment extends BaseFragment {
         ));
 
         BarsArrays bars = getContentProvider().getHistoryBars(getContentProvider().getCurrentCurrencyPair());
+        if (bars.getT().size() == 0) {
+            Log.w(TAG, "Empty graph");
+            return;
+        }
         ArrayList<CandleEntry> values = new ArrayList<>();
         for (int index = 0; index < bars.getT().size(); index++) {
             values.add(new CandleEntry(
@@ -999,9 +1007,6 @@ public class ExchangeFragment extends BaseFragment {
         set.setNeutralColor(Color.BLUE);
         chart.setData(new CandleData(set));
         chart.invalidate();
-
-        displayGraph = true;
-        myOrders = false;
     }
 
     private void setLogo(String coin, ImageView logo) {

@@ -13,6 +13,7 @@
     <string name="ok_btn">OK</string>
     <string name="positive_btn">Áno</string>
     <string name="negative_btn">Nie</string>
+    <string name="cancel_btn">Zrušiť</string>
     <string name="dialog_verifying_identity">Prebieha overenie identity</string>
 
     <!-- Drawer -->
@@ -22,6 +23,25 @@
     <!-- Exchange -->
     <string name="exchange">Zmenáreň</string>
     <string name="exchange_loading">Načítavam dáta zmenárne</string>
+    <string name="exchange_select_currency_pair">Vyberte menový pár</string>
+    <string name="exchange_coin_balance">Zostatok:</string>
+    <string name="exchange_buy">Nákup</string>
+    <string name="exchange_sell">Predaj</string>
+    <string name="exchange_order_title">Stanoviť ponuku</string>
+    <string name="exchange_amount">Množstvo</string>
+    <string name="exchange_price">Cena</string>
+    <string name="exchange_fee">Poplatok</string>
+    <string name="exchange_total">Spolu</string>
+    <string name="exchange_market">Market</string>
+    <string name="exchange_limit">Limit</string>
+    <string name="exchange_stop">Stop</string>
+    <string name="exchange_orders_title">Prehľad ponúk na trhu</string>
+    <string name="exchange_market_orders">Trh</string>
+    <string name="exchange_my_orders">Moje</string>
+    <string name="exchange_graph">Graf</string>
+    <string name="exchange_graph_month">Mesiac</string>
+    <string name="exchange_graph_day">Deň</string>
+    <string name="exchange_graph_hour">Hodina</string>
     <string name="market_order">Market ponuka</string>
     <string name="limit_order">Limit ponuka</string>
     <string name="stop_order">Stop ponuka</string>
@@ -48,14 +68,24 @@
     <!-- Wallet -->
     <string name="wallet">Peňaženka</string>
     <string name="wallet_balance">Finančný zostatok</string>
+    <string name="wallet_action">Akcia</string>
+    <string name="wallet_choose_action">Vyberte akciu pre vykonanie nad vašou %s peňaženkou</string>
+    <string name="wallet_copy_address">Skopírovať</string>
+    <string name="wallet_generate_address">Nová adresa</string>
+    <string name="wallet_generate_address_question">Prajete si vygenerovať novú %s adresu?</string>
+    <string name="wallet_withdrawal">Výber meny</string>
+    <string name="wallet_withdrawal_amount">Množstvo %s:</string>
+    <string name="wallet_withdrawal_address">Cieľová adresa peňaženky:</string>
+    <string name="wallet_withdrawal_confirmation">Určite si prajete vybrať %s %s do peňaženky na adrese "%s"?</string>
     <string name="wallet_tx_history">História transakcií</string>
     <string name="wallet_tx_bought">Nákup %s</string>
     <string name="wallet_tx_sold">Predaj %s</string>
-    <string name="notification_tx_bought">Nakúpených %s %s pri cene %s/%s, zaplatených %s %s</string>
-    <string name="notification_tx_sold">Predaných %s %s pri cene %s/%s, získaných %s %s</string>
     <string name="wallet_tx_price">Cena</string>
     <string name="wallet_tx_amount">Množstvo</string>
     <string name="wallet_tx_time">Čas</string>
+    <string name="notification_tx_bought">Nakúpených %s %s pri cene %s/%s, zaplatených %s %s</string>
+    <string name="notification_tx_sold">Predaných %s %s pri cene %s/%s, získaných %s %s</string>
+    <string name="missing_address">Musíte zadať adresu</string>
 
     <!-- Settings -->
     <string name="settings">Nastavenia</string>
@@ -68,5 +98,6 @@
     <!-- Other -->
     <string name="channel_name">Aktualizácie ponúk</string>
     <string name="help">Pomoc</string>
+
 
 </resources>

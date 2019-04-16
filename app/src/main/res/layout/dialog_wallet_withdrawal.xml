@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <TextView
+        android:id="@+id/withdrawal_amount_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:text="AMOUNT" />
+
+    <EditText
+        android:id="@+id/withdrawal_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:digits="0123456789.,"
+        android:ellipsize="start"
+        android:gravity="center_vertical|start"
+        android:includeFontPadding="false"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textSize="@dimen/item_text_size_big" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:text="@string/wallet_withdrawal_address" />
+
+    <EditText
+        android:id="@+id/withdrawal_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

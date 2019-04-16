@@ -17,10 +17,15 @@ import bit.xchangecrypt.client.exceptions.TradingException;
 import bit.xchangecrypt.client.listeners.FragmentSwitcherInterface;
 import bit.xchangecrypt.client.ui.MainActivity;
 import bit.xchangecrypt.client.util.DialogHelper;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.annimon.stream.Stream;
 import io.swagger.client.ApiInvoker;
 import io.swagger.client.auth.ApiKeyAuth;
 import io.swagger.client.model.*;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,6 +57,7 @@ public class ContentRefresher {
     private boolean continueOffline;
     private AlertDialog authenticationExpirationDialog;
     private boolean notificationsOnly;
+    private Date lastError = null;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -312,6 +318,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní menových dvojíc.", Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Loading Instruments received error: " + e.getMessage());
         }
         List<String> pairs = new ArrayList<>();
@@ -333,6 +340,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri čítaní dostupných ponúk: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Loading Market Depth for pair " + pair + " received error: " + e.getMessage());
         }
         List<Order> orders = new ArrayList<>();
@@ -384,6 +392,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri čítaní histórie: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Loading History Bars for pair " + pair + " received error: " + e.getMessage());
         }
         if (historyBars == null
@@ -420,6 +429,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní vlastných ponúk.", Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Account Orders received error: " + e.getMessage());
         }
         for (io.swagger.client.model.Order order : ordersResponse) {
@@ -469,6 +479,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní histórie ponúk.", Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Account Orders History received error: " + e.getMessage());
         }
         List<Order> orderHistory = new ArrayList<>();
@@ -499,6 +510,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri ziskavaní histórie transakcií.", Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Account Executions received error: " + e.getMessage());
         }
         List<MyTransaction> transactions = new ArrayList<>();
@@ -529,6 +541,7 @@ public class ContentRefresher {
             context.runOnUiThread(() -> {
                 Toast.makeText(context, "Chyba pri čítani zostatkov mien.", Toast.LENGTH_SHORT).show();
             });
+            recordError(e);
             throw new TradingException("Loading Balance received error: " + e.getMessage());
         }
         List<Coin> coins = new ArrayList<>();
@@ -552,7 +565,7 @@ public class ContentRefresher {
                     && ContentRefresher.this.authenticationExpirationDialog.isShowing()) {
                     return;
                 }
-                ContentRefresher.this.authenticationExpirationDialog = DialogHelper.confirmationDialog(
+                ContentRefresher.this.authenticationExpirationDialog = DialogHelper.choiceDialog(
                     context,
                     "Overenie používateľa vypršalo",
                     "Je potrebné prihlásiť sa znovu",
@@ -563,7 +576,8 @@ public class ContentRefresher {
                     },
                     () -> continueOffline = true,
                     "Prihlásiť sa",
-                    "Pokračovať offline"
+                    "Pokračovať offline",
+                    false
                 );
             });
             return true;
@@ -585,6 +599,7 @@ public class ContentRefresher {
                 } catch (TradingException e) {
                     e.printStackTrace();
                     DialogHelper.alertDialog(context, "Chyba", "Pokus o vytvorenie ponuky skončil s chybou: " + e.getMessage());
+                    recordError(e);
                 }
                 return null;
             }
@@ -611,6 +626,7 @@ public class ContentRefresher {
                 } catch (TradingException e) {
                     e.printStackTrace();
                     DialogHelper.alertDialog(context, "Chyba", "Pokus o odstránenie ponuky skončil s chybou: " + e.getMessage());
+                    recordError(e);
                 }
                 return null;
             }
@@ -637,6 +653,7 @@ public class ContentRefresher {
                 } catch (TradingException e) {
                     e.printStackTrace();
                     DialogHelper.alertDialog(context, "Chyba", "Pokus o generovanie peňaženky skončil s chybou: " + e.getMessage());
+                    recordError(e);
                 }
                 return null;
             }
@@ -647,5 +664,68 @@ public class ContentRefresher {
                 context.hideProgressDialog();
             }
         }.execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public void withdraw(Coin coin, String withdrawalWalletTarget, double amount) {
+        Log.d(TAG, "withdraw called");
+        // We pause the refresher so that it doesn't display a conflicting progress dialog
+        pauseRefresher();
+        context.showProgressDialog("Odosielam požiadavku na výber");
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    tradingApiHelper.withdraw(coin.getSymbolName(), withdrawalWalletTarget, amount);
+                } catch (TradingException e) {
+                    e.printStackTrace();
+                    DialogHelper.alertDialog(context, "Chyba", "Pokus o výber skončil s chybou: " + e.getMessage());
+                    recordError(e);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                startRefresher();
+                context.hideProgressDialog();
+            }
+        }.execute();
+    }
+
+    private void recordError(TradingException e) {
+        // At least 200 seconds have to pass before retrying, let's not spam the service
+        if (lastError == null || lastError.before(new Date(new Date().getTime() - 200_000))) {
+            wakeAzureAppService();
+            lastError = new Date();
+        }
+    }
+
+    public void wakeAzureAppService() {
+        // Wakey, wakey, Azure App Service! One does not simply build microservices without Microsoft issues
+        Log.w(TAG, "Trying to wake up Azure App Service");
+        RequestQueue queue = Volley.newRequestQueue(context);
+        for (String wake : new String[]{
+            "https://tradingservice-xchangecrypt.azurewebsites.net/",
+            "https://walletservice-xchangecrypt.azurewebsites.net/",
+            "https://viewservice-xchangecrypt.azurewebsites.net/",
+        }) {
+            JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                wake,
+                new JSONObject(),
+                response -> {
+                },
+                error -> {
+                }
+            );
+            queue.add(request);
+        }
+        queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Object>() {
+            @Override
+            public void onRequestFinished(Request<Object> request) {
+                queue.stop();
+            }
+        });
     }
 }

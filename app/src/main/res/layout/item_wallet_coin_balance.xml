@@ -32,13 +32,13 @@
 
         <TextView
             android:id="@+id/listview_coin_amount"
-            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
+            android:text="AMOUNT"
             android:textSize="13sp"
-            android:text="AMOUNT" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,18 +54,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textSize="13sp"
-                android:text="Adresa:" />
+                android:text="Adresa:"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/listview_coin_public_key"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:fontFamily="serif-monospace"
                 android:gravity="center"
                 android:lines="2"
                 android:text="PUBLIC_KEY"
-                android:fontFamily="serif-monospace"
                 android:textSize="10sp" />
 
         </LinearLayout>
@@ -73,11 +73,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/listview_coin_generate_button"
+        android:id="@+id/listview_coin_action"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Nová adresa"
+        android:text="@string/wallet_action"
         android:textSize="10sp" />
 
 </LinearLayout>

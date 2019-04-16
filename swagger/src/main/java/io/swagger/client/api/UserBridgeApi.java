@@ -447,10 +447,10 @@ public class UserBridgeApi {
    * @param coinSymbol         A unique symbol identification of a coin.
    * @param recipientPublicKey Recipient address of a wallet for coins to be sent to
    * @param withdrawalAmount   Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
-   * @return map Map<String, String>
+   * @return String
    */
-  public Map<String, String> walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
-    Object postBody = withdrawalAmount;
+  public String walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+    Object postBody = null;
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
       throw new ApiException(400, "Missing the required parameter 'accountId' when calling walletWithdraw");
@@ -478,24 +478,25 @@ public class UserBridgeApi {
     // form params
     Map<String, String> formParams = new HashMap<String, String>();
     String[] contentTypes = {
-      "application/json-patch+json",
-      "application/json",
-      "text/json",
-      "application/_*+json",
-      "application/json-patch+json",
-      "application/json",
-      "text/json",
-      "application/_*+json"
+      "multipart/form-data"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
     if (contentType.startsWith("multipart/form-data")) {
       // file uploading
       MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+      if (recipientPublicKey != null) {
+        localVarBuilder.addTextBody("recipientPublicKey", ApiInvoker.parameterToString(recipientPublicKey), ApiInvoker.TEXT_PLAIN_UTF8);
+      }
+      if (withdrawalAmount != null) {
+        localVarBuilder.addTextBody("withdrawalAmount", ApiInvoker.parameterToString(withdrawalAmount), ApiInvoker.TEXT_PLAIN_UTF8);
+      }
       HttpEntity httpEntity = localVarBuilder.build();
       postBody = httpEntity;
     } else {
       // normal form params
+      formParams.put("recipientPublicKey", ApiInvoker.parameterToString(recipientPublicKey));
+      formParams.put("withdrawalAmount", ApiInvoker.parameterToString(withdrawalAmount));
     }
 
     String[] authNames = new String[]{"Bearer"};
@@ -503,7 +504,7 @@ public class UserBridgeApi {
     try {
       String localVarResponse = apiInvoker.invokeAPI(basePath, path, "POST", queryParams, postBody, headerParams, formParams, contentType, authNames);
       if (localVarResponse != null) {
-        return (Map<String, String>) ApiInvoker.deserialize(localVarResponse, "map", String.class);
+        return (String) ApiInvoker.deserialize(localVarResponse, "", String.class);
       } else {
         return null;
       }
@@ -532,8 +533,8 @@ public class UserBridgeApi {
    * @param recipientPublicKey Recipient address of a wallet for coins to be sent to
    * @param withdrawalAmount   Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
    */
-  public void walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount, final Response.Listener<Map<String, String>> responseListener, final Response.ErrorListener errorListener) {
-    Object postBody = withdrawalAmount;
+  public void walletWithdraw(String accountId, String coinSymbol, String recipientPublicKey, Double withdrawalAmount, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+    Object postBody = null;
 
     // verify the required parameter 'accountId' is set
     if (accountId == null) {
@@ -568,7 +569,7 @@ public class UserBridgeApi {
 
 
     String[] contentTypes = {
-      "application/json-patch+json", "application/json", "text/json", "application/_*+json", "application/json-patch+json", "application/json", "text/json", "application/_*+json"
+      "multipart/form-data"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -576,11 +577,21 @@ public class UserBridgeApi {
       // file uploading
       MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
 
+      if (recipientPublicKey != null) {
+        localVarBuilder.addTextBody("recipientPublicKey", ApiInvoker.parameterToString(recipientPublicKey), ApiInvoker.TEXT_PLAIN_UTF8);
+      }
+
+      if (withdrawalAmount != null) {
+        localVarBuilder.addTextBody("withdrawalAmount", ApiInvoker.parameterToString(withdrawalAmount), ApiInvoker.TEXT_PLAIN_UTF8);
+      }
+
 
       HttpEntity httpEntity = localVarBuilder.build();
       postBody = httpEntity;
     } else {
       // normal form params
+      formParams.put("recipientPublicKey", ApiInvoker.parameterToString(recipientPublicKey));
+      formParams.put("withdrawalAmount", ApiInvoker.parameterToString(withdrawalAmount));
     }
 
     String[] authNames = new String[]{"Bearer"};
@@ -591,7 +602,7 @@ public class UserBridgeApi {
           @Override
           public void onResponse(String localVarResponse) {
             try {
-              responseListener.onResponse((Map<String, String>) ApiInvoker.deserialize(localVarResponse, "map", String.class));
+              responseListener.onResponse((String) ApiInvoker.deserialize(localVarResponse, "", String.class));
             } catch (ApiException exception) {
               errorListener.onErrorResponse(new VolleyError(exception));
             }

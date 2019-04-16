@@ -318,6 +318,25 @@ public class TradingApiHelper {
         }
     }
 
+    public void withdraw(final String coinSymbol, final String withdrawalAddressTarget, final double amount) {
+        createUserApi();
+        String errorResponse = null;
+        try {
+            errorResponse = userApi.walletWithdraw(
+                mainActivity.getContentProvider().getUser().getAccountId(),
+                coinSymbol,
+                withdrawalAddressTarget,
+                amount
+            );
+        } catch (TimeoutException | ExecutionException | InterruptedException | ApiException e) {
+            e.printStackTrace();
+            throw new TradingException("Cannot withdraw from wallet", e);
+        }
+        if (errorResponse != null && !"".equals(errorResponse)) {
+            throw new TradingException("return " + errorResponse);
+        }
+    }
+
     public AuthorizationResponse authorize(final User user) {
         createTradingOrdersApi();
         mainActivity.showProgressDialog("Prebieha overenie identity");

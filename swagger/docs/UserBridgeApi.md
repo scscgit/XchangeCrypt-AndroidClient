@@ -136,7 +136,7 @@ Name | Type | Description  | Notes
 
 <a name="walletWithdraw"></a>
 # **walletWithdraw**
-> Map&lt;String, String&gt; walletWithdraw(accountId, coinSymbol, recipientPublicKey, withdrawalAmount)
+> String walletWithdraw(accountId, coinSymbol, recipientPublicKey, withdrawalAmount)
 
 Requests a coin withdrawal from a specific wallet of the authorized user.
 
@@ -151,7 +151,7 @@ String coinSymbol = "coinSymbol_example"; // String | A unique symbol identifica
 String recipientPublicKey = "recipientPublicKey_example"; // String | Recipient address of a wallet for coins to be sent to
 Double withdrawalAmount = 3.4D; // Double | Amount of balance to withdraw, represented in multiplies of the lowest tradable amount, which is specified by the wallet
 try {
-    Map<String, String> result = apiInstance.walletWithdraw(accountId, coinSymbol, recipientPublicKey, withdrawalAmount);
+    String result = apiInstance.walletWithdraw(accountId, coinSymbol, recipientPublicKey, withdrawalAmount);
     System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling UserBridgeApi#walletWithdraw");
@@ -170,7 +170,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**Map&lt;String, String&gt;**
+**String**
 
 ### Authorization
 
@@ -178,7 +178,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json, application/json-patch+json, application/json, text/json, application/_*+json
+ - **Content-Type**: multipart/form-data
  - **Accept**: application/json
 
 <a name="wallets"></a>

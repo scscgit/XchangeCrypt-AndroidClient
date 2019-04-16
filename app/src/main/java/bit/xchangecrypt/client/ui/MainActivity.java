@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private int notificationId;
 
     public void loginDialog() {
-        DialogHelper.confirmationDialog(
+        DialogHelper.yesNoConfirmationDialog(
             this,
             getString(R.string.user_is_offline),
             getString(R.string.question_login),
