@@ -549,7 +549,8 @@ public class ContentRefresher {
             coins.add(new Coin(
                 walletDetails.getCoinSymbol(),
                 walletDetails.getWalletPublicKey(),
-                walletDetails.getBalance()
+                walletDetails.getBalance(),
+                walletDetails.getAvailableBalance()
             ));
         }
         getContentProvider().setCoinsBalance(coins);
@@ -708,7 +709,6 @@ public class ContentRefresher {
         for (String wake : new String[]{
             "https://tradingservice-xchangecrypt.azurewebsites.net/",
             "https://walletservice-xchangecrypt.azurewebsites.net/",
-            "https://viewservice-xchangecrypt.azurewebsites.net/",
         }) {
             JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,

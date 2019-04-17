@@ -74,9 +74,10 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     private TextView toolbarTitle;
     private ImageButton helpButton;
 
-    // Azure AD MSAL context variables
-    private PublicClientApplication activeDirectoryApp;
     private int notificationId;
+
+    // Azure AD MSAL context variables
+    private static PublicClientApplication activeDirectoryApp;
 
     public void loginDialog() {
         DialogHelper.yesNoConfirmationDialog(
@@ -410,9 +411,9 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         getContentProvider().setAccountTransactionHistory(getContentProvider().getCurrentCurrencyPair(), transactionList);
         //getContentProvider().setLastUpdateTime(ContentCacheType.history, new Date());
 
-        Coin coin1 = new Coin("BTC", "testPubKeyBtc", 0.00025638);
-        Coin coin2 = new Coin("QBC", "testPubKeyQbc", 1.90025211);
-        Coin coin3 = new Coin("LTC", "testPubKeyLtc", 5.10015111);
+        Coin coin1 = new Coin("BTC", "testPubKeyBtc", 0.00025638, 0.00025638);
+        Coin coin2 = new Coin("QBC", "testPubKeyQbc", 1.90025211, 1.90025211);
+        Coin coin3 = new Coin("LTC", "testPubKeyLtc", 5.10015111, 5.10015111);
         List<Coin> coins = new ArrayList<>();
         coins.add(coin1);
         coins.add(coin2);

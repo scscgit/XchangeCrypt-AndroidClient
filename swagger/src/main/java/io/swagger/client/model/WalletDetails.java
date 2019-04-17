@@ -28,6 +28,8 @@ public class WalletDetails {
   private String walletPublicKey = null;
   @SerializedName("balance")
   private Double balance = null;
+  @SerializedName("availableBalance")
+  private Double availableBalance = null;
 
   /**
    * Short and unique coin name, used as a part of instrument trading pair name. Also used as account identifier.
@@ -65,6 +67,18 @@ public class WalletDetails {
     this.balance = balance;
   }
 
+  /**
+   * User balance of the wallet, that is not reserved by open orders, and is available for trading.
+   **/
+  @ApiModelProperty(value = "User balance of the wallet, that is not reserved by open orders, and is available for trading.")
+  public Double getAvailableBalance() {
+    return availableBalance;
+  }
+
+  public void setAvailableBalance(Double availableBalance) {
+    this.availableBalance = availableBalance;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -77,7 +91,8 @@ public class WalletDetails {
     WalletDetails walletDetails = (WalletDetails) o;
     return (this.coinSymbol == null ? walletDetails.coinSymbol == null : this.coinSymbol.equals(walletDetails.coinSymbol)) &&
       (this.walletPublicKey == null ? walletDetails.walletPublicKey == null : this.walletPublicKey.equals(walletDetails.walletPublicKey)) &&
-      (this.balance == null ? walletDetails.balance == null : this.balance.equals(walletDetails.balance));
+      (this.balance == null ? walletDetails.balance == null : this.balance.equals(walletDetails.balance)) &&
+      (this.availableBalance == null ? walletDetails.availableBalance == null : this.availableBalance.equals(walletDetails.availableBalance));
   }
 
   @Override
@@ -86,6 +101,7 @@ public class WalletDetails {
     result = 31 * result + (this.coinSymbol == null ? 0 : this.coinSymbol.hashCode());
     result = 31 * result + (this.walletPublicKey == null ? 0 : this.walletPublicKey.hashCode());
     result = 31 * result + (this.balance == null ? 0 : this.balance.hashCode());
+    result = 31 * result + (this.availableBalance == null ? 0 : this.availableBalance.hashCode());
     return result;
   }
 
@@ -97,6 +113,7 @@ public class WalletDetails {
     sb.append("  coinSymbol: ").append(coinSymbol).append("\n");
     sb.append("  walletPublicKey: ").append(walletPublicKey).append("\n");
     sb.append("  balance: ").append(balance).append("\n");
+    sb.append("  availableBalance: ").append(availableBalance).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

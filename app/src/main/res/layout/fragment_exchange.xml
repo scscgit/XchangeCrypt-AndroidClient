@@ -100,7 +100,7 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:text="@string/exchange_coin_balance" />
+                        android:text="@string/exchange_coin_available" />
 
                     <TextView
                         android:id="@+id/exchange_coin_balance_value"

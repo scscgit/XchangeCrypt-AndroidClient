@@ -24,7 +24,7 @@
     <string name="exchange">Zmenáreň</string>
     <string name="exchange_loading">Načítavam dáta zmenárne</string>
     <string name="exchange_select_currency_pair">Vyberte menový pár</string>
-    <string name="exchange_coin_balance">Zostatok:</string>
+    <string name="exchange_coin_available">Dostupý zostatok:</string>
     <string name="exchange_buy">Nákup</string>
     <string name="exchange_sell">Predaj</string>
     <string name="exchange_order_title">Stanoviť ponuku</string>
@@ -42,6 +42,7 @@
     <string name="exchange_graph_month">Mesiac</string>
     <string name="exchange_graph_day">Deň</string>
     <string name="exchange_graph_hour">Hodina</string>
+    <string name="exchange_graph_minute">Minúta</string>
     <string name="market_order">Market ponuka</string>
     <string name="limit_order">Limit ponuka</string>
     <string name="stop_order">Stop ponuka</string>
@@ -68,6 +69,7 @@
     <!-- Wallet -->
     <string name="wallet">Peňaženka</string>
     <string name="wallet_balance">Finančný zostatok</string>
+    <string name="wallet_coin_address">Adresa:</string>
     <string name="wallet_action">Akcia</string>
     <string name="wallet_choose_action">Vyberte akciu pre vykonanie nad vašou %s peňaženkou</string>
     <string name="wallet_copy_address">Skopírovať</string>
@@ -98,6 +100,5 @@
     <!-- Other -->
     <string name="channel_name">Aktualizácie ponúk</string>
     <string name="help">Pomoc</string>
-
 
 </resources>

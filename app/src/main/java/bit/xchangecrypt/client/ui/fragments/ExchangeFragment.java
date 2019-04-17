@@ -82,7 +82,7 @@ public class ExchangeFragment extends BaseFragment {
     private LinearLayout orderListDescriptionResolution;
     private Button resolutionMonth;
     private Button resolutionDay;
-    private Button resolutionHour;
+    private Button resolutionHourMinute;
 
     private Button buttonMarketOrder;
     private Button buttonLimitOrder;
@@ -206,7 +206,7 @@ public class ExchangeFragment extends BaseFragment {
         orderListDescriptionResolution = rootView.findViewById(R.id.exchange_order_list_description_resolution);
         resolutionMonth = rootView.findViewById(R.id.exchange_resolution_1M);
         resolutionDay = rootView.findViewById(R.id.exchange_resolution_1D);
-        resolutionHour = rootView.findViewById(R.id.exchange_resolution_1H);
+        resolutionHourMinute = rootView.findViewById(R.id.exchange_resolution_1H);
 
         imageUp = rootView.findViewById(R.id.exchange_state_arrow_up);
         imageDown = rootView.findViewById(R.id.exchange_state_arrow_down);
@@ -421,6 +421,7 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 resolutionMonth.setBackgroundColor(getResources().getColor(R.color.blue));
                 getContentProvider().setGraphResolution("1M");
+                resolutionHourMinute.setText(R.string.exchange_graph_hour);
                 getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
                 // Wait for refresher
             }
@@ -431,16 +432,23 @@ public class ExchangeFragment extends BaseFragment {
             public void onClick(View v) {
                 resolutionDay.setBackgroundColor(getResources().getColor(R.color.blue));
                 getContentProvider().setGraphResolution("1D");
+                resolutionHourMinute.setText(R.string.exchange_graph_hour);
                 getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
                 // Wait for refresher
             }
         });
 
-        resolutionHour.setOnClickListener(new View.OnClickListener() {
+        resolutionHourMinute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resolutionHour.setBackgroundColor(getResources().getColor(R.color.blue));
-                getContentProvider().setGraphResolution("1H");
+                resolutionHourMinute.setBackgroundColor(getResources().getColor(R.color.blue));
+                if (getContentProvider().getGraphResolution().equals("1H")) {
+                    getContentProvider().setGraphResolution("1m");
+                    resolutionHourMinute.setText(R.string.exchange_graph_minute);
+                } else {
+                    getContentProvider().setGraphResolution("1H");
+                    resolutionHourMinute.setText(R.string.exchange_graph_hour);
+                }
                 getMainActivity().getContentRefresher().pauseRefresher().startRefresher();
                 // Wait for refresher
             }
@@ -459,7 +467,6 @@ public class ExchangeFragment extends BaseFragment {
                     imageDownDown.setVisibility(View.VISIBLE);
                     imageDown.setVisibility(View.VISIBLE);
                 }
-
             }
         });
 
@@ -906,7 +913,9 @@ public class ExchangeFragment extends BaseFragment {
         if (coin == null) {
             balanceText.setText("");
         } else {
-            balanceText.setText(formatNumber(coin.getAmount()) + " " + coin.getSymbolName());
+            balanceText.setText(
+                formatNumber(coin.getAvailableAmount())
+            );
         }
     }
 
@@ -961,11 +970,12 @@ public class ExchangeFragment extends BaseFragment {
         resolutionMonth.setBackgroundColor(getResources().getColor(
             getContentProvider().getGraphResolution().equals("1M") ? R.color.orange : R.color.gray
         ));
-        resolutionHour.setBackgroundColor(getResources().getColor(
-            getContentProvider().getGraphResolution().equals("1H") ? R.color.orange : R.color.gray
-        ));
         resolutionDay.setBackgroundColor(getResources().getColor(
             getContentProvider().getGraphResolution().equals("1D") ? R.color.orange : R.color.gray
+        ));
+        resolutionHourMinute.setBackgroundColor(getResources().getColor(
+            (getContentProvider().getGraphResolution().equals("1H") || getContentProvider().getGraphResolution().equals("1m"))
+                ? R.color.orange : R.color.gray
         ));
 
         BarsArrays bars = getContentProvider().getHistoryBars(getContentProvider().getCurrentCurrencyPair());

@@ -10,6 +10,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.datamodel.Coin;
+import bit.xchangecrypt.client.ui.MainActivity;
 import bit.xchangecrypt.client.ui.fragments.ExchangeFragment;
 import bit.xchangecrypt.client.ui.fragments.WalletFragment;
 import bit.xchangecrypt.client.util.CoinHelper;
@@ -45,7 +46,12 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
 
         logo.setImageDrawable((CoinHelper.getDrawableForCoin(getContext(), coin.getSymbolName())));
         coinTitle.setText(coin.getSymbolName());
-        coinAmount.setText(walletFragment.formatNumber(coin.getAmount()) + " " + coin.getSymbolName());
+        coinAmount.setText(String.format(
+            "%s/%s %s",
+            MainActivity.formatNumber(coin.getAvailableAmount()),
+            MainActivity.formatNumber(coin.getAmount()),
+            coin.getSymbolName()
+        ));
         coinPublicKey.setText(coin.getPublicKey());
         coinPublicKey.setOnClickListener(new View.OnClickListener() {
             @Override
