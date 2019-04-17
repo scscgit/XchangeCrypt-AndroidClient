@@ -57,7 +57,8 @@ public class ContentRefresher {
     private boolean continueOffline;
     private AlertDialog authenticationExpirationDialog;
     private boolean notificationsOnly;
-    private Date lastError = null;
+    private Date lastErrorWake = null;
+    private int errorCount = 10;
 
     private ContentRefresher() {
         this.executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(NUMBER_OF_THREADS);
@@ -188,6 +189,7 @@ public class ContentRefresher {
                     default:
                         throw new IllegalArgumentException("switchFragmentTarget");
                 }
+                // Overrides the loaders if the app is paused with notifications enabled
                 if (notificationsOnly) {
                     if (getContentProvider().getUser() != null) {
                         loaders = new Runnable[]{
@@ -231,20 +233,11 @@ public class ContentRefresher {
             } catch (Throwable e) {
                 e.printStackTrace();
                 Log.e(TAG, "Refresher thread has failed, this run is skipped");
-                // TODO: replace by a more conservative approach
-                pauseRefresher();
-                // This thread has been interrupted, so we have to sleep in a new thread
-                new Thread(() -> {
-                    tradingApiHelper.tryNextDomain();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    startRefresher();
-                }).start();
+                trySwitchApi(e);
                 return;
             }
+            // Load was successful, let's not switch API domain any time soon
+            errorCount = 0;
 
             synchronized (this) {
                 if (reloadFragment != this.switchFragmentTarget) {
@@ -462,7 +455,7 @@ public class ContentRefresher {
                 quote,
                 OrderSide.fromString(order.getSide().toString()),
                 OrderType.fromString(order.getType().toString())
-            ));
+            ).setOrderId(order.getId()));
         }
         getContentProvider().setAccountOrders(offers);
     }
@@ -492,7 +485,7 @@ public class ContentRefresher {
                 orderResponse.getInstrument().split("_")[1],
                 OrderSide.fromString(orderResponse.getSide().toString()),
                 OrderType.fromString(orderResponse.getType().toString())
-            ));
+            ).setOrderId(orderResponse.getId()));
         }
         getContentProvider().setAccountOrderHistory(orderHistory);
     }
@@ -695,11 +688,30 @@ public class ContentRefresher {
     }
 
     private void recordError(TradingException e) {
-        // At least 200 seconds have to pass before retrying, let's not spam the service
-        if (lastError == null || lastError.before(new Date(new Date().getTime() - 200_000))) {
+        // At least 200 seconds have to pass before retrying the wake up trigger, let's not spam the service
+        if (lastErrorWake == null || lastErrorWake.before(new Date(new Date().getTime() - 200_000))) {
+            lastErrorWake = new Date();
             wakeAzureAppService();
-            lastError = new Date();
         }
+    }
+
+    private void trySwitchApi(Throwable e) {
+        if (++errorCount > 10) {
+            // errorCount starts at max, so it can switch domains on start, and it keeps switching until first success
+            pauseRefresher();
+            errorCount = 9;
+            // This thread will be interrupted (probably?), so we have to sleep in a new thread
+            new Thread(() -> {
+                tradingApiHelper.tryNextDomain();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                startRefresher();
+            }).start();
+        }
+        Log.d(TAG, "API switch ErrorCount " + errorCount + "/20");
     }
 
     public void wakeAzureAppService() {

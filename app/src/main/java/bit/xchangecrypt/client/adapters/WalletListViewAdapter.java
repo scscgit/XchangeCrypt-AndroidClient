@@ -47,7 +47,7 @@ public class WalletListViewAdapter extends ArrayAdapter<Coin> {
         logo.setImageDrawable((CoinHelper.getDrawableForCoin(getContext(), coin.getSymbolName())));
         coinTitle.setText(coin.getSymbolName());
         coinAmount.setText(String.format(
-            "%s/%s %s",
+            "%s / %s %s",
             MainActivity.formatNumber(coin.getAvailableAmount()),
             MainActivity.formatNumber(coin.getAmount()),
             coin.getSymbolName()

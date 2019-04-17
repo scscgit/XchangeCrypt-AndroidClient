@@ -420,25 +420,25 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         coins.add(coin3);
         getContentProvider().setCoinsBalance(coins);
 
-        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT, "1");
-        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer1 = new Order(0.00000268, 0.00000268, "LTC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("1");
+        Order offer2 = new Order(0.00000270, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer3 = new Order(0.00000272, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer4 = new Order(0.00000274, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer5 = new Order(0.00000282, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer6 = new Order(0.00000284, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer7 = new Order(0.00000295, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer8 = new Order(0.00000296, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer9 = new Order(0.00000299, 0.00000268, "LTC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
 
-        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT, "1");
-        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
-        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT, "2");
+        Order offer11 = new Order(0.00000268, 0.00000268, "QBC", 1252.1965919, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("1");
+        Order offer21 = new Order(0.00000270, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer31 = new Order(0.00000272, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer41 = new Order(0.00000274, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer51 = new Order(0.00000282, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer61 = new Order(0.00000284, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer71 = new Order(0.00000295, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer81 = new Order(0.00000296, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
+        Order offer91 = new Order(0.00000299, 0.00000268, "QBC", 3000.0000000, "BTC", OrderSide.BUY, OrderType.LIMIT).setOrderId("2");
 
         List<Order> offerList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -873,7 +873,8 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(CoinHelper.getResourceIdCoin(coinSymbol))
             .setContentTitle(title)
-            .setContentText(text)
+            .setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(text))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true);

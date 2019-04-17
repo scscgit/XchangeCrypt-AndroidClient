@@ -97,16 +97,19 @@
 
                     <TextView
                         android:id="@+id/exchange_coin_balance_title"
-                        android:layout_width="70dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:text="@string/exchange_coin_available" />
+                        android:layout_marginEnd="6dp"
+                        android:text="@string/exchange_coin_available"
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/exchange_coin_balance_value"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="VALUE CURRENCY" />
+                        android:text="VALUE CURRENCY"
+                        android:textSize="13sp" />
 
                 </LinearLayout>
 

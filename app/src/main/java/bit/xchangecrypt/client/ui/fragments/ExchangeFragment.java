@@ -914,7 +914,7 @@ public class ExchangeFragment extends BaseFragment {
             balanceText.setText("");
         } else {
             balanceText.setText(
-                formatNumber(coin.getAvailableAmount())
+                String.format("%s %s", formatNumber(coin.getAvailableAmount()), coin.getSymbolName())
             );
         }
     }

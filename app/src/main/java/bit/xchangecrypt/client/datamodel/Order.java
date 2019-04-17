@@ -3,8 +3,6 @@ package bit.xchangecrypt.client.datamodel;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
 import bit.xchangecrypt.client.datamodel.enums.OrderType;
 
-import java.util.UUID;
-
 /**
  * Created by Peter on 23.04.2018.
  */
@@ -18,18 +16,9 @@ public class Order extends BaseObject {
     private String quoteCurrency;
     private OrderSide side;
     private OrderType type;
-    private String orderId;
 
-    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type) {
-        this.limitPrice = limitPrice;
-        this.stopPrice = stopPrice;
-        this.baseCurrency = baseCurrency;
-        this.baseCurrencyAmount = baseCurrencyAmount;
-        this.quoteCurrency = quoteCurrency;
-        this.side = side;
-        this.type = type;
-        this.orderId = UUID.randomUUID().toString();
-    }
+    // Only required for account orders (for their deletion) and account orders history (for sorting)
+    private String orderId;
 
     public Order(Double limitPrice, Double stopPrice, Double stopLoss, Double takeProfit, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type) {
         this.limitPrice = limitPrice;
@@ -41,18 +30,11 @@ public class Order extends BaseObject {
         this.type = type;
         this.stopLoss = stopLoss;
         this.takeProfit = takeProfit;
-        this.orderId = UUID.randomUUID().toString();
+        //this.orderId = UUID.randomUUID().toString();
     }
 
-    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type, String orderId) {
-        this.limitPrice = limitPrice;
-        this.stopPrice = stopPrice;
-        this.baseCurrency = baseCurrency;
-        this.baseCurrencyAmount = baseCurrencyAmount;
-        this.quoteCurrency = quoteCurrency;
-        this.side = side;
-        this.type = type;
-        this.orderId = orderId;
+    public Order(Double limitPrice, Double stopPrice, String baseCurrency, double baseCurrencyAmount, String quoteCurrency, OrderSide side, OrderType type) {
+        this(limitPrice, stopPrice, null, null, baseCurrency, baseCurrencyAmount, quoteCurrency, side, type);
     }
 
     public Double getStopLoss() {
@@ -128,13 +110,11 @@ public class Order extends BaseObject {
     }
 
     public String getOrderId() {
-        if (orderId == null) {
-            return "0";
-        }
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public Order setOrderId(String orderId) {
         this.orderId = orderId;
+        return this;
     }
 }

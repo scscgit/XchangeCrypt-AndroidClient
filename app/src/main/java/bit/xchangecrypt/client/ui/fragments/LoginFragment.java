@@ -7,14 +7,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import bit.xchangecrypt.client.R;
+import bit.xchangecrypt.client.datamodel.User;
 
 /**
  * Created by Peter on 21.04.2018.
  */
 public class LoginFragment extends BaseFragment {
     private ImageView googleSignButton;
-    //    private Button signButton;
-//    private Button registerButton;
+    private Button signButton;
+    private Button registerButton;
     private Button offlineButton;
 //    private EditText emailEditText;
 //    private EditText passwordEditText;
@@ -43,8 +44,8 @@ public class LoginFragment extends BaseFragment {
     protected void setActionBar() {
         setToolbarTitle("");
         googleSignButton = rootView.findViewById(R.id.button_google_sign);
-//        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
-//        registerButton =(Button) rootView.findViewById(R.id.button_register);
+        signButton = (Button) rootView.findViewById(R.id.button_sign_in);
+        registerButton = (Button) rootView.findViewById(R.id.button_register);
         offlineButton = (Button) rootView.findViewById(R.id.button_offline);
 //        emailEditText = (EditText) rootView.findViewById(R.id.edit_text_email);
 //        passwordEditText = (EditText) rootView.findViewById(R.id.edit_text_password);
@@ -63,20 +64,29 @@ public class LoginFragment extends BaseFragment {
                 //   switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
             }
         });
-//
-//        signButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
-//            }
-//        });
-//
-//        registerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                switchToFragmentAndClear(FRAGMENT_EXCHANGE,null);
-//            }
-//        });
+
+        signButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getMainActivity().isProgressDialog()) {
+                    return;
+                }
+                getMainActivity().getContentRefresher().getApiAuthentication().setApiKeyPrefix("Bearer");
+                getMainActivity().getContentRefresher().getApiAuthentication().setApiKey("test_1");
+                getMainActivity().getContentRefresher().setUser(new User(
+                    "TEST_1",
+                    null,
+                    "test1@test.bit",
+                    "Testing Account 1"
+                ));
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
 
         offlineButton.setOnClickListener(new View.OnClickListener() {
             @Override

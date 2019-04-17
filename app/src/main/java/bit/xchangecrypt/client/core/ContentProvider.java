@@ -421,7 +421,9 @@ public class ContentProvider {
         setLastUpdateTime(ContentCacheType.ACCOUNT_ORDERS, new Date());
     }
 
+    @Deprecated
     public void removeAccountOrderById(String orderId) {
+        // Only removes a reference, without actually deleting the order on server-side
         for (Iterator<Order> iterator = accountOrders.iterator(); iterator.hasNext(); ) {
             Order order = iterator.next();
             if (order.getOrderId().equals(orderId)) {
