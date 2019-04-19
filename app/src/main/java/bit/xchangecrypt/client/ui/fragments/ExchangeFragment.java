@@ -288,7 +288,7 @@ public class ExchangeFragment extends BaseFragment {
         // Disable editing of generated text
         feeEdit.setKeyListener(null);
         sumEdit.setKeyListener(null);
-        feeEdit.setText("0,00000001");
+        feeEdit.setText("0.000001");
 
         // Initialize generated values and displayed orders
         updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
@@ -593,8 +593,8 @@ public class ExchangeFragment extends BaseFragment {
                     getString(
                         orderSide == OrderSide.BUY ? R.string.market_buy : R.string.market_sell,
                         formatNumber(amount),
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0]
+                        getContentProvider().getCurrentCurrencyPair().split("_")[0],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[1]
                     ),
                     () -> sendMarketOrder()
                 );
@@ -623,10 +623,10 @@ public class ExchangeFragment extends BaseFragment {
                     getString(
                         orderSide == OrderSide.BUY ? R.string.limit_buy : R.string.limit_sell,
                         formatNumber(amount),
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[0],
                         formatNumber(price),
                         formatNumber(sum),
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0]
+                        getContentProvider().getCurrentCurrencyPair().split("_")[1]
                     ),
                     () -> sendLimitOrder()
                 );
@@ -654,8 +654,8 @@ public class ExchangeFragment extends BaseFragment {
                     getString(
                         orderSide == OrderSide.BUY ? R.string.stop_buy : R.string.stop_sell,
                         formatNumber(amount),
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 0 : 1],
-                        getContentProvider().getCurrentCurrencyPair().split("_")[orderSide == OrderSide.BUY ? 1 : 0],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[0],
+                        getContentProvider().getCurrentCurrencyPair().split("_")[1],
                         formatNumber(price)
                     ),
                     () -> sendStopOrder()
@@ -998,6 +998,9 @@ public class ExchangeFragment extends BaseFragment {
         chart.getXAxis().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float index) {
+                if (index >= bars.getT().size()) {
+                    return "";
+                }
                 return DateFormatter.getStringFromDate(
                     new Date((long) bars.getT().get((int) index).floatValue()),
                     DateFormatter.FORMAT_DD_MM_YYYY_HH_MM

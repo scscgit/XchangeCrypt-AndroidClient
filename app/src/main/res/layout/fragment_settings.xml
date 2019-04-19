@@ -53,7 +53,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Meno:"
+                android:text="@string/settings_name"
                 android:textSize="@dimen/item_text_size_big" />
 
             <TextView
@@ -84,7 +84,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Priezvisko:"
+                android:text="@string/settings_surname"
                 android:textSize="@dimen/item_text_size_big" />
 
             <TextView
@@ -115,7 +115,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="E-mail:"
+                android:text="@string/settings_email"
                 android:textSize="@dimen/item_text_size_big" />
 
             <TextView
@@ -145,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="false"
-                android:text="Nastavenia aplikácie" />
+                android:text="@string/settings_app_configuration" />
 
         </LinearLayout>
 
@@ -166,7 +166,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Dostávať notifikácie:"
+                android:text="@string/notifications_toggle"
                 android:textSize="@dimen/item_text_size_big" />
 
             <ToggleButton
@@ -174,7 +174,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="start|center_vertical" />
+                android:gravity="start|center_vertical"
+                android:textOff="@string/notifications_no"
+                android:textOn="@string/notifications_yes" />
 
         </LinearLayout>
 
@@ -199,7 +201,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/item_background_orange"
                 android:clickable="false"
-                android:text="Odhlásiť sa" />
+                android:text="@string/settings_log_out" />
 
         </LinearLayout>
 
@@ -224,7 +226,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/item_background_orange"
                 android:clickable="false"
-                android:text="Zmena hesla" />
+                android:text="@string/settings_change_password" />
 
         </LinearLayout>
 
@@ -248,7 +250,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Osobná peňaženka"
+            android:text="@string/settings_personal_wallet"
             android:textSize="@dimen/item_text_size_big" />
 
         <LinearLayout
@@ -269,7 +271,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_background_orange"
-                android:text="Vklad" />
+                android:text="@string/settings_personal_wallet_deposit" />
 
             <Button
                 android:id="@+id/button_withdraw"
@@ -282,7 +284,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_background_orange"
-                android:text="Výber" />
+                android:text="@string/settings_personal_wallet_withdrawal" />
 
         </LinearLayout>
 

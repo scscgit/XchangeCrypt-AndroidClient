@@ -24,7 +24,7 @@
     <string name="exchange">Zmenáreň</string>
     <string name="exchange_loading">Načítavam dáta zmenárne</string>
     <string name="exchange_select_currency_pair">Vyberte menový pár</string>
-    <string name="exchange_coin_available">Dostupý zostatok:</string>
+    <string name="exchange_coin_available">Dostupný zostatok:</string>
     <string name="exchange_buy">Nákup</string>
     <string name="exchange_sell">Predaj</string>
     <string name="exchange_order_title">Stanoviť ponuku</string>
@@ -60,11 +60,11 @@
     <string name="order_delete_buy">Chcete odstrániť vašu ponuku na nákup %s %s?</string>
     <string name="order_delete_sell">Chcete odstrániť vašu ponuku na predaj %s %s?</string>
     <string name="market_buy">Prajete si okamžite nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
-    <string name="market_sell">Prajete si okamžite predať %s %s a zaplatiť %s pri najbližšej trhovej cene?</string>
+    <string name="market_sell">Prajete si okamžite predať %s %s a získať %s pri najbližšej trhovej cene?</string>
     <string name="limit_buy">Prajete si nakúpiť %s %s pri cene %s a zaplatit tak %s %s?</string>
     <string name="limit_sell">Prajete si predať %s %s pri cene %s a získať tak %s %s?</string>
     <string name="stop_buy">Prajete si nakúpiť %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena stúpne nad %s?</string>
-    <string name="stop_sell">Prajete si predať %s %s a zaplatiť %s pri najbližšej trhovej cene, až keď cena klesne pod %s?</string>
+    <string name="stop_sell">Prajete si predať %s %s a získať %s pri najbližšej trhovej cene, až keď cena klesne pod %s?</string>
 
     <!-- Wallet -->
     <string name="wallet">Peňaženka</string>
@@ -91,6 +91,18 @@
 
     <!-- Settings -->
     <string name="settings">Nastavenia</string>
+    <string name="settings_name">Meno:</string>
+    <string name="settings_surname">Priezvisko:</string>
+    <string name="settings_email">E-mail:</string>
+    <string name="settings_app_configuration">Nastavenia aplikácie</string>
+    <string name="notifications_toggle">Dostávať notifikácie:</string>
+    <string name="notifications_yes">Áno</string>
+    <string name="notifications_no">Nie</string>
+    <string name="settings_log_out">Odhlásiť sa</string>
+    <string name="settings_change_password">Zmena hesla</string>
+    <string name="settings_personal_wallet">Osobná peňaženka</string>
+    <string name="settings_personal_wallet_deposit">Vklad</string>
+    <string name="settings_personal_wallet_withdrawal">Výber</string>
 
     <!-- Server status -->
     <string name="wallet_last_updated">Naposledy aktualizované</string>

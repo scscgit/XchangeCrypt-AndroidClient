@@ -449,12 +449,17 @@ public class ContentProvider {
     }
 
     public List<MyTransaction> getAccountTransactionHistory(String currencyPair) {
+        if (accountTransactionHistoryMap == null) {
+            return null;
+        }
         return accountTransactionHistoryMap.get(currencyPair);
     }
 
     public void setAccountTransactionHistory(String currencyPair, List<MyTransaction> accountTransactionHistory) {
-        // Notify of any new transactions
-        if (isNotifications()) {
+        // Notify of any new transactions (if this is not a first login)
+        if (accountTransactionHistoryMap == null) {
+            accountTransactionHistoryMap = new HashMap<>();
+        } else if (isNotifications()) {
             if (accountTransactionHistoryMap.containsKey(currencyPair)) {
                 List<MyTransaction> knownTransactions = accountTransactionHistoryMap.get(currencyPair);
                 // Remove known transactions
@@ -468,7 +473,8 @@ public class ContentProvider {
         }
 
         accountTransactionHistory = Stream.of(accountTransactionHistory)
-            .sortBy(MyTransaction::getDate)
+            // Sort descending
+            .sorted((first, second) -> second.getDate().compareTo(first.getDate()))
             .collect(Collectors.toList());
         accountTransactionHistoryMap.put(currencyPair, accountTransactionHistory);
         saveAccountTransactionHistory();
@@ -533,7 +539,7 @@ public class ContentProvider {
         this.user = user;
         accountOrders = null;
         accountOrderHistory = null;
-        accountTransactionHistoryMap = new HashMap<>();
+        accountTransactionHistoryMap = null;
         coinsBalance = null;
         return loadContentFromCache();
     }
@@ -554,7 +560,7 @@ public class ContentProvider {
             && isWalletLoaded()
             && accountOrders != null
             && accountOrderHistory != null
-            && accountTransactionHistoryMap.get(currentCurrencyPair) != null;
+            && getAccountTransactionHistory(currentCurrencyPair) != null;
     }
 
     @Deprecated
