@@ -38,6 +38,7 @@
     <string name="exchange_orders_title">Prehľad ponúk na trhu</string>
     <string name="exchange_market_orders">Trh</string>
     <string name="exchange_my_orders">Moje</string>
+    <string name="exchange_order_history_closed">Táto vaša ponuka už bola zrušená</string>
     <string name="exchange_graph">Graf</string>
     <string name="exchange_graph_month">Mesiac</string>
     <string name="exchange_graph_day">Deň</string>

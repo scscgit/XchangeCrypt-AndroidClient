@@ -435,8 +435,13 @@ public class ContentProvider {
         throw new TradingException("Attempted to remove a reference to a non-existing order");
     }
 
-    public List<Order> getAccountOrderHistory() {
-        return accountOrderHistory;
+    public List<Order> getAccountOrderHistory(String currencyPair, OrderSide side) {
+        String[] currencies = currencyPair.split("_");
+        return Stream.of(this.accountOrderHistory)
+            .filter(order -> order.getBaseCurrency().equals(currencies[0])
+                && order.getQuoteCurrency().equals(currencies[1])
+                && order.getSide() == side)
+            .collect(Collectors.toList());
     }
 
     public void setAccountOrderHistory(List<Order> accountOrderHistory) {

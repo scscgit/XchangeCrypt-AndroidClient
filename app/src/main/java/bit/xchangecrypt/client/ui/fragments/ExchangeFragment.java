@@ -295,15 +295,23 @@ public class ExchangeFragment extends BaseFragment {
 
         ordersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     // Clicked on a header, ignored
                     return;
                 }
                 // Crashed header causes a need to offset all rows by negative one
                 int offset = ExchangeFragment.this.headerAlreadyCrashed ? 0 : -1;
+                position += offset;
                 if (myOrders) {
-                    Order deleteOrder = currentUserOrders.get(position + offset);
+                    if (position >= currentUserOrders.size()) {
+                        Order order = userOrdersHistory.get(position - currentUserOrders.size());
+                        Toast.makeText(getContext(),
+                            getString(R.string.exchange_order_history_closed), Toast.LENGTH_LONG
+                        ).show();
+                        return;
+                    }
+                    Order deleteOrder = currentUserOrders.get(position);
                     getMainActivity().showDialogWithAction(
                         getString(
                             deleteOrder.getSide() == OrderSide.BUY ? R.string.order_delete_buy : R.string.order_delete_sell,
@@ -319,7 +327,7 @@ public class ExchangeFragment extends BaseFragment {
                         true);
                 } else {
                     priceEdit.setText(
-                        formatNumber(marketDepthForPairAndSide.get(position + offset).getLimitPrice())
+                        formatNumber(marketDepthForPairAndSide.get(position).getLimitPrice())
                     );
                 }
             }
@@ -920,6 +928,7 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     private List<Order> currentUserOrders = null;
+    private List<Order> userOrdersHistory = null;
 
     private void showMarketDepthOrders() {
         this.ordersList.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
@@ -931,7 +940,7 @@ public class ExchangeFragment extends BaseFragment {
         orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
         marketDepthForPairAndSide = getContentProvider().getMarketDepthOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
-        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, true));
+        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), marketDepthForPairAndSide, new ArrayList<>(), true));
 
         createOrdersHeader(false);
         displayGraph = false;
@@ -948,7 +957,8 @@ public class ExchangeFragment extends BaseFragment {
         orderListDescriptionResolution.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
         this.currentUserOrders = getContentProvider().getAccountOrders(getContentProvider().getCurrentCurrencyPair(), orderSide);
-        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, false));
+        this.userOrdersHistory = getContentProvider().getAccountOrderHistory(getContentProvider().getCurrentCurrencyPair(), orderSide);
+        ordersList.setAdapter(new ExchangeOrderListViewAdapter(getContext(), currentUserOrders, userOrdersHistory, false));
 
         createOrdersHeader(true);
         displayGraph = false;
