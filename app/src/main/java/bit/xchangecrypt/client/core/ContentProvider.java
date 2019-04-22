@@ -506,7 +506,7 @@ public class ContentProvider {
     }
 
     public void setCoinsBalance(List<Coin> coinsBalance) {
-        this.coinsBalance = coinsBalance;
+        this.coinsBalance = Stream.of(coinsBalance).sortBy(Coin::getSymbolName).toList();
         saveCoinsBalance();
         setLastUpdateTime(ContentCacheType.COINS_BALANCE, new Date());
     }

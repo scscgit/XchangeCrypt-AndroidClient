@@ -18,6 +18,8 @@ public class CoinHelper {
                 return R.drawable.coin_eth;
             case "LTC":
                 return R.drawable.coin_ltc;
+            case "XCT":
+                return R.drawable.coin_xct;
             default:
                 return R.drawable.coin_default;
         }

@@ -27,6 +27,7 @@ public class TradingApiHelper {
         "https://convergenceservice-xchangecrypt.azurewebsites.net/api/v1/trading",
         "https://192.168.0.20/api/v1/trading",
 //        "https://192.168.0.20:8000/api/v1/trading",
+        "https://192.168.8.100/api/v1/trading",
         "https://192.168.8.101/api/v1/trading"
 //        "https://rest-demo.tradingview.com/tradingview/v1",
     );
@@ -35,6 +36,7 @@ public class TradingApiHelper {
         "https://convergenceservice-xchangecrypt.azurewebsites.net/api/v1/user",
         "https://192.168.0.20/api/v1/user",
 //        "https://192.168.0.20:8000/api/v1/user",
+        "https://192.168.8.100/api/v1/user",
         "https://192.168.8.101/api/v1/user"
 //        "https://rest-demo.tradingview.com/tradingview/v1/fake-invalid-api",
     );

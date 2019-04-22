@@ -711,7 +711,7 @@ public class ContentRefresher {
                 startRefresher();
             }).start();
         }
-        Log.d(TAG, "API switch ErrorCount " + errorCount + "/20");
+        Log.d(TAG, "API switch ErrorCount " + errorCount + "/10");
     }
 
     public void wakeAzureAppService() {
