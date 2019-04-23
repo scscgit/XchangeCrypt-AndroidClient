@@ -56,9 +56,10 @@ public class ExchangeOrderListViewAdapter extends ArrayAdapter<Order> {
         TextView coin1 = rowView.findViewById(R.id.listview_orders_item_coin1);
         TextView coin2 = rowView.findViewById(R.id.listview_orders_item_coin2);
         double offerPrice = offer.getType() == OrderType.STOP ? offer.getStopPrice() : offer.getLimitPrice();
+        double baseAmount = openOrder ? offer.getBaseCurrencyAmount() - offer.getBaseCurrencyFilledAmount() : offer.getBaseCurrencyFilledAmount();
         price.setText(String.format("%.8f", offerPrice));
-        coin1.setText(String.format("%.8f", offer.getBaseCurrencyAmount()));
-        coin2.setText(String.format("%.8f", offerPrice * offer.getBaseCurrencyAmount()));
+        coin1.setText(String.format("%.8f", baseAmount));
+        coin2.setText(String.format("%.8f", offerPrice * baseAmount));
         if (!marketOrders) {
             switch (offer.getType()) {
                 case LIMIT:

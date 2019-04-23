@@ -307,7 +307,7 @@ public class ExchangeFragment extends BaseFragment {
                     if (position >= currentUserOrders.size()) {
                         Order order = userOrdersHistory.get(position - currentUserOrders.size());
                         Toast.makeText(getContext(),
-                            getString(R.string.exchange_order_history_closed), Toast.LENGTH_LONG
+                            getString(R.string.exchange_order_history_closed, formatNumber(order.getBaseCurrencyFilledAmount()), formatNumber(order.getBaseCurrencyAmount()), order.getBaseCurrency()), Toast.LENGTH_LONG
                         ).show();
                         return;
                     }
@@ -703,7 +703,11 @@ public class ExchangeFragment extends BaseFragment {
         if (amount == null) {
             return;
         }
-        Order order = new Order(null, null,
+        Order order = new Order(
+            null,
+            null,
+            null,
+            null,
             pair[0],
             amount,
             pair[1],

@@ -346,6 +346,7 @@ public class ContentRefresher {
                 ask.get(0),
                 pair.split("_")[0],
                 ask.get(1),
+                0,
                 pair.split("_")[1],
                 OrderSide.BUY,
                 OrderType.LIMIT
@@ -357,6 +358,7 @@ public class ContentRefresher {
                 bid.get(0),
                 pair.split("_")[0],
                 bid.get(1),
+                0,
                 pair.split("_")[1],
                 OrderSide.SELL,
                 OrderType.LIMIT
@@ -452,6 +454,7 @@ public class ContentRefresher {
                 price,
                 base,
                 order.getQty().doubleValue(),
+                order.getFilledQty().doubleValue(),
                 quote,
                 OrderSide.fromString(order.getSide().toString()),
                 OrderType.fromString(order.getType().toString())
@@ -482,6 +485,7 @@ public class ContentRefresher {
                 orderResponse.getStopPrice() == null ? null : orderResponse.getStopPrice().doubleValue(),
                 orderResponse.getInstrument().split("_")[0],
                 orderResponse.getQty().doubleValue(),
+                orderResponse.getFilledQty().doubleValue(),
                 orderResponse.getInstrument().split("_")[1],
                 OrderSide.fromString(orderResponse.getSide().toString()),
                 OrderType.fromString(orderResponse.getType().toString())
