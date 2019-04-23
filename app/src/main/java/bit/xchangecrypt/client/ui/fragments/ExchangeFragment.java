@@ -19,6 +19,7 @@ import android.widget.*;
 import androidx.core.content.ContextCompat;
 import bit.xchangecrypt.client.R;
 import bit.xchangecrypt.client.adapters.ExchangeOrderListViewAdapter;
+import bit.xchangecrypt.client.core.Constants;
 import bit.xchangecrypt.client.datamodel.Coin;
 import bit.xchangecrypt.client.datamodel.Order;
 import bit.xchangecrypt.client.datamodel.enums.OrderSide;
@@ -48,6 +49,7 @@ import java.util.List;
  */
 public class ExchangeFragment extends BaseFragment {
     private static String TAG = ExchangeFragment.class.getSimpleName();
+
     private TextView firstCurrencyText;
     private ImageView firstCurrencyLogo;
     private TextView secondCurrencyText;
@@ -288,7 +290,6 @@ public class ExchangeFragment extends BaseFragment {
         // Disable editing of generated text
         feeEdit.setKeyListener(null);
         sumEdit.setKeyListener(null);
-        feeEdit.setText("0.000001");
 
         // Initialize generated values and displayed orders
         updateOnCurrencyPairChange(getContentProvider().getCurrentCurrencyPair(), true);
@@ -523,12 +524,14 @@ public class ExchangeFragment extends BaseFragment {
                     try {
                         double amount = parseValue(amountEdit);
                         double price = parseValue(priceEdit);
-                        double fee = parseValue(feeEdit);
-                        double sum = amount * price + fee;
-                        sumEdit.setText(formatNumber(sum));
+                        calculateFeeAndSum(amount, price);
                     } catch (NumberFormatException e) {
+                        feeEdit.setText(getString(R.string.invalid_value));
                         sumEdit.setText(getString(R.string.invalid_value));
                     }
+                } else {
+                    feeEdit.setText("");
+                    sumEdit.setText("");
                 }
             }
 
@@ -548,12 +551,14 @@ public class ExchangeFragment extends BaseFragment {
                     try {
                         double amount = parseValue(amountEdit);
                         double price = parseValue(priceEdit);
-                        double fee = parseValue(feeEdit);
-                        double sum = amount * price + fee;
-                        sumEdit.setText(formatNumber(sum));
+                        calculateFeeAndSum(amount, price);
                     } catch (NumberFormatException e) {
+                        feeEdit.setText(getString(R.string.invalid_value));
                         sumEdit.setText(getString(R.string.invalid_value));
                     }
+                } else {
+                    feeEdit.setText("");
+                    sumEdit.setText("");
                 }
             }
 
@@ -670,6 +675,13 @@ public class ExchangeFragment extends BaseFragment {
                 );
             }
         });
+    }
+
+    private void calculateFeeAndSum(double amount, double price) {
+        double simpleSum = amount * price;
+        double fee = simpleSum * 0.01 * Constants.FEE_PERCENTAGE;
+        feeEdit.setText(formatNumber(fee));
+        sumEdit.setText(formatNumber(simpleSum + (orderSide == OrderSide.BUY ? fee : -fee)));
     }
 
     private void createOrdersHeader(boolean userOrders) {

@@ -9,6 +9,8 @@ public interface Constants {
     String INFODIALOG_MESSAGE = "message_infodialog";
     String INFODIALOG_BUTTON_TEXT = "button_text_infodialog";
 
+    double FEE_PERCENTAGE = 1;
+
     // Azure AD B2C Configs (Mock, doesn't work)
 //    String AUTHORITY = "https://login.microsoftonline.com/tfp/%s/%s";
 //    String TENANT = "fabrikamb2c.onmicrosoft.com";
