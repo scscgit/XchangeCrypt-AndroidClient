@@ -703,7 +703,7 @@ public class ContentRefresher {
         if (++errorCount > 10) {
             // errorCount starts at max, so it can switch domains on start, and it keeps switching until first success
             pauseRefresher();
-            errorCount = 9;
+            errorCount = 10;
             // This thread will be interrupted (probably?), so we have to sleep in a new thread
             new Thread(() -> {
                 tradingApiHelper.tryNextDomain();
