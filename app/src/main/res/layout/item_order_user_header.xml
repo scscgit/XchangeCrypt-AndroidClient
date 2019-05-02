@@ -11,14 +11,14 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Typ" />
+        android:text="@string/exchange_orders_item_type" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="center"
-        android:text="Cena" />
+        android:text="@string/exchange_orders_item_price" />
 
     <TextView
         android:id="@+id/listview_orders_header_coin1"

@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="alebo"
+                android:text="@string/login_or"
                 android:textSize="@dimen/title_text_size_big" />
 
         </LinearLayout>
@@ -76,7 +76,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:labelFor="@id/edit_text_email"
-                android:text="E-mail"
+                android:text="@string/login_email"
                 android:textSize="@dimen/title_text_size_big" />
 
             <EditText
@@ -102,7 +102,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:labelFor="@id/edit_text_password"
-                android:text="Heslo"
+                android:text="@string/login_password"
                 android:textSize="@dimen/title_text_size_big" />
 
             <EditText
@@ -132,7 +132,7 @@
                 android:layout_marginEnd="3dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_background_orange"
-                android:text="Prihlásiť sa" />
+                android:text="@string/login_sign_in" />
 
             <Button
                 android:id="@+id/button_register"
@@ -143,7 +143,7 @@
                 android:layout_marginEnd="3dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_background_orange"
-                android:text="Registrovať sa" />
+                android:text="@string/login_sign_up" />
 
             <Button
                 android:id="@+id/button_offline"
@@ -154,7 +154,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_background_orange"
-                android:text="Skúsiť offline" />
+                android:text="@string/login_try_offline" />
 
         </LinearLayout>
 

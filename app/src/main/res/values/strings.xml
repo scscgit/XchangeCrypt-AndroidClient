@@ -2,6 +2,12 @@
     <string name="app_name">XchangeCrypt</string>
 
     <!-- Login -->
+    <string name="login_or">alebo</string>
+    <string name="login_email">E-mail</string>
+    <string name="login_password">Heslo</string>
+    <string name="login_sign_in">Prihlásiť sa</string>
+    <string name="login_sign_up">Registrovať sa</string>
+    <string name="login_try_offline">Skúsiť offline</string>
     <string name="login_failed_verification">Nepodarilo sa overiť vašu identitu, boli ste odhlásený</string>
     <string name="login_canceled">Prihlásenie bolo zrušené</string>
     <string name="authentication_attempting">Prebieha pokus o prihlásenie</string>
@@ -27,7 +33,7 @@
     <string name="exchange_coin_available">Dostupný zostatok:</string>
     <string name="exchange_buy">Nákup</string>
     <string name="exchange_sell">Predaj</string>
-    <string name="exchange_order_title">Stanoviť ponuku</string>
+    <string name="exchange_order_title">Stanoviť novú ponuku</string>
     <string name="exchange_amount">Množstvo</string>
     <string name="exchange_price">Cena</string>
     <string name="exchange_fee">Poplatok</string>
@@ -37,6 +43,8 @@
     <string name="exchange_stop">Stop</string>
     <string name="exchange_orders_title">Prehľad ponúk na trhu</string>
     <string name="exchange_market_orders">Trh</string>
+    <string name="exchange_orders_item_type">Typ</string>
+    <string name="exchange_orders_item_price">Cena</string>
     <string name="exchange_my_orders">Moje</string>
     <string name="exchange_order_history_closed">Táto vaša ponuka už bola zrušená po naplnení množstva %s z celkových %s %s</string>
     <string name="exchange_graph">Graf</string>

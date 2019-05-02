@@ -536,7 +536,7 @@
                 android:layout_height="40dp"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:weightSum="16">
+                android:weightSum="15.5">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -550,7 +550,8 @@
                         android:layout_height="match_parent"
                         android:background="@color/orange"
                         android:gravity="center"
-                        android:text="@string/exchange_market_orders" />
+                        android:text="@string/exchange_market_orders"
+                        android:textSize="@dimen/item_text_size" />
 
                 </LinearLayout>
 
@@ -574,7 +575,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="8"
+                    android:layout_weight="7.5"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
 
@@ -588,8 +589,9 @@
                         <ImageView
                             android:layout_width="25dp"
                             android:layout_height="match_parent"
+                            android:layout_marginStart="2dp"
                             android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_marginBottom="5dp"
                             android:src="@drawable/order_icon" />
 
