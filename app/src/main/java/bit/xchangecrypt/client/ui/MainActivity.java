@@ -846,7 +846,7 @@ public class MainActivity extends BaseActivity implements FragmentSwitcherInterf
     }
 
     public static String formatNumber(double number) {
-        return String.format("%.8f", number).replaceAll("0+$", "0").replaceAll("([^.])0$", "$1");
+        return String.format("%.8f", number).replaceAll("0+$", "0").replaceAll("([^.,])0$", "$1");
     }
 
     private void createNotificationChannel() {
